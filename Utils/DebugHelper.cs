@@ -9,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace Utils {
 	public static class DebugHelper {
-		public static int DEBUGMODE = 1+2+4+8;	// 1: Display info, 2: Fast time, 4: Reset, 8: Clear win
+		public static int DEBUGMODE = 0;	// 1: Display info, 2: Fast time, 4: Reset, 8: Clear win
 		public static bool Once;
 		public static int OnceInAWhile;
 		public static IDictionary<string, string> Display = new Dictionary<string, string>();
