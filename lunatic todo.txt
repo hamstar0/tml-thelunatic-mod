@@ -1,0 +1,101 @@
+v2
+-	Add challenge mode boss killing?
+-	@B&D post-apocalypse options
+	-	Add NPC sacrificing to add 3 days
+-	Create Phase Potion
+	-	Craft with Healing Potion, Luminite, Blinkroot, Soul of Sight
+	-	Gift 2 with each mask given to NPC
+	-	Implement effect: Phasing FX + Blocked abilities + Invincibility
+	-	Add potion item
+-	Set apocalypse mobs to have added damage + health
+-	Add more signs
+v1.2
+-	Add apocalypse options
+	-	Add config setting to allow NPCs to return after apocalypse averted
+	-	Add config setting to disable
+	-	Allow giving masks during reprieve period
+	-	Change 'Give Mask' option to sacrifice a random NPC to get +1 day apocalypse reprieve
+	-	Randomly kill grass and tiles on surface
+-	Add API for defining new bosses
+-	Add config to blacklist bosses or mods
+-	Add config to use only vanilla bosses
+
+v1.1
+-	Fix custom mask display
+-	Add config setting to disallow cowl reward
+-	Set shunning to be a config option (disallowed masks are still rejected, with explanation)
+-	Add Betsy to the boss mask list
+-	Fix sky tinge after killing cultist boss
+-	Add quake sound
+-	Fix sky tint
+-	Reduce frequency of quakes
+-	Add modded boss checks
+	-	Set Lunatic to recognize each mask
+		-	MaskLogic.GetRemainingMasks
+		-	MaskLogic.RegisterMask
+	-	Set each custom boss to drop variant of custom boss mask
+	-	Implement custom boss mask
+v1 - Basic behavior
+-	Release!
+-	Implement player guid-based PlayerInfo
+	-	@Plan
+		-	On load, if a GUID is found, refresh their data
+		-	On save, if no GUID, generate a new GUID, port their data to it, destroy 
+		-	If a player exists without a GUID, use their .whoAmI to map to their data
+	-	Define class
+-	Fix day slipping
+-	@Test multiplayer
+	-	Test apocalypse
+	-	Test signs
+	-	Test sequence breaking
+	-	Re-enable Save and Load and strictness check
+-	Fix orange tint replacing background sky completely (I JUST WANT A DANG OVERLAY)
+-	F&T
+	-	Set player to get grue'd if they remove cowl while grue approaching
+	-	Fix unequipping cowl leaving permanent noclip
+	-	Exiting darkness
+	-	Torches
+-	Implement Umbral Cowl
+	-	Implement grue
+		-	Give grue warning sound
+		-	Randomly, once every 5 minutes, invoke the grue
+	-	Prevent from use unless specifically unlocked (no lending)
+	-	Implement noclip mode (w/ multiplayer sync)
+	-	Implement darkness detection
+-	Add bake sale + summon item sale
+-	@B&D secondary, persistent function
+	-	!Sells boss summon items after defeating a boss (expensive!)
+	-	Boss challenges
+	-	Handicap challenge
+	-	Sacrifice health for special buff
+	-	Gives special buff cocktail
+v0.9
+-	Release as WIP
+-	Set tooltips for masks to indicate their value
+-	Set bosses to drop their masks
+-	Add alert when world ends
+-	Set Logic class to load with each world
+-	Add Lunatic spawn condition: No progression-related events (alert "You feel inexplicably bored.")
+-	Implement apocalypse
+	-	Kill NPCs left above ground at random
+	-	Add solar event trigger
+-	Implement apocalypse signs
+	-	Add sky tinting towards end
+	-	Implement quakes
+	-	Implement random signs
+-	On enter world, have player receive mask and time data
+-	Restructure code to be more logical
+-	Animate mask giving (flash sky)
+-	Set cultist mask and time to save with world data
+-	Set cultist 'bye' data to save for player
+-	@Revise plan
+	-	Boss masks add 3-7 days to world end
+	-	Set time limit per world (not per player) to 16 days
+	-	Indicate the cultist wants to save the world, but needs boss essense to do so
+-	Implement time passage
+-	Add win and fail conditions
+-	Mask prompts
+	-	Reply "PRAISE BE TO YOG- er, thank you very much! <status update>"
+	-	Give mask from inventory on option select
+-	Save masks
+-	Create lunatic NPC base

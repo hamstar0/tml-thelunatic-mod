@@ -1,0 +1,14 @@
+This mod adds one important missing component to Terraria: A central motivation. Namely, hurrying to save the world. Literally.
+
+Incidentally (maybe), please welcome our friendly newcomer to the town roster: The Lunatic. Who is he? Is he a he? Why does he want masks? Will his bake sale idea ever take off? Is that unearthly increasing orange sky tinge normal? Play this mod to find out!
+
+If for some reason you're finding the struggle to quell those pesky seismic tremors a bit much (or else too little), feel free to tone things down in the config file, found in 'Documents/My Games/Terraria/ModLoader/Mod Configs/The Lunatic Config.json'.
+
+...did I mention there's an excellent, one-of-a-kind reward waiting for you at the end of your quest? No cheating!
+
+
+Important:
+- You'll need a relatively fresh world to play this. The Lunatic won't spawn if you've killed any of the main bosses.
+- You'll get warnings before the end comes. Talk to the Lunatic for more information.
+- Once time runs out, the apocalypse begins. It is permanent for any given world.
+- Protip: Try to keep this guy safe. Like any town NPC, there's no telling when he'll return, if you don't.
