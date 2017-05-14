@@ -20,6 +20,9 @@ v1.2
 -	Add config to blacklist bosses or mods
 -	Add config to use only vanilla bosses
 
+v1.1.7
+-	Add more time per mask (+1 whole day)
+-	Remove old config (The Lunatic 1.0.1.json)
 v1.1
 -	Fix custom mask display
 -	Add config setting to disallow cowl reward
