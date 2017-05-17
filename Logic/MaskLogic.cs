@@ -161,6 +161,10 @@ namespace TheLunatic.Logic {
 					break;
 				}
 
+				if( MiscHelper.GetDayOrNightPercentDone() > 0.5f ) {
+					recovered += 1;
+				}
+
 				modworld.GameLogic.SetTime( modworld.GameLogic.HalfDaysElapsed - recovered );
 			}
 

@@ -119,15 +119,7 @@ namespace TheLunatic {
 			ModPacket packet = mymod.GetPacket();
 
 			packet.Write( (byte)TheLunaticNetProtocolTypes.SendModSettings );
-			packet.Write( (int)mymod.Config.Data.DaysUntil );
-			packet.Write( (bool)mymod.Config.Data.LoonyEnforcesBossSequence );	// Strict mode
-			packet.Write( (bool)mymod.Config.Data.LoonyAcceptsMasksWithoutBossKill );	// Cheaty mode
-			packet.Write( (bool)mymod.Config.Data.LoonySellsSummonItems );
-			packet.Write( (bool)mymod.Config.Data.LoonyShunsCheaters );
-			packet.Write( (bool)mymod.Config.Data.LoonyGivesCompletionReward );
-			packet.Write( (int)mymod.Config.Data.HalfDaysRecoveredPerMask );
-			packet.Write( (float)mymod.Config.Data.WallOfFleshMultiplier );
-			packet.Write( (float)mymod.Config.Data.HardModeMultiplier );
+			packet.Write( (string)mymod.Config.SerializeMe() );
 			
 			packet.Send( (int)player.whoAmI );
 		}
@@ -219,30 +211,12 @@ namespace TheLunatic {
 			// Clients only
 			if( Main.netMode != 1 ) { return; }
 
-			int days_until = reader.ReadInt32();
-			bool strict_mode = reader.ReadBoolean();
-			bool cheaty_mode = reader.ReadBoolean();
-			bool loony_sells_summon_items = reader.ReadBoolean();
-			bool loony_shuns_cheaters = reader.ReadBoolean();
-			bool loony_reward = reader.ReadBoolean();
-			int half_days_recovered = reader.ReadInt32();
-			float wof_mul = reader.ReadSingle();
-			float hard_mul = reader.ReadSingle();
-
-			if( days_until < 0 ) {
+			mymod.Config.DeserializeMe( reader.ReadString() );
+			
+			if( mymod.Config.Data.DaysUntil < 0 ) {
 				DebugHelper.Log( "TheLunaticNetProtocol.ReceiveModSettingsOnClient - Invalid 'DaysUntil' quantity." );
 				return;
 			}
-
-			mymod.Config.Data.DaysUntil = days_until;
-			mymod.Config.Data.LoonyEnforcesBossSequence = strict_mode;
-			mymod.Config.Data.LoonyAcceptsMasksWithoutBossKill = cheaty_mode;
-			mymod.Config.Data.LoonySellsSummonItems = loony_sells_summon_items;
-			mymod.Config.Data.LoonyShunsCheaters = loony_shuns_cheaters;
-			mymod.Config.Data.LoonyGivesCompletionReward = loony_reward;
-			mymod.Config.Data.HalfDaysRecoveredPerMask = half_days_recovered;
-			mymod.Config.Data.WallOfFleshMultiplier = wof_mul;
-			mymod.Config.Data.HardModeMultiplier = hard_mul;
 		}
 
 		private static void ReceiveModDataOnClient( TheLunaticMod mymod, BinaryReader reader ) {
@@ -292,6 +266,9 @@ namespace TheLunatic {
 			modworld.LoadOnce( world_id );
 			modworld.GameLogic.LoadOnce( has_loony_arrived, has_loony_quit, has_game_end, has_won, is_safe, time );
 			modworld.MaskLogic.LoadOnce( masks, custom_masks );
+
+			var modplayer = Main.player[Main.myPlayer].GetModPlayer<TheLunaticPlayer>( mymod );
+			modplayer.PostEnterWorld();
 		}
 
 		private static void ReceiveEndSignOnClient( TheLunaticMod mymod, BinaryReader reader ) {

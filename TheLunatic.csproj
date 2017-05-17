@@ -73,6 +73,7 @@
     <Compile Include="Utils\NPCHelper.cs" />
     <Compile Include="Utils\PlayerHelper.cs" />
     <Compile Include="Utils\TileHelper.cs" />
+    <Compile Include="Utils\UIHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="build.txt" />

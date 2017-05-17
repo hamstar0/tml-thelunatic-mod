@@ -7,19 +7,29 @@ v2
 	-	Gift 2 with each mask given to NPC
 	-	Implement effect: Phasing FX + Blocked abilities + Invincibility
 	-	Add potion item
--	Set apocalypse mobs to have added damage + health
--	Add more signs
-v1.2
--	Add apocalypse options
-	-	Add config setting to allow NPCs to return after apocalypse averted
-	-	Add config setting to disable
-	-	Allow giving masks during reprieve period
-	-	Change 'Give Mask' option to sacrifice a random NPC to get +1 day apocalypse reprieve
-	-	Randomly kill grass and tiles on surface
+-	Put 'Umbral Cowl' into separate mod
 -	Add API for defining new bosses
+-	Apocalypse
+	-	Sacrifices
+		-	Add config setting to allow NPCs to return after apocalypse averted
+		-	Change 'Give Mask' option to sacrifice a random NPC to get +1 day apocalypse reprieve
+	-	Add more signs
+	-	Add config setting to remove active apocalypses (worlds are 'boring', though)
+	-	Allow giving masks during reprieve period
+	-	Randomly kill grass and tiles on surface
+	-	Set apocalypse mobs to be re-colored
+v1.3
 -	Add config to blacklist bosses or mods
 -	Add config to use only vanilla bosses
+-	Fix custom mask
+-	Fix tint (!)
 
+v1.2
+-	Add debug config option
+-	On last day, give dramatic indication
+-	When submitting masks, add an extra half day if current half day is at least halfway done
+-	Add 'days left' display on 'give mask' option
+-	Add more dialog for npc
 v1.1.7
 -	Add more time per mask (+1 whole day)
 -	Remove old config (The Lunatic 1.0.1.json)

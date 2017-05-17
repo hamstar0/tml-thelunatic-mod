@@ -27,7 +27,10 @@ namespace TheLunatic.NPCs {
 				"Have you by chance given thought to accepting into your heart our savior, Lord Cthulhu? It's a relatively painless surgical procedure!",
 				"Find any interesting masks you'd be willing to let go? Not like it's important, or anything...",
 				"My boss has gone nuts. All we do is rituals to summon elder gods, lately. Why couldn't we just go with my bake sale fund raiser idea?!",
-				"The masks? They are the captured essense of powerful beings. Great collector's items. Also good for saving the world. Or destroying it. Same difference."
+				"The masks? They are the captured essense of powerful beings. Great collector's items. Also good for saving the world. Or destroying it. Same difference?",
+				"I used to be the gang's critter wrangler, until... let's not talk about that. Also, disregard any rumors of a world-ending cleanup operation. Crazy talk, I says! Heh...",
+				"Heard they called in some part time fashion clerk to fill my vacancy. Now that the dungeon's main occupants have esc...relocated, thought it time to move on...",
+				"Ph'nglui mglw'nafh ... I forget the rest. Sorry, my R'leyhian is a bit rusty. Just brushing up. No reason..."
 			};
 			TheLunaticTownNPC.DismissalReplies = new string[] {
 				//"You'll pay!",
@@ -344,10 +347,10 @@ namespace TheLunatic.NPCs {
 						msg = "Party time! Masks won't do much good, now. Alas, they were our only hope...";
 					} else if( TheLunaticTownNPC.AlertedToImpendingDoom ) {
 						if( days_left <= 3 && Main.rand.Next(3) == 0 ) {
-							msg = "I enjoy a good party and all, but I think we're all gonna need to get underground soon. Literally.";
+							msg = "I enjoy a good party and all, but this one'll be killer if we're don't get underground soon, at this rate. Literally.";
 						} else {
 							if( days_left > 1 ) {
-								msg = "So it's begun. I estimate we've got " + days_left + " days until party time.\n...on a totally unrelated note, got any masks?";
+								msg = "So it's begun. I estimate we've got only a few days until party time.\n...on a totally unrelated note, got any masks?";
 							} else {
 								msg = "Those tremors... the ceremony must be near completion. That makes this the final day.\nIf you have any masks for me, it's now or never!";
 							}
@@ -356,7 +359,7 @@ namespace TheLunatic.NPCs {
 						msg = "There ought to be signs. There's always signs within the last few days. Seismic activity, unusual celestial phenomena... Noticed any, yet?";
 					}
 				}
-
+				
 				return msg;
 			} catch( Exception e ) {
 				DebugHelper.Log( e.ToString() );
@@ -424,12 +427,19 @@ namespace TheLunatic.NPCs {
 				if( mask == null ) {
 					mask = PlayerHelper.FindFirstOfItemFor( player, MaskLogic.AllVanillaMasks );
 				}
-				string hint = this.GetHint();
+				string msg, hint = this.GetHint();
 
 				if( mask == null ) {
-					return "Ehehe, good one! But seriously, you DO have a mask... don't you? ...please?\n" + hint;
+					msg = "Ehehe, good one! But seriously, you DO have a mask... don't you? ...please?\n" + hint;
+				} else {
+					msg = "Very nice, but I've already got a " + MaskLogic.GetMaskDisplayName( mask ) + ".\n" + hint;
 				}
-				return "Very nice, but I've already got a " + MaskLogic.GetMaskDisplayName(mask) + ".\n" + hint;
+
+				if( !modworld.GameLogic.HasGameEnded ) {
+					int days_left = mymod.Config.Data.DaysUntil - (modworld.GameLogic.HalfDaysElapsed / 2);
+					msg += "\n \nDays remaining: " + days_left;
+				}
+				return msg;
 			}
 
 			if( modworld.MaskLogic.IsValidMask( mask ) ) {

@@ -22,12 +22,13 @@ namespace TheLunatic {
 		public bool LoonySellsSummonItems = true;
 		public bool LoonyShunsCheaters = false;
 		public bool LoonyGivesCompletionReward = true;
+		public int DEBUGFLAGS = 0;
 	}
 
 
 
 	public class TheLunaticMod : Mod {
-		public readonly static Version ConfigVersion = new Version(1, 1, 7);
+		public readonly static Version ConfigVersion = new Version(1, 2, 0);
 		public JsonConfig<ConfigurationData> Config { get; private set; }
 
 		public AnimatedSky Sky { get; private set; }
@@ -78,6 +79,8 @@ namespace TheLunatic {
 				this.Sky = new AnimatedSky();
 				SkyManager.Instance["TheLunaticMod:AnimatedColorize"] = this.Sky;
 			}
+
+			DebugHelper.DEBUGMODE = this.Config.Data.DEBUGFLAGS;
 		}
 
 
@@ -110,6 +113,8 @@ namespace TheLunatic {
 			if( modworld.GameLogic != null ) {
 				modworld.GameLogic.ReadyClient = true;  // Ugh!
 			}
+
+			UIHelper.UpdateMessageDisplay( sb );
 
 			DebugHelper.PrintToBatch( sb );
 		}

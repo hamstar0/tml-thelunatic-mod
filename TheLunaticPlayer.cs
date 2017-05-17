@@ -26,7 +26,7 @@ namespace TheLunatic {
 		private int QuakeStartDuration = 0;
 
 		public Texture2D MaskTex = null;
-		
+
 
 		////////////////
 
@@ -53,20 +53,34 @@ namespace TheLunatic {
 		
 		public override void OnEnterWorld( Player player ) {    // This seems to be as close to a constructor as we're gonna get!
 			if( player.whoAmI == this.player.whoAmI ) {    // Current player
+				var mymod = (TheLunaticMod)this.mod;
+				var modworld = mymod.GetModWorld<TheLunaticWorld>();
+
 				if( Main.netMode != 2 ) {   // Not server
-					var mymod = (TheLunaticMod)this.mod;
 					if( !mymod.Config.LoadFile() ) {
 						mymod.Config.SaveFile();
 					}
 				}
+				modworld.GameLogic.ApplyDebugOverrides();
 
 				if( Main.netMode == 1 ) {	// Client
 					TheLunaticNetProtocol.SendRequestModSettingsFromClient( this.mod );
 					TheLunaticNetProtocol.SendRequestModDataFromClient( this.mod );
+				} else if( Main.netMode == 0 ) {	// Single
+					this.PostEnterWorld();
 				}
 			}
 			
 			this.HasEnteredWorld = true;
+		}
+
+		public void PostEnterWorld() {
+			var mymod = (TheLunaticMod)this.mod;
+			var modworld = mymod.GetModWorld<TheLunaticWorld>();
+
+			if( modworld.GameLogic.HasGameEnded && !modworld.GameLogic.HasWon ) {
+				Main.NewText( "You inexplicably feel like this will now be a boring adventure.", 64, 64, 96, false );
+			}
 		}
 
 		////////////////
@@ -96,8 +110,8 @@ namespace TheLunatic {
 
 			foreach( var kv in this.Bye ) {
 				string world_id = kv.Key;
-				tags.SetTag( "world_id_" + i, world_id );
-				tags.SetTag( "bye_" + i, this.Bye[world_id] );
+				tags.Set( "world_id_" + i, world_id );
+				tags.Set( "bye_" + i, this.Bye[world_id] );
 				i++;
 			}
 
@@ -129,16 +143,16 @@ namespace TheLunatic {
 				}
 			}
 
-			if( Main.netMode != 2 ) {	// Not server
-				if( this.player.whoAmI == Main.myPlayer ) { // Current player only
-					if( this.HasEnteredWorld ) {
-						var modworld = this.mod.GetModWorld<TheLunaticWorld>();
+			var modworld = this.mod.GetModWorld<TheLunaticWorld>();
+
+			if( Main.netMode != 2 ) {   // Not server
+				if( this.HasEnteredWorld ) {
+					if( this.player.whoAmI == Main.myPlayer ) { // Current player only
 						modworld.GameLogic.Update();
 					}
 				}
 			} else {	// Server
-				var modworld = this.mod.GetModWorld<TheLunaticWorld>();
-				modworld.GameLogic.ReadyServer = true;	// Ugh!
+				modworld.GameLogic.ReadyServer = true;	// Needed?
 			}
 		}
 

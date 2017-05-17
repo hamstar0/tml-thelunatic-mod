@@ -72,9 +72,9 @@ namespace TheLunatic.Tiles {
 			float tint_scale = MathHelper.Clamp( this.TintScale, 0f, 1f );
 
 			if( Main.dayTime ) {
-				tint_scale *= 1f - (float)Math.Abs( MiscHelper.GetDayFractional() - 0.5d );
+				tint_scale *= 1f - (float)Math.Abs( MiscHelper.GetDayOrNightPercentDone() - 0.5d );
 			} else {
-				tint_scale *= ((float)Math.Abs( MiscHelper.GetDayFractional() - 0.5d ) * 0.6f ) + 0.2f;
+				tint_scale *= ((float)Math.Abs( MiscHelper.GetDayOrNightPercentDone() - 0.5d ) * 0.6f ) + 0.2f;
 			}
 
 			color.R = (byte)(255f * tint_scale);

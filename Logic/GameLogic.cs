@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using Terraria;
 using Terraria.Graphics.Effects;
+using Terraria.ModLoader;
 using TheLunatic.NPCs;
 using Utils;
 
@@ -22,6 +23,7 @@ namespace TheLunatic.Logic {
 		public bool HasGameEnded { get; private set; }
 		public bool HasWon { get; private set; }
 		public bool IsSafe { get; private set; }
+		public bool IsLastDay { get; private set; }
 
 		public bool IsApocalypse { get; private set; }
 
@@ -37,6 +39,7 @@ namespace TheLunatic.Logic {
 			this.HasWon = false;
 			this.IsSafe = false;
 			this.HalfDaysElapsed = 0;
+			this.IsLastDay = false;
 
 			this.Mod = mod;
 			this.IsDay = Main.dayTime;
@@ -65,8 +68,20 @@ namespace TheLunatic.Logic {
 			this.IsSafe = is_safe;
 			this.HalfDaysElapsed = time;
 
+			this.ApplyDebugOverrides();
+
+			this.IsLoaded = true;
+		}
+		private bool IsLoaded = false;
+
+
+		public void AllowReload() {
+			this.IsLoaded = false;
+		}
+
+		public void ApplyDebugOverrides() {
 			if( (DebugHelper.DEBUGMODE & 2) > 0 ) {
-				this.Mod.Config.Data.DaysUntil /= 8;
+				this.Mod.Config.Data.DaysUntil /= 5;
 			}
 			if( (DebugHelper.DEBUGMODE & 4) > 0 ) {
 				DebugHelper.Log( "DEBUG Game Logic reset!" );
@@ -77,13 +92,6 @@ namespace TheLunatic.Logic {
 				this.IsSafe = false;
 				this.HalfDaysElapsed = 0;
 			}
-			this.IsLoaded = true;
-		}
-		private bool IsLoaded = false;
-
-
-		public void AllowReload() {
-			this.IsLoaded = false;
 		}
 
 
@@ -122,7 +130,7 @@ namespace TheLunatic.Logic {
 				DebugHelper.Display["HasLoonyArrived"] = "" + this.HasLoonyArrived;
 				DebugHelper.Display["HasLoonyQuit"] = "" + this.HasLoonyQuit;
 				DebugHelper.Display["HasGameEnded"] = "" + this.HasGameEnded;
-				DebugHelper.Display["HalfDaysElapsed"] = "" + this.HalfDaysElapsed;
+				DebugHelper.Display["HalfDaysElapsed"] = "" + this.HalfDaysElapsed + " ("+(this.Mod.Config.Data.DaysUntil*2)+")";
 				DebugHelper.Display["HaveWeEndSigns"] = "" + this.HaveWeEndSigns();
 				DebugHelper.Display["HaveHope"] = "" + this.HaveWeHopeToWin();
 				DebugHelper.Display["TintScale"] = "" + this.Mod.Sky.TintScale;
@@ -161,6 +169,20 @@ namespace TheLunatic.Logic {
 			// Have we won?
 			if( !this.HasWon && this.HaveWeWon() ) {
 				this.WinTheGame();
+			}
+
+			// Indicate final day
+			if( !this.HasGameEnded ) {
+				if( !this.IsLastDay ) {
+					if( this.HalfDaysElapsed >= (this.Mod.Config.Data.DaysUntil - 1) * 2 ) {
+						UIHelper.PostMessage( "Final Day", 60 * 5 );
+						this.IsLastDay = true;
+					}
+				} else {
+					if( this.HalfDaysElapsed < (this.Mod.Config.Data.DaysUntil - 1) * 2 ) {
+						this.IsLastDay = false;
+					}
+				}
 			}
 		}
 
@@ -219,7 +241,7 @@ namespace TheLunatic.Logic {
 
 				if( Main.netMode != 2 ) {   // Not server
 					if( half_days_left != 0 ) {
-						double days = (double)this.HalfDaysElapsed + MiscHelper.GetDayFractional();
+						double days = (double)this.HalfDaysElapsed + MiscHelper.GetDayOrNightPercentDone();
 						days -= this.Mod.Config.Data.DaysUntil;
 						this.Mod.Sky.TintScale = (float)days / (float)this.Mod.Config.Data.DaysUntil;
 					} else {

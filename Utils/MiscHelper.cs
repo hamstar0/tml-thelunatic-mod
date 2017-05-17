@@ -8,11 +8,11 @@ namespace Utils {
 		}
 
 
-		public static double GetDayFractional() {
+		public static double GetDayOrNightPercentDone() {
 			if( Main.dayTime ) {
-				return Main.time / 54000.0;
+				return Main.time / 54000.0d;
 			} else {
-				return Main.time / 32400.0;
+				return Main.time / 32400.0d;
 			}
 		}
 
