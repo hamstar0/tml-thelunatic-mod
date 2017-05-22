@@ -1,4 +1,4 @@
-v2
+Undecided
 -	Add challenge mode boss killing?
 -	@B&D post-apocalypse options
 	-	Add NPC sacrificing to add 3 days
@@ -9,21 +9,26 @@ v2
 	-	Add potion item
 -	Put 'Umbral Cowl' into separate mod
 -	Add API for defining new bosses
--	Apocalypse
+-	Post apocalypse
+	-	Allow giving masks during reprieve period
 	-	Sacrifices
 		-	Add config setting to allow NPCs to return after apocalypse averted
 		-	Change 'Give Mask' option to sacrifice a random NPC to get +1 day apocalypse reprieve
 	-	Add more signs
+		-	Random greek fire drops from sky
+		-	Sky clouds start moving fast
 	-	Add config setting to remove active apocalypses (worlds are 'boring', though)
-	-	Allow giving masks during reprieve period
 	-	Randomly kill grass and tiles on surface
 	-	Set apocalypse mobs to be re-colored
-v1.3
--	Add config to blacklist bosses or mods
--	Add config to use only vanilla bosses
--	Fix custom mask
 -	Fix tint (!)
 
+v1.2.1
+-	Change config default initial days to 9 (from 10)
+-	Change config default days per mask to 2 (from 2.5)
+-	Add config option to indicate days remaining
+-	Add config option to enable only the moon lord mask to be needed to win
+-	Add config option to use only vanilla bosses
+-	Fix custom boss mask
 v1.2
 -	Add debug config option
 -	On last day, give dramatic indication

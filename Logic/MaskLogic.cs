@@ -126,7 +126,7 @@ namespace TheLunatic.Logic {
 
 		////////////////
 
-		public void RegisterMask( Player giving_player, int mask_type, int boss_type ) {
+		public void RegisterReceiptOfMask( Player giving_player, int mask_type, int boss_type ) {
 			if( mask_type == this.Mod.ItemType<CustomBossMaskItem>() ) {
 				NPC npc = new NPC();
 				npc.SetDefaults( boss_type );
@@ -139,7 +139,7 @@ namespace TheLunatic.Logic {
 				DebugHelper.Log( "DEBUG Registering mask. "+giving_player.name+", "+mask_type );
 			}
 
-			// Adjust time
+			// Buy time before the end comes
 			if( this.GivenVanillaMasksByType.Count < (MaskLogic.AvailableMaskCount) ) {
 				var modworld = this.Mod.GetModWorld<TheLunaticWorld>();
 				int recovered = this.Mod.Config.Data.HalfDaysRecoveredPerMask;
@@ -157,6 +157,9 @@ namespace TheLunatic.Logic {
 				case 3372: // Ancient Cultist Mask
 				case 3863: // Betsy Mask
 				case 3373: // Moon Lord Mask
+					if( mask_type == 3373 && this.Mod.Config.Data.MoonLordMaskWins ) {
+						this.GiveAllVanillaMasks();
+					}
 					recovered = (int)((float)recovered * this.Mod.Config.Data.HardModeMultiplier);
 					break;
 				}
@@ -164,7 +167,7 @@ namespace TheLunatic.Logic {
 				if( MiscHelper.GetDayOrNightPercentDone() > 0.5f ) {
 					recovered += 1;
 				}
-
+				
 				modworld.GameLogic.SetTime( modworld.GameLogic.HalfDaysElapsed - recovered );
 			}
 
@@ -188,12 +191,19 @@ namespace TheLunatic.Logic {
 			return masks;
 		}
 
-		public bool LoonyHasMask( Item mask ) {
-			if( this.GetRemainingVanillaMasks().Contains(mask.type) ) { return true; }
+		public bool DoesLoonyHaveThisMask( Item mask_item ) {
+			if( this.GetRemainingVanillaMasks().Contains(mask_item.type) ) { return true; }
 
-			var info = mask.GetModInfo<CustomBossMaskItemInfo>( this.Mod );
-			return this.GivenCustomMasksByBossUid.Contains( info.BossUid );
+			var mask_item_info = mask_item.GetModInfo<CustomBossMaskItemInfo>( this.Mod );
+			return this.GivenCustomMasksByBossUid.Contains( mask_item_info.BossUid );
 		}
+
+		public void GiveAllVanillaMasks() {
+			foreach( int mask_type in this.GetRemainingVanillaMasks() ) {
+				this.GivenVanillaMasksByType.Add( mask_type );
+			}
+		}
+
 
 		////////////////
 
@@ -275,7 +285,7 @@ namespace TheLunatic.Logic {
 				if( mask.type == this.Mod.ItemType<CustomBossMaskItem>() ) {
 					boss_type = mask.GetModInfo<CustomBossMaskItemInfo>( this.Mod ).BossNpcType;
 				}
-				this.RegisterMask( player, mask.type, boss_type );
+				this.RegisterReceiptOfMask( player, mask.type, boss_type );
 			} else {
 				throw new Exception( "Server should not be giving masks to loonys." );
 			}

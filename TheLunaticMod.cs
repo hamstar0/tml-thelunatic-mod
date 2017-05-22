@@ -13,22 +13,29 @@ using System;
 namespace TheLunatic {
 	public class ConfigurationData {
 		public string VersionSinceUpdate = "";
-		public int DaysUntil = 10;  // Days until The End
-		public int HalfDaysRecoveredPerMask = 6;    // Half days recovered per mask
-		public float WallOfFleshMultiplier = 3f;    // Added time for WoF kill
+
+		public int DaysUntil = 9;  // Days until The End
+		public int HalfDaysRecoveredPerMask = 4;    // Half days recovered per mask
+		public float WallOfFleshMultiplier = 2.5f;    // Added time for WoF kill
 		public float HardModeMultiplier = 1.5f;	// Added time for hard mode bosses
+
 		public bool LoonyEnforcesBossSequence = true;
 		public bool LoonyAcceptsMasksWithoutBossKill = false;
 		public bool LoonySellsSummonItems = true;
 		public bool LoonyShunsCheaters = false;
 		public bool LoonyGivesCompletionReward = true;
-		public int DEBUGFLAGS = 0;
+		public bool LoonyIndicatesDaysRemaining = true;
+
+		public bool OnlyVanillaBossesDropMasks = false;
+		public bool MoonLordMaskWins = false;
+		
+		public int DEBUGFLAGS = 0;	// 1: Display info, 2: Fast time, 4: Reset, 8: Clear win, 16: Skip to signs
 	}
 
 
 
 	public class TheLunaticMod : Mod {
-		public readonly static Version ConfigVersion = new Version(1, 2, 0);
+		public readonly static Version ConfigVersion = new Version(1, 2, 1);
 		public JsonConfig<ConfigurationData> Config { get; private set; }
 
 		public AnimatedSky Sky { get; private set; }
@@ -63,14 +70,15 @@ namespace TheLunatic {
 			if( vers_since < TheLunaticMod.ConfigVersion ) {
 				var new_config = new ConfigurationData();
 				ErrorLogger.Log( "The Lunatic config updated to " + TheLunaticMod.ConfigVersion.ToString() );
-
-				if( vers_since < new Version(1, 1, 0) ) {
-					this.Config.Data.HardModeMultiplier = new_config.HardModeMultiplier;
-				}
+				
 				if( vers_since < new Version( 1, 1, 7 ) ) {
 					this.Config.Data.HalfDaysRecoveredPerMask = new_config.HalfDaysRecoveredPerMask;
 				}
-				
+				if( vers_since < new Version( 1, 3, 0 ) ) {
+					this.Config.Data.DaysUntil = new_config.DaysUntil;
+					this.Config.Data.HardModeMultiplier = new_config.HardModeMultiplier;
+				}
+
 				this.Config.Data.VersionSinceUpdate = TheLunaticMod.ConfigVersion.ToString();
 				this.Config.SaveFile();
 			}

@@ -28,7 +28,7 @@ namespace TheLunatic.NPCs {
 				"Find any interesting masks you'd be willing to let go? Not like it's important, or anything...",
 				"My boss has gone nuts. All we do is rituals to summon elder gods, lately. Why couldn't we just go with my bake sale fund raiser idea?!",
 				"The masks? They are the captured essense of powerful beings. Great collector's items. Also good for saving the world. Or destroying it. Same difference?",
-				"I used to be the gang's critter wrangler, until... let's not talk about that. Also, disregard any rumors of a world-ending cleanup operation. Crazy talk, I says! Heh...",
+				//"I used to be the gang's critter wrangler, until... let's not talk about that. Also, disregard any rumors of a world-ending cleanup operation. Crazy talk, I says! Heh...",
 				"Heard they called in some part time fashion clerk to fill my vacancy. Now that the dungeon's main occupants have esc...relocated, thought it time to move on...",
 				"Ph'nglui mglw'nafh ... I forget the rest. Sorry, my R'leyhian is a bit rusty. Just brushing up. No reason..."
 			};
@@ -347,7 +347,7 @@ namespace TheLunatic.NPCs {
 						msg = "Party time! Masks won't do much good, now. Alas, they were our only hope...";
 					} else if( TheLunaticTownNPC.AlertedToImpendingDoom ) {
 						if( days_left <= 3 && Main.rand.Next(3) == 0 ) {
-							msg = "I enjoy a good party and all, but this one'll be killer if we're don't get underground soon, at this rate. Literally.";
+							msg = "I enjoy a good party and all, but this one'll be killer if we don't get underground soon, at this rate. Literally.";
 						} else {
 							if( days_left > 1 ) {
 								msg = "So it's begun. I estimate we've got only a few days until party time.\n...on a totally unrelated note, got any masks?";
@@ -420,7 +420,7 @@ namespace TheLunatic.NPCs {
 			if( mask == null ) {
 				mask = PlayerHelper.FindFirstOfItemFor( player, new HashSet<int> { mymod.ItemType<CustomBossMaskItem>() } );
 				is_custom = mask != null;
-				is_given = is_custom && modworld.MaskLogic.LoonyHasMask( mask );
+				is_given = is_custom && modworld.MaskLogic.DoesLoonyHaveThisMask( mask );
 			}
 
 			if( mask == null || is_given ) {
@@ -435,7 +435,7 @@ namespace TheLunatic.NPCs {
 					msg = "Very nice, but I've already got a " + MaskLogic.GetMaskDisplayName( mask ) + ".\n" + hint;
 				}
 
-				if( !modworld.GameLogic.HasGameEnded ) {
+				if( !modworld.GameLogic.HasGameEnded && mymod.Config.Data.LoonyIndicatesDaysRemaining ) {
 					int days_left = mymod.Config.Data.DaysUntil - (modworld.GameLogic.HalfDaysElapsed / 2);
 					msg += "\n \nDays remaining: " + days_left;
 				}

@@ -92,6 +92,11 @@ namespace TheLunatic.Logic {
 				this.IsSafe = false;
 				this.HalfDaysElapsed = 0;
 			}
+			if( (DebugHelper.DEBUGMODE & 16) > 0 ) {
+				if( this.HalfDaysElapsed < this.Mod.Config.Data.DaysUntil ) {
+					this.HalfDaysElapsed = this.Mod.Config.Data.DaysUntil;
+				}
+			}
 		}
 
 

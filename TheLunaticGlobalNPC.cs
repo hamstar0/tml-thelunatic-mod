@@ -46,15 +46,23 @@ namespace TheLunatic {
 			var modworld = this.mod.GetModWorld<TheLunaticWorld>();
 			if( modworld.GameLogic == null ) { throw new Exception( "Game logic not initialized." ); }
 			if( modworld.MaskLogic == null ) { throw new Exception( "Mask logic not initialized." ); }
-			int mask_type = MaskLogic.GetMaskTypeOfNpc( npc.type );
-			Item item = null;
-			
-			if( mask_type == -1 ) { return; }
 			if( !modworld.GameLogic.HaveWeHopeToWin() ) { return; }
 
-			bool is_given = modworld.MaskLogic.GivenVanillaMasksByType.Contains( mask_type );
+			Item item = null;
+			int mask_type = MaskLogic.GetMaskTypeOfNpc( npc.type );
+			if( mask_type == -1 ) { return; }
+
+			// Already given this mask?
 			bool is_vanilla = MaskLogic.AllVanillaMasks.Contains( mask_type );
-			if( !is_given && (!is_vanilla && modworld.MaskLogic.GivenCustomMasksByBossUid.Contains( NPCHelper.GetUniqueId(npc) )) ) {
+			if( !modworld.MaskLogic.GivenVanillaMasksByType.Contains( mask_type ) ) {
+				if( !is_vanilla && modworld.MaskLogic.GivenCustomMasksByBossUid.Contains( NPCHelper.GetUniqueId( npc ) ) ) {
+					return;
+				}
+			}
+
+			// No modded masks allowed?
+			var mymod = (TheLunaticMod)this.mod;
+			if( !is_vanilla && mymod.Config.Data.OnlyVanillaBossesDropMasks ) {
 				return;
 			}
 			

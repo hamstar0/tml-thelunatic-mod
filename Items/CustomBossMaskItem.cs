@@ -142,7 +142,7 @@ namespace TheLunatic.Items {
 				}
 			}*/
 
-			return false;
+			return true;
 		}
 	}
 

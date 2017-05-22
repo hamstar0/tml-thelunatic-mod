@@ -314,7 +314,7 @@ namespace TheLunatic {
 				player = Main.player[from_who];
 			}
 
-			modworld.MaskLogic.RegisterMask( player, mask_type, boss_type );
+			modworld.MaskLogic.RegisterReceiptOfMask( player, mask_type, boss_type );
 		}
 
 
@@ -378,7 +378,7 @@ namespace TheLunatic {
 				return;
 			}
 
-			modworld.MaskLogic.RegisterMask( Main.player[player_who], mask_type, boss_type );
+			modworld.MaskLogic.RegisterReceiptOfMask( Main.player[player_who], mask_type, boss_type );
 			
 			TheLunaticNetProtocol.BroadcastGivenMaskFromServer( mymod, player_who, mask_type, boss_type );
 		}

@@ -70,11 +70,12 @@ namespace TheLunatic.Tiles {
 		public Color GetTintColor() {
 			Color color = Color.Black;
 			float tint_scale = MathHelper.Clamp( this.TintScale, 0f, 1f );
+			float day_spike = (float)Math.Abs( MiscHelper.GetDayOrNightPercentDone() - 0.5d );
 
 			if( Main.dayTime ) {
-				tint_scale *= 1f - (float)Math.Abs( MiscHelper.GetDayOrNightPercentDone() - 0.5d );
+				tint_scale *= 1f - day_spike;
 			} else {
-				tint_scale *= ((float)Math.Abs( MiscHelper.GetDayOrNightPercentDone() - 0.5d ) * 0.6f ) + 0.2f;
+				tint_scale *= (day_spike * 0.6f) + 0.2f;
 			}
 
 			color.R = (byte)(255f * tint_scale);
