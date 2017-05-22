@@ -29,13 +29,13 @@ namespace TheLunatic {
 		public bool OnlyVanillaBossesDropMasks = false;
 		public bool MoonLordMaskWins = false;
 		
-		public int DEBUGFLAGS = 0;	// 1: Display info, 2: Fast time, 4: Reset, 8: Clear win, 16: Skip to signs
+		public int DEBUGFLAGS = 0;	// 1: Display info, 2: Fast time, 4: Reset, 8: Reset win, 16: Skip to signs
 	}
 
 
 
 	public class TheLunaticMod : Mod {
-		public readonly static Version ConfigVersion = new Version(1, 2, 1);
+		public readonly static Version ConfigVersion = new Version(1, 2, 2);
 		public JsonConfig<ConfigurationData> Config { get; private set; }
 
 		public AnimatedSky Sky { get; private set; }
@@ -71,12 +71,10 @@ namespace TheLunatic {
 				var new_config = new ConfigurationData();
 				ErrorLogger.Log( "The Lunatic config updated to " + TheLunaticMod.ConfigVersion.ToString() );
 				
-				if( vers_since < new Version( 1, 1, 7 ) ) {
-					this.Config.Data.HalfDaysRecoveredPerMask = new_config.HalfDaysRecoveredPerMask;
-				}
-				if( vers_since < new Version( 1, 3, 0 ) ) {
+				if( vers_since < new Version( 1, 2, 2 ) ) {
 					this.Config.Data.DaysUntil = new_config.DaysUntil;
 					this.Config.Data.HardModeMultiplier = new_config.HardModeMultiplier;
+					this.Config.Data.HalfDaysRecoveredPerMask = new_config.HalfDaysRecoveredPerMask;
 				}
 
 				this.Config.Data.VersionSinceUpdate = TheLunaticMod.ConfigVersion.ToString();

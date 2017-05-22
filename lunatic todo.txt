@@ -1,14 +1,13 @@
 Undecided
 -	Add challenge mode boss killing?
--	@B&D post-apocalypse options
-	-	Add NPC sacrificing to add 3 days
 -	Create Phase Potion
 	-	Craft with Healing Potion, Luminite, Blinkroot, Soul of Sight
 	-	Gift 2 with each mask given to NPC
 	-	Implement effect: Phasing FX + Blocked abilities + Invincibility
 	-	Add potion item
--	Put 'Umbral Cowl' into separate mod
--	Add API for defining new bosses
+v1.3
+-	Put 'Umbral Cowl' into separate mod (used as dependency)
+-	Add API for adding required custom bosses
 -	Post apocalypse
 	-	Allow giving masks during reprieve period
 	-	Sacrifices
@@ -20,6 +19,8 @@ Undecided
 	-	Add config setting to remove active apocalypses (worlds are 'boring', though)
 	-	Randomly kill grass and tiles on surface
 	-	Set apocalypse mobs to be re-colored
+-	Set loony to drop a 'Paperback Necronomicon' (resummons Lunatic if dead)
+-	Add more 'baked goods' to shop
 -	Fix tint (!)
 
 v1.2.1
