@@ -9,13 +9,13 @@ using Utils;
 
 namespace TheLunatic {
 	public enum TheLunaticNetProtocolTypes : byte {
-		SendRequestModSettings,
-		SendRequestModData,
-		SendModSettings,
-		SendModData,
-		BroadcastEndSign,
-		SendGivenMask,
-		BroadcastGivenMask
+		RequestModSettings,
+		RequestModData,
+		ModSettings,
+		ModData,
+		EndSign,
+		GiveMaskToServer,
+		GiveMaskToClient
 	}
 
 
@@ -25,32 +25,32 @@ namespace TheLunatic {
 			bool is_debug = (DebugHelper.DEBUGMODE & 1) > 0;
 
 			switch( protocol ) {
-			case TheLunaticNetProtocolTypes.SendRequestModSettings:
-				if( is_debug ) { DebugHelper.Log( "SendRequestModSettings" ); }
+			case TheLunaticNetProtocolTypes.RequestModSettings:
+				if( is_debug ) { DebugHelper.Log( "Packet RequestModSettings" ); }
 				TheLunaticNetProtocol.ReceiveRequestModSettingsOnServer( mymod, reader );
 				break;
-			case TheLunaticNetProtocolTypes.SendRequestModData:
-				if( is_debug ) { DebugHelper.Log( "SendRequestModData" ); }
+			case TheLunaticNetProtocolTypes.RequestModData:
+				if( is_debug ) { DebugHelper.Log( "Packet RequestModData" ); }
 				TheLunaticNetProtocol.ReceiveRequestModDataOnServer( mymod, reader );
 				break;
-			case TheLunaticNetProtocolTypes.SendModSettings:
-				if( is_debug ) { DebugHelper.Log( "SendModSettings" ); }
+			case TheLunaticNetProtocolTypes.ModSettings:
+				if( is_debug ) { DebugHelper.Log( "Packet ModSettings" ); }
 				TheLunaticNetProtocol.ReceiveModSettingsOnClient( mymod, reader );
 				break;
-			case TheLunaticNetProtocolTypes.SendModData:
-				if( is_debug ) { DebugHelper.Log( "SendModData" ); }
+			case TheLunaticNetProtocolTypes.ModData:
+				if( is_debug ) { DebugHelper.Log( "Packet ModData" ); }
 				TheLunaticNetProtocol.ReceiveModDataOnClient( mymod, reader );
 				break;
-			case TheLunaticNetProtocolTypes.BroadcastEndSign:
-				if( is_debug ) { DebugHelper.Log( "BroadcastEndSign" ); }
+			case TheLunaticNetProtocolTypes.EndSign:
+				if( is_debug ) { DebugHelper.Log( "Packet EndSign" ); }
 				TheLunaticNetProtocol.ReceiveEndSignOnClient( mymod, reader );
 				break;
-			case TheLunaticNetProtocolTypes.SendGivenMask:
-				if( is_debug ) { DebugHelper.Log( "SendGivenMask" ); }
+			case TheLunaticNetProtocolTypes.GiveMaskToServer:
+				if( is_debug ) { DebugHelper.Log( "Packet GiveMaskToServer" ); }
 				TheLunaticNetProtocol.ReceiveGivenMaskOnServer( mymod, reader );
 				break;
-			case TheLunaticNetProtocolTypes.BroadcastGivenMask:
-				if( is_debug ) { DebugHelper.Log( "BroadcastGivenMask" ); }
+			case TheLunaticNetProtocolTypes.GiveMaskToClient:
+				if( is_debug ) { DebugHelper.Log( "Packet GiveMaskToClient" ); }
 				TheLunaticNetProtocol.ReceiveGivenMaskOnClient( mymod, reader );
 				break;
 			default:
@@ -71,7 +71,7 @@ namespace TheLunatic {
 
 			ModPacket packet = mod.GetPacket();
 
-			packet.Write( (byte)TheLunaticNetProtocolTypes.SendRequestModSettings );
+			packet.Write( (byte)TheLunaticNetProtocolTypes.RequestModSettings );
 			packet.Write( (int)Main.myPlayer );
 
 			packet.Send();
@@ -83,7 +83,7 @@ namespace TheLunatic {
 
 			ModPacket packet = mod.GetPacket();
 
-			packet.Write( (byte)TheLunaticNetProtocolTypes.SendRequestModData );
+			packet.Write( (byte)TheLunaticNetProtocolTypes.RequestModData );
 			packet.Write( (int)Main.myPlayer );
 
 			packet.Send();
@@ -99,7 +99,7 @@ namespace TheLunatic {
 				boss_type = mask.GetModInfo<CustomBossMaskItemInfo>(mod).BossNpcType;
 			}
 
-			packet.Write( (byte)TheLunaticNetProtocolTypes.SendGivenMask );
+			packet.Write( (byte)TheLunaticNetProtocolTypes.GiveMaskToServer );
 			packet.Write( (int)Main.myPlayer );
 			packet.Write( (int)mask.type );
 			packet.Write( boss_type );
@@ -118,7 +118,7 @@ namespace TheLunatic {
 			
 			ModPacket packet = mymod.GetPacket();
 
-			packet.Write( (byte)TheLunaticNetProtocolTypes.SendModSettings );
+			packet.Write( (byte)TheLunaticNetProtocolTypes.ModSettings );
 			packet.Write( (string)mymod.Config.SerializeMe() );
 			
 			packet.Send( (int)player.whoAmI );
@@ -133,14 +133,14 @@ namespace TheLunatic {
 
 			ModPacket packet = mymod.GetPacket();
 
-			packet.Write( (byte)TheLunaticNetProtocolTypes.SendModData );
-			packet.Write( (string)modworld.ID );
+			packet.Write( (byte)TheLunaticNetProtocolTypes.ModData );
 			packet.Write( (bool)modworld.GameLogic.HasLoonyArrived );
 			packet.Write( (bool)modworld.GameLogic.HasLoonyQuit );
 			packet.Write( (bool)modworld.GameLogic.HasGameEnded );
 			packet.Write( (bool)modworld.GameLogic.HasWon );
 			packet.Write( (bool)modworld.GameLogic.IsSafe );
 			packet.Write( (int)modworld.GameLogic.HalfDaysElapsed );
+
 			packet.Write( (int)modworld.MaskLogic.GivenVanillaMasksByType.Count );
 			foreach( int mask in modworld.MaskLogic.GivenVanillaMasksByType ) {
 				packet.Write( (int)mask );
@@ -159,7 +159,7 @@ namespace TheLunatic {
 					modworld.GameLogic.IsSafe + ", " +
 					modworld.GameLogic.HalfDaysElapsed + ", " +
 					modworld.MaskLogic.GivenVanillaMasksByType.Count + ", [" +
-					String.Join(",", modworld.MaskLogic.GivenVanillaMasksByType.ToArray())+"]" +
+					String.Join(",", modworld.MaskLogic.GivenVanillaMasksByType.ToArray())+"], " +
 					modworld.MaskLogic.GivenCustomMasksByBossUid.Count + ", [" +
 					String.Join( ",", modworld.MaskLogic.GivenCustomMasksByBossUid.ToArray() ) + "]" );
 			}
@@ -173,7 +173,7 @@ namespace TheLunatic {
 
 			ModPacket packet = mymod.GetPacket();
 
-			packet.Write( (byte)TheLunaticNetProtocolTypes.BroadcastEndSign );
+			packet.Write( (byte)TheLunaticNetProtocolTypes.EndSign );
 			packet.Write( duration );
 
 			for( int i = 0; i < Main.player.Length; i++ ) {
@@ -189,13 +189,13 @@ namespace TheLunatic {
 
 			ModPacket packet = mymod.GetPacket();
 
-			packet.Write( (byte)TheLunaticNetProtocolTypes.BroadcastGivenMask );
+			packet.Write( (byte)TheLunaticNetProtocolTypes.GiveMaskToClient );
 			packet.Write( from_who );
 			packet.Write( mask_type );
 			packet.Write( boss_mask );
 
 			for( int i = 0; i < Main.player.Length; i++ ) {
-				if( Main.player[i] != null && Main.player[i].active ) {
+				if( i != from_who && Main.player[i] != null && Main.player[i].active ) {
 					packet.Send( i );
 				}
 			}
@@ -217,59 +217,51 @@ namespace TheLunatic {
 				DebugHelper.Log( "TheLunaticNetProtocol.ReceiveModSettingsOnClient - Invalid 'DaysUntil' quantity." );
 				return;
 			}
+
+			DebugHelper.DEBUGMODE = mymod.Config.Data.DEBUGFLAGS;
 		}
+
 
 		private static void ReceiveModDataOnClient( TheLunaticMod mymod, BinaryReader reader ) {
 			// Clients only
 			if( Main.netMode != 1 ) { return; }
-
+			
 			var modworld = mymod.GetModWorld<TheLunaticWorld>();
 			if( modworld.GameLogic == null ) { throw new Exception( "Game logic not initialized." ); }
 			if( modworld.MaskLogic == null ) { throw new Exception( "Mask logic not initialized." ); }
 
-			string world_id = reader.ReadString();
 			bool has_loony_arrived = reader.ReadBoolean();
 			bool has_loony_quit = reader.ReadBoolean();
 			bool has_game_end = reader.ReadBoolean();
 			bool has_won = reader.ReadBoolean();
 			bool is_safe = reader.ReadBoolean();
 			int time = reader.ReadInt32();
-			int mask_count = reader.ReadInt32();
 
+			int mask_count = reader.ReadInt32();
 			var masks = new int[mask_count];
-			for( int i=0; i<mask_count; i++ ) {
+			for( int i = 0; i < mask_count; i++ ) {
 				masks[i] = reader.ReadInt32();
 			}
 
 			int custom_mask_count = reader.ReadInt32();
-
 			var custom_masks = new string[custom_mask_count];
-			for( int i = 0; i < mask_count; i++ ) {
+			for( int i = 0; i < custom_mask_count; i++ ) {
 				custom_masks[i] = reader.ReadString();
 			}
 
-			if( world_id == "" ) {
-				DebugHelper.Log( "TheLunaticNetProtocol.ReceiveModDataOnClient - Empty world id." );
-				return;
-			}
-			if( mask_count < 0 || mask_count >= MaskLogic.AvailableMaskCount ) {    // Loose
-				DebugHelper.Log( "TheLunaticNetProtocol.ReceiveModDataOnClient - Invalid set of masks numbering " + mask_count );
-				return;
-			}
-
 			if( (DebugHelper.DEBUGMODE & 1) > 0 ) {
-				DebugHelper.Log( "DEBUG Receiving mod data on client. "+world_id+", "+
+				DebugHelper.Log( "DEBUG Receiving mod data on client. " +
 					time + ", " + has_loony_arrived + ", " + has_loony_quit + ", " + has_game_end + ", " + has_won + ", " +
-					is_safe + ", " + mask_count + ", [" + String.Join(",", masks)+"]" );
+					is_safe + ", " + mask_count + ", [" + String.Join( ",", masks ) + "]" );
 			}
 
-			modworld.LoadOnce( world_id );
 			modworld.GameLogic.LoadOnce( has_loony_arrived, has_loony_quit, has_game_end, has_won, is_safe, time );
 			modworld.MaskLogic.LoadOnce( masks, custom_masks );
 
 			var modplayer = Main.player[Main.myPlayer].GetModPlayer<TheLunaticPlayer>( mymod );
 			modplayer.PostEnterWorld();
 		}
+
 
 		private static void ReceiveEndSignOnClient( TheLunaticMod mymod, BinaryReader reader ) {
 			// Clients only
@@ -287,6 +279,7 @@ namespace TheLunatic {
 
 			modworld.GameLogic.ApplyEndSignForMe( duration );
 		}
+
 
 		private static void ReceiveGivenMaskOnClient( TheLunaticMod mymod, BinaryReader reader ) {
 			// Clients only
@@ -340,6 +333,7 @@ namespace TheLunatic {
 			TheLunaticNetProtocol.SendModSettingsFromServer( mymod, Main.player[player_who] );
 		}
 
+
 		private static void ReceiveRequestModDataOnServer( TheLunaticMod mymod, BinaryReader reader ) {
 			// Server only
 			if( Main.netMode != 2 ) { return; }
@@ -358,6 +352,7 @@ namespace TheLunatic {
 			TheLunaticNetProtocol.SendModDataFromServer( mymod, Main.player[player_who] );
 		}
 
+
 		private static void ReceiveGivenMaskOnServer( TheLunaticMod mymod, BinaryReader reader ) {
 			// Server only
 			if( Main.netMode != 2 ) { return; }
@@ -368,12 +363,23 @@ namespace TheLunatic {
 			int player_who = reader.ReadInt32();
 			int mask_type = reader.ReadInt32();
 			int boss_type = reader.ReadInt32();
+			Item fake_mask = new Item();
 
+			fake_mask.SetDefaults( mask_type );
+			if( mask_type == mymod.ItemType<CustomBossMaskItem>() ) {
+				var moditem = (CustomBossMaskItem)fake_mask.modItem;
+				moditem.SetBoss( boss_type );
+			}
+			
 			if( player_who < 0 || player_who >= Main.player.Length || Main.player[player_who] == null ) {
 				DebugHelper.Log( "TheLunaticNetProtocol.ReceiveGivenMaskOnServer - Invalid player id " + player_who );
 				return;
 			}
-			if( !modworld.MaskLogic.GetRemainingVanillaMasks().Contains(mask_type) ) {
+			//if( !Main.player[player_who].active ) {
+			//	Debug.Log( "TheLunaticNetProtocol.ReceiveGivenMaskOnServer - Inactive player " + Main.player[player_who].name );
+			//	return;
+			//}
+			if( modworld.MaskLogic.DoesLoonyHaveThisMask(fake_mask) ) {
 				DebugHelper.Log( "TheLunaticNetProtocol.ReceiveGivenMaskOnServer - Invalid mask from player " + Main.player[player_who].name + " of type " + mask_type );
 				return;
 			}

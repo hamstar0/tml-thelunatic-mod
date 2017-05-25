@@ -35,7 +35,7 @@ namespace TheLunatic {
 
 
 	public class TheLunaticMod : Mod {
-		public readonly static Version ConfigVersion = new Version(1, 2, 2);
+		public readonly static Version ConfigVersion = new Version(1, 2, 3);
 		public JsonConfig<ConfigurationData> Config { get; private set; }
 
 		public AnimatedSky Sky { get; private set; }
@@ -94,7 +94,11 @@ namespace TheLunatic {
 		////////////////
 
 		public override void HandlePacket( BinaryReader reader, int whoAmI ) {
-			TheLunaticNetProtocol.RouteReceivedPackets( this, reader );
+			try {
+				TheLunaticNetProtocol.RouteReceivedPackets( this, reader );
+			} catch( Exception e ) {
+				DebugHelper.Log( "HandlePacket "+e.ToString() );
+			}
 		}
 
 		public override bool HijackGetData( ref byte messageType, ref BinaryReader reader, int playerNumber ) {

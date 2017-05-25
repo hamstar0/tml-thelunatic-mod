@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Terraria;
 using Terraria.ModLoader;
@@ -14,63 +15,60 @@ namespace TheLunatic {
 		public GameLogic GameLogic { get; private set; }
 		public MaskLogic MaskLogic { get; private set; }
 
+		public bool HasCorrectID { get; private set; }	// Workaround for tml bug?
+
 
 
 		////////////////
-
-		public TheLunaticWorld() : base() {
-			this.ID = Guid.NewGuid().ToString( "D" );
-			this.GameLogic = null;
-			this.MaskLogic = null;
-		}
-
+		
 		public override void Initialize() {
-			this.GameLogic = new GameLogic( (TheLunaticMod)this.mod );
-			this.MaskLogic = new MaskLogic( (TheLunaticMod)this.mod );
-			this.IsIDLoaded = false;
+			var mymod = (TheLunaticMod)this.mod;
+
+			this.ID = Guid.NewGuid().ToString( "D" );
+			this.HasCorrectID = false;  // 'Load()' decides if no pre-existing one is found
+
+			this.GameLogic = new GameLogic( mymod );
+			this.MaskLogic = new MaskLogic( mymod );
 
 			if( (DebugHelper.DEBUGMODE & 1) > 0 ) {
 				DebugHelper.Log( "DEBUG World created; logics (re)created." );
 			}
 		}
 
-		public void LoadOnce( string id ) {
-			if( this.IsIDLoaded ) {
-				DebugHelper.Log( "Redundant world ID load. "+id+" ("+ this.ID+")" );
-				return;
-			}
-			this.IsIDLoaded = true;
-
-			this.ID = id;
-		}
-		private bool IsIDLoaded = false;
-
 		////////////////
 
 		public override void Load( TagCompound tag ) {
-			try {
-				var mymod = (TheLunaticMod)this.mod;
+			var mymod = (TheLunaticMod)this.mod;
+			bool has_arrived = false, has_quit = false, has_end = false, has_won = false, is_safe = false;
+			int time = 0;
+			int[] masks = new int[0];
+			int custom_mask_count = 0;
+			string[] custom_masks = new string[0];
 
-				string world_id =		tag.GetString(		"world_id" );
-				bool has_arrived =		tag.GetBool(		"has_loony_arrived" );
-				bool has_quit =			tag.GetBool(		"has_loony_quit" );
-				bool has_end =			tag.GetBool(		"has_game_ended" );
-				bool has_won =			tag.GetBool(		"has_won" );
-				bool is_safe =			tag.GetBool(		"is_safe" );
-				int time =				tag.GetInt(			"half_days_elapsed_" + world_id );
-				int[] masks =			tag.GetIntArray(	"masks_given_" + world_id );
-				int custom_mask_count = tag.GetInt(			"custom_masks_given_" + world_id );
-				string[] custom_masks = new string[ custom_mask_count ];
+			if( tag.ContainsKey("world_id") ) {
+				this.ID = tag.GetString( "world_id" );
+
+				has_arrived = tag.GetBool( "has_loony_arrived" );
+				has_quit = tag.GetBool( "has_loony_quit" );
+				has_end = tag.GetBool( "has_game_ended" );
+				has_won = tag.GetBool( "has_won" );
+				is_safe = tag.GetBool( "is_safe" );
+
+				time = tag.GetInt( "half_days_elapsed_" + this.ID );
+
+				masks = tag.GetIntArray( "masks_given_" + this.ID );
+
+				custom_mask_count = tag.GetInt( "custom_masks_given_" + this.ID );
+				custom_masks = new string[custom_mask_count];
 				for( int i = 0; i < custom_mask_count; i++ ) {
-					custom_masks[i] = tag.GetString( "custom_mask_" + world_id + "_" + i );
+					custom_masks[i] = tag.GetString( "custom_mask_" + this.ID + "_" + i );
 				}
-
-				this.LoadOnce( world_id );
-				this.GameLogic.LoadOnce( has_arrived, has_quit, has_end, has_won, is_safe, time );
-				this.MaskLogic.LoadOnce( masks, custom_masks );
-			} catch( Exception e ) {
-				DebugHelper.Log( "Load data out of sync. "+e.ToString() );
 			}
+
+			this.HasCorrectID = true;
+
+			this.GameLogic.LoadOnce( has_arrived, has_quit, has_end, has_won, is_safe, time );
+			this.MaskLogic.LoadOnce( masks, custom_masks );
 		}
 
 		public override TagCompound Save() {
@@ -108,11 +106,28 @@ namespace TheLunatic {
 
 		////////////////
 
-		public override void PreUpdate() {
-			if( Main.netMode != 2 ) { return; } // Server only
+		public override void NetSend( BinaryWriter writer ) {
+			writer.Write( this.HasCorrectID );
+			writer.Write( this.ID );
+		}
 
-			if( this.GameLogic != null ) {
-				this.GameLogic.Update();
+		public override void NetReceive( BinaryReader reader ) {
+			bool has_correct_id = reader.ReadBoolean();
+			string id = reader.ReadString();
+
+			if( has_correct_id ) {
+				this.ID = id;
+				this.HasCorrectID = true;
+			}
+		}
+
+		////////////////
+
+		public override void PreUpdate() {
+			if( Main.netMode == 2 ) { // Server only
+				if( this.HasCorrectID && this.GameLogic != null ) {
+					this.GameLogic.Update();
+				}
 			}
 		}
 	}

@@ -7,7 +7,7 @@ Undecided
 	-	Add potion item
 v1.3
 -	Put 'Umbral Cowl' into separate mod (used as dependency)
--	Add API for adding required custom bosses
+-	Add API for adding required custom bosses and mask submit events
 -	Post apocalypse
 	-	Allow giving masks during reprieve period
 	-	Sacrifices

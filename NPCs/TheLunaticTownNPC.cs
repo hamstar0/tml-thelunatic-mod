@@ -190,6 +190,7 @@ namespace TheLunatic.NPCs {
 
 		public override void SetupShop( Chest shop, ref int nextSlot ) {
 			var mymod = (TheLunaticMod)this.mod;
+			var modworld = mymod.GetModWorld<TheLunaticWorld>();
 			bool strict = mymod.Config.Data.LoonyEnforcesBossSequence;
 			bool downed_mech = NPC.downedMechBoss1 || NPC.downedMechBoss2 || NPC.downedMechBoss3;
 			bool downed_towers = NPC.downedTowerSolar && NPC.downedTowerVortex && NPC.downedTowerNebula && NPC.downedTowerStardust;
@@ -213,6 +214,12 @@ namespace TheLunatic.NPCs {
 			pumpkin_pie.value *= 9;
 			cooked_marshmallow.value *= 5;
 
+			sugar_cookie.toolTip2 = "Bake sale!";
+			gingerbread_cookie.toolTip2 = "Bake sale!";
+			christmas_pudding.toolTip2 = "Bake sale!";
+			pumpkin_pie.toolTip2 = "Bake sale!";
+			cooked_marshmallow.toolTip2 = "Bake sale!";
+
 			shop.item[nextSlot++] = sugar_cookie;
 			shop.item[nextSlot++] = gingerbread_cookie;
 			shop.item[nextSlot++] = christmas_pudding;
@@ -226,92 +233,94 @@ namespace TheLunatic.NPCs {
 			// Boss summon items
 			if( mymod.Config.Data.LoonySellsSummonItems ) {
 				// Eye of Cthulhu
-				if( NPC.downedBoss1 ) {
+				if( /*NPC.downedBoss1*/ modworld.MaskLogic.GivenVanillaMasksByType.Contains(2112) ) {
 					Item summon_item = new Item();
 					summon_item.SetDefaults( 43 );		// Suspicious Looking Eye
 					summon_item.value = 150000;
 					shop.item[nextSlot++] = summon_item;
 				}
 				// King Slime
-				if( NPC.downedSlimeKing ) {
+				if( /*NPC.downedSlimeKing*/ modworld.MaskLogic.GivenVanillaMasksByType.Contains(2112) ) {
 					Item summon_item = new Item();
 					summon_item.SetDefaults( 560 );    // Slime Crown
 					summon_item.value = 180000;
 					shop.item[nextSlot++] = summon_item;
 				}
 				// Queen Bee
-				if( NPC.downedQueenBee ) {
+				if( /*NPC.downedQueenBee*/ modworld.MaskLogic.GivenVanillaMasksByType.Contains(2108) ) {
 					Item summon_item = new Item();
 					summon_item.SetDefaults( 1133 );    // Abeemination
 					summon_item.value = 200000;
 					shop.item[nextSlot++] = summon_item;
 				}
 				// Brain of Cthulhu
-				if( NPC.downedBoss2 ) {
+				if( /*NPC.downedBoss2 && WorldGen.crimson*/ modworld.MaskLogic.GivenVanillaMasksByType.Contains(2104) ) {
 					Item summon_item = new Item();
 					summon_item.SetDefaults( 1331 );	// Bloody Spine
 					summon_item.value = 260000;
 					shop.item[nextSlot++] = summon_item;
 				}
 				// Eater of Worlds
-				if( NPC.downedBoss2 ) {
+				if( /*NPC.downedBoss2 && !WorldGen.crimson*/ modworld.MaskLogic.GivenVanillaMasksByType.Contains(2111) ) {
 					Item summon_item = new Item();
 					summon_item.SetDefaults( 70 );    // Worm Food
 					summon_item.value = 250000;
 					shop.item[nextSlot++] = summon_item;
 				}
 				// Skeletron
-				if( NPC.downedBoss3 ) {
+				if( /*NPC.downedBoss3*/ modworld.MaskLogic.GivenVanillaMasksByType.Contains(1281) ) {
 					Item summon_item = new Item();
 					summon_item.SetDefaults( 1307 );    // Clothier Voodoo Doll
 					summon_item.value = 300000;
 					shop.item[nextSlot++] = summon_item;
 				}
 				// Wall of Flesh
-				if( Main.hardMode ) {
+				if( /*Main.hardMode*/ modworld.MaskLogic.GivenVanillaMasksByType.Contains(2105) ) {
 					Item summon_item = new Item();
 					summon_item.SetDefaults( 267 );    // Guide Voodoo Doll
 					summon_item.value = 320000;
 					shop.item[nextSlot++] = summon_item;
 				}
 				// Destroyer
-				if( (!strict || (Main.hardMode)) && NPC.downedMechBoss1 ) {
+				if( (!strict || (Main.hardMode)) && /*NPC.downedMechBoss1*/ modworld.MaskLogic.GivenVanillaMasksByType.Contains(2113) ) {
 					Item summon_item = new Item();
 					summon_item.SetDefaults( 556 );    // Mechanical Worm
 					summon_item.value = 1000000;
 					shop.item[nextSlot++] = summon_item;
 				}
 				// Twins
-				if( (!strict || (Main.hardMode)) && NPC.downedMechBoss2 ) {
+				if( (!strict || (Main.hardMode)) && /*NPC.downedMechBoss2*/ modworld.MaskLogic.GivenVanillaMasksByType.Contains(2106) ) {
 					Item summon_item = new Item();
 					summon_item.SetDefaults( 544 );    // Mechanical Worm
 					summon_item.value = 1000000;
 					shop.item[nextSlot++] = summon_item;
 				}
 				// Skeletron Prime
-				if( (!strict ||(Main.hardMode)) && NPC.downedMechBoss3 ) {
+				if( (!strict ||(Main.hardMode)) && /*NPC.downedMechBoss3*/ modworld.MaskLogic.GivenVanillaMasksByType.Contains(2107) ) {
 					Item summon_item = new Item();
 					summon_item.SetDefaults( 557 );    // Mechanical Skull
 					summon_item.value = 1000000;
 					shop.item[nextSlot++] = summon_item;
 				}
 				// Golem
-				if( (!strict || (Main.hardMode && downed_mech && NPC.downedPlantBoss)) && NPC.downedGolemBoss ) {
+				if( (!strict || (Main.hardMode && downed_mech && NPC.downedPlantBoss)) && /*NPC.downedGolemBoss*/
+						modworld.MaskLogic.GivenVanillaMasksByType.Contains(2110) ) {
 					Item summon_item = new Item();
 					summon_item.SetDefaults( 1293 );    // Lihzahrd Power Cell
 					summon_item.value = 2000000;
 					shop.item[nextSlot++] = summon_item;
 				}
 				// Duke Fishron
-				if( (!strict || (Main.hardMode)) && NPC.downedFishron ) {
+				if( (!strict || (Main.hardMode)) && /*NPC.downedFishron*/ modworld.MaskLogic.GivenVanillaMasksByType.Contains(2588) ) {
 					Item summon_item = new Item();
 					summon_item.SetDefaults( 2673 );    // Truffle Worm
 					summon_item.value = 3500000;
 					shop.item[nextSlot++] = summon_item;
 				}
 				// Moon Lord
-				if( (!strict || (Main.hardMode && downed_mech && NPC.downedPlantBoss && NPC.downedGolemBoss &&
-						NPC.downedAncientCultist)) && NPC.downedMoonlord ) {    //&& downed_towers
+				if( (!strict || (Main.hardMode && downed_mech && NPC.downedPlantBoss && NPC.downedGolemBoss && NPC.downedAncientCultist)) &&
+						/*NPC.downedMoonlord &&*/
+						modworld.MaskLogic.GivenVanillaMasksByType.Contains(3373) ) {    //&& downed_towers
 					Item summon_item = new Item();
 					summon_item.SetDefaults( 3601 );    // Celestial Sigil
 					summon_item.value = 8000000;

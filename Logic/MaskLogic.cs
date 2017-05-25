@@ -85,9 +85,9 @@ namespace TheLunatic.Logic {
 			Mod mod = ModLoader.GetMod( "TheLunatic" );
 			int custom_type = mod.ItemType<CustomBossMaskItem>();
 			if( mask.type == custom_type ) {
-				var info = mask.GetModInfo<CustomBossMaskItemInfo>( mod );
-				if( info != null ) {
-					return info.BossDisplayName + " Mask";
+				var mask_item_info = mask.GetModInfo<CustomBossMaskItemInfo>( mod );
+				if( mask_item_info != null ) {
+					return mask_item_info.BossDisplayName + " Mask";
 				}
 			}
 
@@ -180,7 +180,7 @@ namespace TheLunatic.Logic {
 		}
 
 		public ISet<int> GetRemainingVanillaMasks() {
-			ISet<int> masks = new HashSet<int>( MaskLogic.AllVanillaMasks.Where( x => !this.GivenVanillaMasksByType.Contains(x) ) );
+			ISet<int> masks = new HashSet<int>( MaskLogic.AllVanillaMasks.Where(x => !this.GivenVanillaMasksByType.Contains(x)) );
 
 			if( WorldGen.crimson ) {
 				masks.Remove( 2111 );
@@ -192,7 +192,7 @@ namespace TheLunatic.Logic {
 		}
 
 		public bool DoesLoonyHaveThisMask( Item mask_item ) {
-			if( this.GetRemainingVanillaMasks().Contains(mask_item.type) ) { return true; }
+			if( this.GetRemainingVanillaMasks().Contains(mask_item.type) ) { return false; }
 
 			var mask_item_info = mask_item.GetModInfo<CustomBossMaskItemInfo>( this.Mod );
 			return this.GivenCustomMasksByBossUid.Contains( mask_item_info.BossUid );
@@ -280,15 +280,18 @@ namespace TheLunatic.Logic {
 		public void GiveMaskToLoony( Player player, Item mask ) {
 			if( Main.netMode == 1 ) {   // Client
 				TheLunaticNetProtocol.SendGivenMaskFromClient( this.Mod, mask );
-			} else if( Main.netMode == 0 ) {    // Single
-				int boss_type = -1;
-				if( mask.type == this.Mod.ItemType<CustomBossMaskItem>() ) {
-					boss_type = mask.GetModInfo<CustomBossMaskItemInfo>( this.Mod ).BossNpcType;
-				}
-				this.RegisterReceiptOfMask( player, mask.type, boss_type );
-			} else {
+			} else if( Main.netMode == 2 ) {    // Server
 				throw new Exception( "Server should not be giving masks to loonys." );
 			}
+
+			int boss_type = -1;
+			if( mask.type == this.Mod.ItemType<CustomBossMaskItem>() ) {
+				boss_type = mask.GetModInfo<CustomBossMaskItemInfo>( this.Mod ).BossNpcType;
+			} else {
+				var boss_of_mask = MaskLogic.VanillaBossOfMask.Where( x => x.Value == mask.type ).First();
+				boss_type = boss_of_mask.Value > 0 ? boss_of_mask.Value : boss_type;
+			}
+			this.RegisterReceiptOfMask( player, mask.type, boss_type );
 
 			mask.TurnToAir();
 

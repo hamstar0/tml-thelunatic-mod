@@ -17,8 +17,8 @@ namespace TheLunatic {
 	public class TheLunaticPlayer : ModPlayer {
 		public IDictionary<string, bool> Bye { get; private set; }
 		public PlayerNoclip Noclip { get; private set; }
-
-		public bool HasEnteredWorld { get; private set; }
+		
+		public bool HasVerifiedGameData { get; private set; }
 		public bool IsInDangerZone { get; private set; }
 
 		private float QuakeScale = 1f;
@@ -31,20 +31,17 @@ namespace TheLunatic {
 		////////////////
 
 		public override void Initialize() {
-			if( this.Noclip == null ) {
-				this.Noclip = new PlayerNoclip();
-			}
-			if( this.Bye == null ) {
-				this.Bye = new Dictionary<string, bool>();
-			}
-			base.Initialize();
+			this.Noclip = new PlayerNoclip();
+			this.Bye = new Dictionary<string, bool>();
+			this.HasVerifiedGameData = false;
+			this.IsInDangerZone = false;
 		}
 
 		public override void clientClone( ModPlayer clone ) {
 			var myclone = (TheLunaticPlayer)clone;
 			myclone.Bye = this.Bye;
 			myclone.Noclip = this.Noclip;
-			myclone.HasEnteredWorld = this.HasEnteredWorld;
+			myclone.HasVerifiedGameData = this.HasVerifiedGameData;
 			myclone.QuakeScale = this.QuakeScale;
 			myclone.QuakeDuration = this.QuakeDuration;
 			myclone.QuakeStartDuration = this.QuakeStartDuration;
@@ -70,8 +67,6 @@ namespace TheLunatic {
 					this.PostEnterWorld();
 				}
 			}
-			
-			this.HasEnteredWorld = true;
 		}
 
 		public void PostEnterWorld() {
@@ -81,6 +76,8 @@ namespace TheLunatic {
 			if( modworld.GameLogic.HasGameEnded && !modworld.GameLogic.HasWon ) {
 				Main.NewText( "You inexplicably feel like this will now be a boring adventure.", 64, 64, 96, false );
 			}
+
+			this.HasVerifiedGameData = true;
 		}
 
 		////////////////
@@ -146,7 +143,7 @@ namespace TheLunatic {
 			var modworld = this.mod.GetModWorld<TheLunaticWorld>();
 
 			if( Main.netMode != 2 ) {   // Not server
-				if( this.HasEnteredWorld ) {
+				if( modworld.HasCorrectID && this.HasVerifiedGameData ) {
 					if( this.player.whoAmI == Main.myPlayer ) { // Current player only
 						modworld.GameLogic.Update();
 					}
@@ -236,14 +233,17 @@ namespace TheLunatic {
 				int y = (int)((pos.Y + (player.headFrame.Height / 2f)) / 16f);
 				Color light_color = Lighting.GetColor( x, y );
 				DrawData data = new DrawData( tex, rel_pos, new Rectangle(0, 0, tex.Width, tex.Height), light_color, 0f, new Vector2(), 1f, se, 0 );
+				
 				Main.playerDrawData.Add( data );
 			}
 		);
 
 		public override void ModifyDrawLayers( List<PlayerLayer> layers ) {
 			this.MaskTex = CustomBossMaskItem.GetMaskTextureOfPlayer( this.player, this.mod );
-			TheLunaticPlayer.CustomBossMask.visible = this.MaskTex != null && !this.player.dead;
-			layers.Add( TheLunaticPlayer.CustomBossMask );
+			if( this.MaskTex != null ) {
+				TheLunaticPlayer.CustomBossMask.visible = !this.player.dead;
+				layers.Add( TheLunaticPlayer.CustomBossMask );
+			}
 		}
 
 
@@ -253,7 +253,7 @@ namespace TheLunatic {
 		public bool IsCheater() {
 			var modworld = this.mod.GetModWorld<TheLunaticWorld>();
 			if( !this.Bye.Keys.Contains( modworld.ID ) ) { return false; }
-			return this.Bye[modworld.ID];
+			return this.Bye[ modworld.ID ];
 		}
 
 		////////////////
