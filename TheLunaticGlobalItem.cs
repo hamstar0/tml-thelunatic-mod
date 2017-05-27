@@ -7,7 +7,7 @@ using TheLunatic.Logic;
 
 
 namespace TheLunatic {
-	class TheLunaticGlobalItem : GlobalItem {
+	public class TheLunaticGlobalItem : GlobalItem {
 		public override void ModifyTooltips( Item item, List<TooltipLine> tooltips ) {
 			bool found = item.type == this.mod.ItemType<CustomBossMaskItem>();
 			if( !found ) { found = MaskLogic.AllVanillaMasks.Contains( item.type ); }

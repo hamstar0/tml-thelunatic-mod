@@ -4,7 +4,7 @@ using TheLunatic.Buffs;
 
 
 namespace TheLunatic {
-	class TheLunaticGlobalProjectile : GlobalProjectile {
+	public class TheLunaticGlobalProjectile : GlobalProjectile {
 		public override bool? CanUseGrapple( int type, Player player ) {
 			var buff = (ShadowWalkerBuff)this.mod.GetBuff( "ShadowWalkerBuff" );
 			bool? can_we = buff.ProjectileCanUseGrapple( type, player );

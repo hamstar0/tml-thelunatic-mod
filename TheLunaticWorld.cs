@@ -10,7 +10,7 @@ using Utils;
 
 
 namespace TheLunatic {
-	class TheLunaticWorld : ModWorld {
+	public class TheLunaticWorld : ModWorld {
 		public string ID { get; private set; }
 		public GameLogic GameLogic { get; private set; }
 		public MaskLogic MaskLogic { get; private set; }
