@@ -100,7 +100,7 @@ namespace TheLunatic.NPCs {
 					if( NPC.downedAncientCultist ) { can_spawn = false; }   // Ancient Cultist
 				}
 			}
-
+			
 			return can_spawn;
 		}
 
@@ -112,10 +112,10 @@ namespace TheLunatic.NPCs {
 
 			if( mymod.Config.Data.LoonyEnforcesBossSequence ) {
 				if( can_spawn && !Main.hardMode ) {
-					can_spawn = !NPC.downedMechBoss1 && !NPC.downedMechBoss2 && NPC.downedMechBoss3 && !NPC.downedFishron
+					can_spawn = !NPC.downedMechBoss1 && !NPC.downedMechBoss2 && !NPC.downedMechBoss3 && !NPC.downedFishron
 						&& !NPC.downedPlantBoss && !NPC.downedGolemBoss && !NPC.downedAncientCultist && !NPC.downedMoonlord;
 				}
-				if( can_spawn && !(NPC.downedMechBoss1 || NPC.downedMechBoss2 || NPC.downedMechBoss3) ) {
+				if( can_spawn && !NPC.downedMechBoss1 && !NPC.downedMechBoss2 && !NPC.downedMechBoss3 ) {
 					can_spawn = !NPC.downedPlantBoss && !NPC.downedGolemBoss && !NPC.downedAncientCultist && !NPC.downedMoonlord;
 				}
 				if( can_spawn && !NPC.downedPlantBoss ) {
@@ -128,7 +128,12 @@ namespace TheLunatic.NPCs {
 					can_spawn = !NPC.downedMoonlord;
 				}
 			}
-
+			
+//if( _debug ) {
+//Main.NewText( "WantsToSpawn:"+ can_spawn+" mech1:"+ NPC.downedMechBoss1 + " mech2:"+ NPC.downedMechBoss2+" mech3:"+ NPC.downedMechBoss3
+//	+" fish:"+ NPC.downedFishron+" plant:"+ NPC.downedPlantBoss+" golem:"+ NPC.downedGolemBoss+" cult:"+ NPC.downedAncientCultist
+//	+" moon:"+ NPC.downedMoonlord );
+//}
 			return can_spawn;
 		}
 
