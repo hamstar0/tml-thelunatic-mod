@@ -124,6 +124,9 @@ namespace TheLunatic {
 		////////////////
 
 		public override void PreUpdate() {
+			var mymod = (TheLunaticMod)this.mod;
+			if( !mymod.Config.Data.Enabled ) { return; }
+
 			if( Main.netMode == 2 ) { // Server only
 				if( this.HasCorrectID && this.GameLogic != null ) {
 					this.GameLogic.Update();

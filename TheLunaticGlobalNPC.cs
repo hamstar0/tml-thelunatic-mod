@@ -9,6 +9,9 @@ using Utils;
 namespace TheLunatic {
 	public class TheLunaticGlobalNPC : GlobalNPC {
 		public override void AI( NPC npc ) {
+			var mymod = (TheLunaticMod)this.mod;
+			if( !mymod.Config.Data.Enabled ) { return; }
+
 			if( Main.rand == null ) { return; }
 
 			var modworld = this.mod.GetModWorld<TheLunaticWorld>();
@@ -25,6 +28,9 @@ namespace TheLunatic {
 
 
 		public override void SetDefaults( NPC npc ) {
+			var mymod = (TheLunaticMod)this.mod;
+			if( !mymod.Config.Data.Enabled ) { return; }
+
 			var modworld = this.mod.GetModWorld<TheLunaticWorld>();
 			if( modworld == null ) { return; }
 			if( modworld.GameLogic == null ) { return; }
@@ -42,10 +48,11 @@ namespace TheLunatic {
 
 
 		public override void NPCLoot( NPC npc ) {
+			var mymod = (TheLunaticMod)this.mod;
+			if( !mymod.Config.Data.Enabled ) { return; }
+
 			if( !npc.boss && npc.type != 551 && npc.type != 398 ) { return; }	// Betsy isn't a boss?
 			var modworld = this.mod.GetModWorld<TheLunaticWorld>();
-			if( modworld.GameLogic == null ) { throw new Exception( "Game logic not initialized." ); }
-			if( modworld.MaskLogic == null ) { throw new Exception( "Mask logic not initialized." ); }
 			if( !modworld.GameLogic.HaveWeHopeToWin() ) { return; }
 
 			Item item = null;
@@ -61,7 +68,6 @@ namespace TheLunatic {
 			}
 
 			// No modded masks allowed?
-			var mymod = (TheLunaticMod)this.mod;
 			if( !is_vanilla && mymod.Config.Data.OnlyVanillaBossesDropMasks ) {
 				return;
 			}

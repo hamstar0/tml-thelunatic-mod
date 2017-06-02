@@ -167,8 +167,14 @@ namespace TheLunatic.Logic {
 			this.IsDay = Main.dayTime;
 
 			// Is loony gone for good?
-			if( !this.HasLoonyQuit && !this.HasLoonyArrived && !TheLunaticTownNPC.WantsToSpawn(this.Mod) ) {
-				this.Quit();
+			if( !this.HasLoonyQuit ) {
+				if( !this.HasLoonyArrived ) {
+					if( !TheLunaticTownNPC.WantsToSpawnAnew(this.Mod) ) {
+						this.Quit();
+					}
+				} else if( !TheLunaticTownNPC.WantsToSpawn(this.Mod) ) {
+					this.Quit();
+				}
 			}
 
 			// Have we won?

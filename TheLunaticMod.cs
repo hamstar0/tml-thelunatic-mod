@@ -14,6 +14,8 @@ namespace TheLunatic {
 	public class ConfigurationData {
 		public string VersionSinceUpdate = "";
 
+		public bool Enabled = true;
+
 		public int DaysUntil = 9;  // Days until The End
 		public int HalfDaysRecoveredPerMask = 4;    // Half days recovered per mask
 		public float WallOfFleshMultiplier = 2.5f;    // Added time for WoF kill
@@ -35,7 +37,7 @@ namespace TheLunatic {
 
 
 	public class TheLunaticMod : Mod {
-		public readonly static Version ConfigVersion = new Version(1, 2, 3);
+		public readonly static Version ConfigVersion = new Version(1, 2, 4);
 		public JsonConfig<ConfigurationData> Config { get; private set; }
 
 		public AnimatedSky Sky { get; private set; }
@@ -119,6 +121,8 @@ namespace TheLunatic {
 		////////////////
 
 		public override void PostDrawInterface( SpriteBatch sb ) {
+			if( !this.Config.Data.Enabled ) { return; }
+
 			var modworld = this.GetModWorld<TheLunaticWorld>();
 			if( modworld.GameLogic != null ) {
 				modworld.GameLogic.ReadyClient = true;  // Ugh!
@@ -130,7 +134,10 @@ namespace TheLunatic {
 		}
 
 		public override void UpdateMusic( ref int music ) {
+			if( !this.Config.Data.Enabled ) { return; }
+
 			var modworld = this.GetModWorld<TheLunaticWorld>();
+
 			if( modworld != null && modworld.GameLogic != null ) {
 				modworld.GameLogic.UpdateMyMusic( ref music );
 			}

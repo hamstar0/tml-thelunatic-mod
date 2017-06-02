@@ -124,6 +124,9 @@ namespace TheLunatic {
 		////////////////
 
 		public override void PreUpdate() {
+			var mymod = (TheLunaticMod)this.mod;
+			if( !mymod.Config.Data.Enabled ) { return; }
+
 			if( this.player.position.Y < Main.worldSurface * 16.0 ) {
 				this.IsInDangerZone = true;
 			} else {
@@ -155,6 +158,9 @@ namespace TheLunatic {
 
 
 		public override void PostUpdate() {
+			var mymod = (TheLunaticMod)this.mod;
+			if( !mymod.Config.Data.Enabled ) { return; }
+
 			if( Main.netMode == 2 || this.player.whoAmI == Main.myPlayer ) {   // Server or current player only
 				if( this.Noclip != null ) {
 					this.Noclip.UpdateMovement( this.player );
@@ -164,6 +170,9 @@ namespace TheLunatic {
 
 
 		public override bool PreItemCheck() {
+			var mymod = (TheLunaticMod)this.mod;
+			if( !mymod.Config.Data.Enabled ) { base.PreItemCheck(); }
+
 			// Force de-select of items while shadow walking
 			if( this.player.HeldItem != null && this.player.HeldItem.type > 0 ) {
 				var buff = (ShadowWalkerBuff)this.mod.GetBuff( "ShadowWalkerBuff" );
@@ -178,6 +187,9 @@ namespace TheLunatic {
 		////////////////
 
 		public override void ModifyScreenPosition() {
+			var mymod = (TheLunaticMod)this.mod;
+			if( !mymod.Config.Data.Enabled ) { return; }
+
 			if( this.QuakeDuration != 0 ) {
 				float quake_scale = this.QuakeScale;
 				float duration_range = this.QuakeStartDuration > 0f ? this.QuakeStartDuration : this.QuakeStartDuration * 2f;
@@ -200,7 +212,10 @@ namespace TheLunatic {
 		}
 
 		public override void UpdateBiomes() {
+			var mymod = (TheLunaticMod)this.mod;
 			var modworld = this.mod.GetModWorld<TheLunaticWorld>();
+
+			if( !mymod.Config.Data.Enabled ) { return; }
 			if( modworld.GameLogic == null ) { throw new Exception( "Game logic not initialized." ); }
 
 			modworld.GameLogic.UpdateBiomes( this.player );
@@ -209,6 +224,8 @@ namespace TheLunatic {
 		public override void UpdateBiomeVisuals() {
 			var mymod = (TheLunaticMod)this.mod;
 			var modworld = this.mod.GetModWorld<TheLunaticWorld>();
+
+			if( !mymod.Config.Data.Enabled ) { return; }
 			if( modworld.GameLogic == null ) { throw new Exception( "Game logic not initialized." ); }
 
 			mymod.Sky.UpdateSky( this.player );
@@ -239,7 +256,10 @@ namespace TheLunatic {
 		);
 
 		public override void ModifyDrawLayers( List<PlayerLayer> layers ) {
-			this.MaskTex = CustomBossMaskItem.GetMaskTextureOfPlayer( this.player, this.mod );
+			var mymod = (TheLunaticMod)this.mod;
+			if( !mymod.Config.Data.Enabled ) { return; }
+
+			this.MaskTex = CustomBossMaskItem.GetMaskTextureOfPlayer( this.player, mymod );
 			if( this.MaskTex != null ) {
 				TheLunaticPlayer.CustomBossMask.visible = !this.player.dead;
 				layers.Add( TheLunaticPlayer.CustomBossMask );

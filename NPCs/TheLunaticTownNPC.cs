@@ -76,9 +76,9 @@ namespace TheLunatic.NPCs {
 			};
 		}
 
-		public static bool WantsToSpawn( TheLunaticMod mymod ) {
+		public static bool WantsToSpawnAnew( TheLunaticMod mymod ) {
 			var modworld = mymod.GetModWorld<TheLunaticWorld>();
-			if( modworld.GameLogic == null ) { throw new Exception("Game logic not initialized."); }
+			if( modworld.GameLogic == null ) { throw new Exception( "Game logic not initialized." ); }
 
 			bool can_spawn = !modworld.GameLogic.HasLoonyQuit;
 
@@ -86,8 +86,8 @@ namespace TheLunatic.NPCs {
 				// Allow spawning if moon lord gone (shop use only)
 				if( !NPC.downedMoonlord ) {
 					//if( NPC.downedSlimeKing ) { can_spawn = false; }		// King Slime
+					if( NPC.downedBoss1 ) { can_spawn = false; }            // Eye of Cthulhu
 					if( NPC.downedQueenBee ) { can_spawn = false; }         // Queen Bee
-					if( NPC.downedBoss1 ) { can_spawn = false; }			// Eye of Cthulhu
 					if( NPC.downedBoss2 ) { can_spawn = false; }            // Brain of Cthulhu && Eater of Worlds
 					if( NPC.downedBoss3 ) { can_spawn = false; }            // Skeletron
 					if( Main.hardMode ) { can_spawn = false; }              // Wall of Flesh
@@ -98,6 +98,34 @@ namespace TheLunatic.NPCs {
 					if( NPC.downedPlantBoss ) { can_spawn = false; }        // Plantera
 					if( NPC.downedGolemBoss ) { can_spawn = false; }        // Golem
 					if( NPC.downedAncientCultist ) { can_spawn = false; }   // Ancient Cultist
+				}
+			}
+
+			return can_spawn;
+		}
+
+		public static bool WantsToSpawn( TheLunaticMod mymod ) {
+			var modworld = mymod.GetModWorld<TheLunaticWorld>();
+			if( modworld.GameLogic == null ) { throw new Exception("Game logic not initialized."); }
+
+			bool can_spawn = !modworld.GameLogic.HasLoonyQuit;
+
+			if( mymod.Config.Data.LoonyEnforcesBossSequence ) {
+				if( can_spawn && !Main.hardMode ) {
+					can_spawn = !NPC.downedMechBoss1 && !NPC.downedMechBoss2 && NPC.downedMechBoss3 && !NPC.downedFishron
+						&& !NPC.downedPlantBoss && !NPC.downedGolemBoss && !NPC.downedAncientCultist && !NPC.downedMoonlord;
+				}
+				if( can_spawn && !(NPC.downedMechBoss1 || NPC.downedMechBoss2 || NPC.downedMechBoss3) ) {
+					can_spawn = !NPC.downedPlantBoss && !NPC.downedGolemBoss && !NPC.downedAncientCultist && !NPC.downedMoonlord;
+				}
+				if( can_spawn && !NPC.downedPlantBoss ) {
+					can_spawn = !NPC.downedGolemBoss && !NPC.downedAncientCultist && !NPC.downedMoonlord;
+				}
+				if( can_spawn && !NPC.downedGolemBoss ) {
+					can_spawn = !NPC.downedAncientCultist && !NPC.downedMoonlord;
+				}
+				if( can_spawn && !NPC.downedAncientCultist ) {
+					can_spawn = !NPC.downedMoonlord;
 				}
 			}
 
