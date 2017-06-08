@@ -1,9 +1,10 @@
+using HamstarHelpers.MiscHelpers;
+using HamstarHelpers.WorldHelpers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.Graphics.Effects;
-using Utils;
 
 
 namespace TheLunatic.Tiles {
@@ -70,7 +71,7 @@ namespace TheLunatic.Tiles {
 		public Color GetTintColor() {
 			Color color = Color.Black;
 			float tint_scale = MathHelper.Clamp( this.TintScale, 0f, 1f );
-			float day_spike = (float)Math.Abs( MiscHelper.GetDayOrNightPercentDone() - 0.5d );
+			float day_spike = (float)Math.Abs( WorldHelpers.GetDayOrNightPercentDone() - 0.5d );
 
 			if( Main.dayTime ) {
 				tint_scale *= 1f - day_spike;
@@ -82,8 +83,8 @@ namespace TheLunatic.Tiles {
 			color.G = (byte)(128f * tint_scale);
 			color.A = (byte)(255f * tint_scale);
 
-			if( (DebugHelper.DEBUGMODE & 1) > 0 ) {
-				DebugHelper.Display["Sky"] = color.ToString();
+			if( (TheLunaticMod.DEBUGMODE & 1) > 0 ) {
+				DebugHelpers.Display["Sky"] = color.ToString();
 			}
 			return color;
 		}

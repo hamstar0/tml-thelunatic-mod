@@ -1,3 +1,5 @@
+using HamstarHelpers.MiscHelpers;
+using HamstarHelpers.PlayerHelpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,10 +8,10 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using TheLunatic.Items;
 using TheLunatic.Logic;
-using Utils;
 
 
 namespace TheLunatic.NPCs {
+	[AutoloadHead]
 	public class TheLunaticTownNPC : ModNPC {
 		public static string[] PossibleNames { get; private set; }
 		public static string[] DismissalReplies { get; private set; }
@@ -49,30 +51,6 @@ namespace TheLunatic.NPCs {
 				"Mason",
 				"Alhazred",
 				"Castro"
-
-				/*"Bill",
-				"Charlie",
-				"Dennis",
-				"Fred",
-				"Greg",
-				"Jerry",
-				"Larry",
-				"Phil",
-				"Rob", 
-				"Steve",
-				"Tom",
-				"Vexyloctimus the 42nd"*/
-
-				/*"#24601",
-				"#90210",
-				"#12345",
-				"#4815162342",
-				"#32",
-				"#4583.5",
-				"#9944100",
-				"#8675309",
-				"#9001",
-				"Bob"*/
 			};
 		}
 
@@ -139,16 +117,31 @@ namespace TheLunatic.NPCs {
 
 
 		////////////////
-		
-		public override bool Autoload( ref string name, ref string texture, ref string[] altTextures ) {
+
+		public override string Texture { get { return "TheLunatic/NPCs/TheLunaticTownNPC"; } }
+
+		public override bool Autoload( ref string name ) {
 			name = "The Lunatic";
 			return mod.Properties.Autoload;
 		}
 
-		public override void SetDefaults() {
+		public override void SetStaticDefaults() {
 			int npc_type = this.npc.type;
 
-			this.npc.name = "The Lunatic";
+			this.DisplayName.SetDefault( "The Lunatic" );
+
+			Main.npcFrameCount[npc_type] = 26;
+			NPCID.Sets.AttackFrameCount[npc_type] = 5;
+			NPCID.Sets.DangerDetectRange[npc_type] = 700;
+			NPCID.Sets.AttackType[npc_type] = 1;
+			NPCID.Sets.AttackTime[npc_type] = 30;
+			NPCID.Sets.AttackAverageChance[npc_type] = 30;
+			NPCID.Sets.HatOffsetY[npc_type] = 4;
+		}
+
+		public override void SetDefaults() {
+			int npc_type = this.npc.type;
+			
 			this.npc.townNPC = true;
 			this.npc.friendly = true;
 			this.npc.width = 18;
@@ -160,14 +153,6 @@ namespace TheLunatic.NPCs {
 			this.npc.HitSound = SoundID.NPCHit1;
 			this.npc.DeathSound = SoundID.NPCDeath1;
 			this.npc.knockBackResist = 0.5f;
-
-			Main.npcFrameCount[npc_type] = 26;
-			NPCID.Sets.AttackFrameCount[npc_type] = 5;
-			NPCID.Sets.DangerDetectRange[npc_type] = 700;
-			NPCID.Sets.AttackType[npc_type] = 1;
-			NPCID.Sets.AttackTime[npc_type] = 30;
-			NPCID.Sets.AttackAverageChance[npc_type] = 30;
-			NPCID.Sets.HatOffsetY[npc_type] = 4;
 			this.animationType = NPCID.Guide;
 		}
 
@@ -246,12 +231,12 @@ namespace TheLunatic.NPCs {
 			christmas_pudding.value *= 9;
 			pumpkin_pie.value *= 9;
 			cooked_marshmallow.value *= 5;
-
-			sugar_cookie.toolTip2 = "Bake sale!";
-			gingerbread_cookie.toolTip2 = "Bake sale!";
-			christmas_pudding.toolTip2 = "Bake sale!";
-			pumpkin_pie.toolTip2 = "Bake sale!";
-			cooked_marshmallow.toolTip2 = "Bake sale!";
+			
+			sugar_cookie.GetGlobalItem<TheLunaticItem>(mymod).AddedTooltip = "Bake sale!";
+			gingerbread_cookie.GetGlobalItem<TheLunaticItem>( mymod ).AddedTooltip = "Bake sale!";
+			christmas_pudding.GetGlobalItem<TheLunaticItem>( mymod ).AddedTooltip = "Bake sale!";
+			pumpkin_pie.GetGlobalItem<TheLunaticItem>( mymod ).AddedTooltip = "Bake sale!";
+			cooked_marshmallow.GetGlobalItem<TheLunaticItem>( mymod ).AddedTooltip = "Bake sale!";
 
 			shop.item[nextSlot++] = sugar_cookie;
 			shop.item[nextSlot++] = gingerbread_cookie;
@@ -404,7 +389,7 @@ namespace TheLunatic.NPCs {
 				
 				return msg;
 			} catch( Exception e ) {
-				DebugHelper.Log( e.ToString() );
+				DebugHelpers.Log( e.ToString() );
 				throw e;
 			}
 		}
@@ -458,16 +443,16 @@ namespace TheLunatic.NPCs {
 
 			bool is_custom = false;
 			bool is_given = false;
-			Item mask = PlayerHelper.FindFirstOfItemFor( player, remaining_masks );
+			Item mask = PlayerItemHelpers.FindFirstOfItemFor( player, remaining_masks );
 			if( mask == null ) {
-				mask = PlayerHelper.FindFirstOfItemFor( player, new HashSet<int> { mymod.ItemType<CustomBossMaskItem>() } );
+				mask = PlayerItemHelpers.FindFirstOfItemFor( player, new HashSet<int> { mymod.ItemType<CustomBossMaskItem>() } );
 				is_custom = mask != null;
 				is_given = is_custom && modworld.MaskLogic.DoesLoonyHaveThisMask( mask );
 			}
 
 			if( mask == null || is_given ) {
 				if( mask == null ) {
-					mask = PlayerHelper.FindFirstOfItemFor( player, MaskLogic.AllVanillaMasks );
+					mask = PlayerItemHelpers.FindFirstOfItemFor( player, MaskLogic.AllVanillaMasks );
 				}
 				string msg, hint = this.GetHint();
 
@@ -495,7 +480,7 @@ namespace TheLunatic.NPCs {
 				} else {
 					if( mymod.Config.Data.LoonyGivesCompletionReward ) {
 						status = "At last! Seems this world gets to live a little bit longer. I won't need this anymore. Enjoy!";
-						UmbralCowlItem.Give( this.mod, player );
+						UmbralCowlItem.Give( mymod, player );
 					} else {
 						status = "At last! Seems this world gets to live a little bit longer. Be sure to celebrate by buying some of my delicious treats!";
 					}
@@ -559,7 +544,7 @@ namespace TheLunatic.NPCs {
 				return msg + "\n\n" + status;
 			}
 			else {
-				if( (DebugHelper.DEBUGMODE & 1) > 0 ) { DebugHelper.Log("DEBUG cheater detected. "+ mask.name); }
+				if( (TheLunaticMod.DEBUGMODE & 1) > 0 ) { DebugHelpers.Log("DEBUG cheater detected. "+ mask.Name); }
 
 				if( mymod.Config.Data.LoonyShunsCheaters ) {
 					player.GetModPlayer<TheLunaticPlayer>( this.mod ).SetCheater();

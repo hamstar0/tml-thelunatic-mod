@@ -1,22 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using HamstarHelpers.MiscHelpers;
+using System;
 using System.IO;
 using System.Linq;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using TheLunatic.Logic;
-using Utils;
 
 
 namespace TheLunatic {
 	public class TheLunaticWorld : ModWorld {
 		public string ID { get; private set; }
-		public GameLogic GameLogic { get; private set; }
-		public MaskLogic MaskLogic { get; private set; }
-
 		public bool HasCorrectID { get; private set; }	// Workaround for tml bug?
 
+		public GameLogic GameLogic { get; private set; }
+		public MaskLogic MaskLogic { get; private set; }
+		
 
 
 		////////////////
@@ -30,8 +29,8 @@ namespace TheLunatic {
 			this.GameLogic = new GameLogic( mymod );
 			this.MaskLogic = new MaskLogic( mymod );
 
-			if( (DebugHelper.DEBUGMODE & 1) > 0 ) {
-				DebugHelper.Log( "DEBUG World created; logics (re)created." );
+			if( (TheLunaticMod.DEBUGMODE & 1) > 0 ) {
+				DebugHelpers.Log( "DEBUG World created; logics (re)created." );
 			}
 		}
 
@@ -90,15 +89,15 @@ namespace TheLunatic {
 				i++;
 			}
 
-			if( (DebugHelper.DEBUGMODE & 1) > 0 ) {
-				DebugHelper.Log( "DEBUG Saving world. "+ this.ID + ", "
+			if( (TheLunaticMod.DEBUGMODE & 1) > 0 ) {
+				DebugHelpers.Log( "DEBUG Saving world. " + this.ID + ", "
 					+ this.GameLogic.HasLoonyArrived + ", "
 					+ this.GameLogic.HasLoonyQuit + ", "
 					+ this.GameLogic.HasGameEnded + ", "
 					+ this.GameLogic.HasWon + ", "
 					+ this.GameLogic.IsSafe + ", "
 					+ this.GameLogic.HalfDaysElapsed + ", "
-					+ "["+String.Join(",", this.MaskLogic.GivenVanillaMasksByType.ToArray()) + "], " );
+					+ "[" + String.Join( ",", this.MaskLogic.GivenVanillaMasksByType.ToArray() ) + "], " );
 			}
 
 			return tag;

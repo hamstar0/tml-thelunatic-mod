@@ -4,11 +4,10 @@ using Terraria;
 using Terraria.Graphics.Effects;
 using Terraria.ModLoader;
 using TheLunatic.Tiles;
-using Utils.JsonConfig;
-using Utils;
 using Terraria.ID;
 using System;
-
+using HamstarHelpers.Utilities.Config;
+using HamstarHelpers.MiscHelpers;
 
 namespace TheLunatic {
 	public class ConfigurationData {
@@ -37,7 +36,11 @@ namespace TheLunatic {
 
 
 	public class TheLunaticMod : Mod {
-		public readonly static Version ConfigVersion = new Version(1, 2, 4);
+		public static int DEBUGMODE;
+		static TheLunaticMod() { TheLunaticMod.DEBUGMODE = 0; }
+
+
+		public readonly static Version ConfigVersion = new Version(1, 2, 5);
 		public JsonConfig<ConfigurationData> Config { get; private set; }
 
 		public AnimatedSky Sky { get; private set; }
@@ -63,24 +66,24 @@ namespace TheLunatic {
 				this.Config = old_config;
 			} else if( !this.Config.LoadFile() ) {
 				this.Config.SaveFile();
-			}
-			
-			Version vers_since = this.Config.Data.VersionSinceUpdate != "" ?
-				new Version( this.Config.Data.VersionSinceUpdate ) :
-				new Version();
+			} else {
+				Version vers_since = this.Config.Data.VersionSinceUpdate != "" ?
+					new Version( this.Config.Data.VersionSinceUpdate ) :
+					new Version();
 
-			if( vers_since < TheLunaticMod.ConfigVersion ) {
-				var new_config = new ConfigurationData();
-				ErrorLogger.Log( "The Lunatic config updated to " + TheLunaticMod.ConfigVersion.ToString() );
+				if( vers_since < TheLunaticMod.ConfigVersion ) {
+					var new_config = new ConfigurationData();
+					ErrorLogger.Log( "The Lunatic config updated to " + TheLunaticMod.ConfigVersion.ToString() );
 				
-				if( vers_since < new Version( 1, 2, 2 ) ) {
-					this.Config.Data.DaysUntil = new_config.DaysUntil;
-					this.Config.Data.HardModeMultiplier = new_config.HardModeMultiplier;
-					this.Config.Data.HalfDaysRecoveredPerMask = new_config.HalfDaysRecoveredPerMask;
-				}
+					if( vers_since < new Version( 1, 2, 2 ) ) {
+						this.Config.Data.DaysUntil = new_config.DaysUntil;
+						this.Config.Data.HardModeMultiplier = new_config.HardModeMultiplier;
+						this.Config.Data.HalfDaysRecoveredPerMask = new_config.HalfDaysRecoveredPerMask;
+					}
 
-				this.Config.Data.VersionSinceUpdate = TheLunaticMod.ConfigVersion.ToString();
-				this.Config.SaveFile();
+					this.Config.Data.VersionSinceUpdate = TheLunaticMod.ConfigVersion.ToString();
+					this.Config.SaveFile();
+				}
 			}
 
 			if( !Main.dedServ ) {
@@ -88,7 +91,7 @@ namespace TheLunatic {
 				SkyManager.Instance["TheLunaticMod:AnimatedColorize"] = this.Sky;
 			}
 
-			DebugHelper.DEBUGMODE = this.Config.Data.DEBUGFLAGS;
+			TheLunaticMod.DEBUGMODE = this.Config.Data.DEBUGFLAGS;
 		}
 
 
@@ -99,7 +102,7 @@ namespace TheLunatic {
 			try {
 				TheLunaticNetProtocol.RouteReceivedPackets( this, reader );
 			} catch( Exception e ) {
-				DebugHelper.Log( "HandlePacket "+e.ToString() );
+				DebugHelpers.Log( "HandlePacket "+e.ToString() );
 			}
 		}
 
@@ -108,7 +111,7 @@ namespace TheLunatic {
 			if( modworld != null && modworld.GameLogic != null ) {
 				// Let not a peep of town NPC suffering be heard when set to do so
 				if( modworld.GameLogic.KillSurfaceTownNPCs ) {
-					if( (int)messageType == MessageID.NPCName ) {
+					if( (int)messageType == MessageID.SyncNPCName ) {
 						//reader.ReadInt16();
 						//reader.ReadString();
 						return true;
@@ -127,10 +130,6 @@ namespace TheLunatic {
 			if( modworld.GameLogic != null ) {
 				modworld.GameLogic.ReadyClient = true;  // Ugh!
 			}
-
-			UIHelper.UpdateMessageDisplay( sb );
-
-			DebugHelper.PrintToBatch( sb );
 		}
 
 		public override void UpdateMusic( ref int music ) {

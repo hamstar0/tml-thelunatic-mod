@@ -1,13 +1,13 @@
-﻿using System;
+﻿using HamstarHelpers.ItemHelpers;
+using HamstarHelpers.NPCHelpers;
 using Terraria;
 using Terraria.ModLoader;
 using TheLunatic.Items;
 using TheLunatic.Logic;
-using Utils;
 
 
 namespace TheLunatic {
-	public class TheLunaticGlobalNPC : GlobalNPC {
+	public class TheLunaticNPC : GlobalNPC {
 		public override void AI( NPC npc ) {
 			var mymod = (TheLunaticMod)this.mod;
 			if( !mymod.Config.Data.Enabled ) { return; }
@@ -20,28 +20,8 @@ namespace TheLunatic {
 			// Kill town NPCs above ground every minute when set to do so
 			if( modworld.GameLogic.KillSurfaceTownNPCs ) {
 				if( npc.townNPC && npc.position.Y < (Main.worldSurface*16.0) && Main.rand.Next(60*60) == 0 ) {
-					NPCHelper.Kill( npc );
+					NPCHelpers.Kill( npc );
 					return;
-				}
-			}
-		}
-
-
-		public override void SetDefaults( NPC npc ) {
-			var mymod = (TheLunaticMod)this.mod;
-			if( !mymod.Config.Data.Enabled ) { return; }
-
-			var modworld = this.mod.GetModWorld<TheLunaticWorld>();
-			if( modworld == null ) { return; }
-			if( modworld.GameLogic == null ) { return; }
-
-			// Prevent new town NPCs when set to do so
-			if( modworld.GameLogic.KillSurfaceTownNPCs ) {
-				if( npc.townNPC && WorldGen.spawnNPC == npc.type ) {
-					npc.active = false;
-					npc.type = 0;
-					npc.life = 0;
-					WorldGen.spawnNPC = 0;
 				}
 			}
 		}
@@ -62,7 +42,7 @@ namespace TheLunatic {
 			// Already given this mask?
 			bool is_vanilla = MaskLogic.AllVanillaMasks.Contains( mask_type );
 			if( !modworld.MaskLogic.GivenVanillaMasksByType.Contains( mask_type ) ) {
-				if( !is_vanilla && modworld.MaskLogic.GivenCustomMasksByBossUid.Contains( NPCHelper.GetUniqueId( npc ) ) ) {
+				if( !is_vanilla && modworld.MaskLogic.GivenCustomMasksByBossUid.Contains( NPCHelpers.GetUniqueId( npc ) ) ) {
 					return;
 				}
 			}
@@ -72,14 +52,14 @@ namespace TheLunatic {
 				return;
 			}
 			
-			int which = ItemHelper.CreateItem( npc.position, mask_type, 1, 15, 15 );
+			int which = ItemHelpers.CreateItem( npc.position, mask_type, 1, 15, 15 );
 			item = Main.item[which];
 
 			if( item != null && !item.IsAir ) {
 				if( mask_type == this.mod.ItemType<CustomBossMaskItem>() ) {
 					var moditem = (CustomBossMaskItem)item.modItem;
 					if( !moditem.SetBoss(npc.type) ) {
-						ItemHelper.DestroyWorldItem( which );
+						ItemHelpers.DestroyWorldItem( which );
 					}
 				} else {
 					/*if( !modworld.MaskLogic.GivenVanillaMasks.Contains( mask_type ) ) {

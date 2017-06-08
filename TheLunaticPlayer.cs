@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using HamstarHelpers.MiscHelpers;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using PlayerExtend;
 using System;
@@ -10,7 +11,6 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using TheLunatic.Buffs;
 using TheLunatic.Items;
-using Utils;
 
 
 namespace TheLunatic {
@@ -61,8 +61,8 @@ namespace TheLunatic {
 				modworld.GameLogic.ApplyDebugOverrides();
 
 				if( Main.netMode == 1 ) {	// Client
-					TheLunaticNetProtocol.SendRequestModSettingsFromClient( this.mod );
-					TheLunaticNetProtocol.SendRequestModDataFromClient( this.mod );
+					TheLunaticNetProtocol.SendRequestModSettingsFromClient( mymod );
+					TheLunaticNetProtocol.SendRequestModDataFromClient( mymod );
 				} else if( Main.netMode == 0 ) {	// Single
 					this.PostEnterWorld();
 				}
@@ -92,12 +92,12 @@ namespace TheLunatic {
 					this.Bye[world_id] = tags.GetBool( "bye_" + i );
 				}
 
-				if( (DebugHelper.DEBUGMODE & 1) > 0 ) {
-					DebugHelper.Log( "DEBUG Load player. {" +
+				if( (TheLunaticMod.DEBUGMODE & 1) > 0 ) {
+					DebugHelpers.Log( "DEBUG Load player. {" +
 						string.Join( ";", this.Bye.Select( x => x.Key + "=" + x.Value ).ToArray() ) + "}" );
 				}
 			} catch( Exception e ) {
-				DebugHelper.Log( e.ToString() );
+				DebugHelpers.Log( e.ToString() );
 			}
 		}
 
@@ -112,9 +112,9 @@ namespace TheLunatic {
 				i++;
 			}
 
-			if( (DebugHelper.DEBUGMODE & 1) > 0 ) {
-				DebugHelper.Log( "DEBUG Save player. {" +
-					string.Join(";", this.Bye.Select(x => x.Key + "=" + x.Value).ToArray()) + "}" );
+			if( (TheLunaticMod.DEBUGMODE & 1) > 0 ) {
+				DebugHelpers.Log( "DEBUG Save player. {" +
+					string.Join( ";", this.Bye.Select( x => x.Key + "=" + x.Value ).ToArray() ) + "}" );
 			}
 
 			return tags;

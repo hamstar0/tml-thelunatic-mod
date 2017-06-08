@@ -1,11 +1,12 @@
-﻿using Microsoft.Xna.Framework;
+﻿using HamstarHelpers.MiscHelpers;
+using HamstarHelpers.Utilities.Messages;
+using HamstarHelpers.WorldHelpers;
+using Microsoft.Xna.Framework;
 using System;
-using System.Linq;
 using Terraria;
 using Terraria.Graphics.Effects;
-using Terraria.ModLoader;
+using Terraria.Localization;
 using TheLunatic.NPCs;
-using Utils;
 
 
 namespace TheLunatic.Logic {
@@ -49,14 +50,14 @@ namespace TheLunatic.Logic {
 		public void LoadOnce( bool has_loony_arrived, bool has_loony_quit, bool has_game_ended, bool has_won, bool is_safe, int time ) {
 			if( this.IsLoaded ) {
 				var modworld = this.Mod.GetModWorld<TheLunaticWorld>();
-				DebugHelper.Log( "Redundant Game Logic load. " + has_loony_arrived + "," + has_loony_quit + "," + has_game_ended + "," + has_won + "," + is_safe + "," + time +
+				DebugHelpers.Log( "Redundant Game Logic load. " + has_loony_arrived + "," + has_loony_quit + "," + has_game_ended + "," + has_won + "," + is_safe + "," + time +
 					"   (" + this.HasLoonyArrived + "," + this.HasLoonyQuit + "," + this.HasGameEnded + "," + this.HasWon + "," + this.IsSafe + "," + this.HalfDaysElapsed + ") " +
 					modworld.ID );
 				return;
 			}
-			if( (DebugHelper.DEBUGMODE & 1) > 0 ) {
+			if( (TheLunaticMod.DEBUGMODE & 1) > 0 ) {
 				var modworld = this.Mod.GetModWorld<TheLunaticWorld>();
-				DebugHelper.Log( "DEBUG Game Logic loading. " + has_loony_arrived + "," + has_loony_quit + "," + has_game_ended + "," + has_won + "," + is_safe + "," + time +
+				DebugHelpers.Log( "DEBUG Game Logic loading. " + has_loony_arrived + "," + has_loony_quit + "," + has_game_ended + "," + has_won + "," + is_safe + "," + time +
 					"   (" + this.HasLoonyArrived + "," + this.HasLoonyQuit + "," + this.HasGameEnded + "," + this.HasWon + "," + this.IsSafe + "," + this.HalfDaysElapsed + ") " +
 					modworld.ID );
 			}
@@ -80,11 +81,11 @@ namespace TheLunatic.Logic {
 		}
 
 		public void ApplyDebugOverrides() {
-			if( (DebugHelper.DEBUGMODE & 2) > 0 ) {
+			if( (TheLunaticMod.DEBUGMODE & 2) > 0 ) {
 				this.Mod.Config.Data.DaysUntil /= 5;
 			}
-			if( (DebugHelper.DEBUGMODE & 4) > 0 ) {
-				DebugHelper.Log( "DEBUG Game Logic reset!" );
+			if( (TheLunaticMod.DEBUGMODE & 4) > 0 ) {
+				DebugHelpers.Log( "DEBUG Game Logic reset!" );
 				this.HasLoonyArrived = false;
 				this.HasGameEnded = false;
 				this.HasLoonyQuit = false;
@@ -92,7 +93,7 @@ namespace TheLunatic.Logic {
 				this.IsSafe = false;
 				this.HalfDaysElapsed = 0;
 			}
-			if( (DebugHelper.DEBUGMODE & 16) > 0 ) {
+			if( (TheLunaticMod.DEBUGMODE & 16) > 0 ) {
 				if( this.HalfDaysElapsed < this.Mod.Config.Data.DaysUntil ) {
 					this.HalfDaysElapsed = this.Mod.Config.Data.DaysUntil;
 				}
@@ -127,22 +128,22 @@ namespace TheLunatic.Logic {
 				return;
 			}
 
-			if( (DebugHelper.DEBUGMODE & 1) > 0 ) {
+			if( (TheLunaticMod.DEBUGMODE & 1) > 0 ) {
 				var modworld = this.Mod.GetModWorld<TheLunaticWorld>();
-				DebugHelper.Display["WorldID"] = "" + modworld.ID;
-				DebugHelper.Display["IsApocalypse"] = "" + this.IsApocalypse;
-				DebugHelper.Display["IsSafe"] = "" + this.IsSafe;
-				DebugHelper.Display["HasLoonyArrived"] = "" + this.HasLoonyArrived;
-				DebugHelper.Display["HasLoonyQuit"] = "" + this.HasLoonyQuit;
-				DebugHelper.Display["HasGameEnded"] = "" + this.HasGameEnded;
-				DebugHelper.Display["HalfDaysElapsed"] = "" + this.HalfDaysElapsed + " ("+(this.Mod.Config.Data.DaysUntil*2)+")";
-				DebugHelper.Display["HaveWeEndSigns"] = "" + this.HaveWeEndSigns();
-				DebugHelper.Display["HaveHope"] = "" + this.HaveWeHopeToWin();
-				DebugHelper.Display["TintScale"] = "" + this.Mod.Sky.TintScale;
-				DebugHelper.Display["RemainingMasks"] = String.Join( ",", modworld.MaskLogic.GetRemainingVanillaMasks() );
-				DebugHelper.Display["GivenMasks"] = String.Join(",", modworld.MaskLogic.GivenVanillaMasksByType);
+				DebugHelpers.Display["WorldID"] = "" + modworld.ID;
+				DebugHelpers.Display["IsApocalypse"] = "" + this.IsApocalypse;
+				DebugHelpers.Display["IsSafe"] = "" + this.IsSafe;
+				DebugHelpers.Display["HasLoonyArrived"] = "" + this.HasLoonyArrived;
+				DebugHelpers.Display["HasLoonyQuit"] = "" + this.HasLoonyQuit;
+				DebugHelpers.Display["HasGameEnded"] = "" + this.HasGameEnded;
+				DebugHelpers.Display["HalfDaysElapsed"] = "" + this.HalfDaysElapsed + " (" + (this.Mod.Config.Data.DaysUntil * 2) + ")";
+				DebugHelpers.Display["HaveWeEndSigns"] = "" + this.HaveWeEndSigns();
+				DebugHelpers.Display["HaveHope"] = "" + this.HaveWeHopeToWin();
+				DebugHelpers.Display["TintScale"] = "" + this.Mod.Sky.TintScale;
+				DebugHelpers.Display["RemainingMasks"] = String.Join( ",", modworld.MaskLogic.GetRemainingVanillaMasks() );
+				DebugHelpers.Display["GivenMasks"] = String.Join( ",", modworld.MaskLogic.GivenVanillaMasksByType );
 			}
-			if( (DebugHelper.DEBUGMODE & 2) > 0 ) {
+			if( (TheLunaticMod.DEBUGMODE & 2) > 0 ) {
 				Main.time += 24;
 			}
 
@@ -186,7 +187,7 @@ namespace TheLunatic.Logic {
 			if( !this.HasGameEnded ) {
 				if( !this.IsLastDay ) {
 					if( this.HalfDaysElapsed >= (this.Mod.Config.Data.DaysUntil - 1) * 2 ) {
-						UIHelper.PostMessage( "Final Day", 60 * 5 );
+						SimpleMessage.PostMessage( "Final Day", "", 60 * 5 );
 						this.IsLastDay = true;
 					}
 				} else {
@@ -252,7 +253,7 @@ namespace TheLunatic.Logic {
 
 				if( Main.netMode != 2 ) {   // Not server
 					if( half_days_left != 0 ) {
-						double days = (double)this.HalfDaysElapsed + MiscHelper.GetDayOrNightPercentDone();
+						double days = (double)this.HalfDaysElapsed + WorldHelpers.GetDayOrNightPercentDone();
 						days -= this.Mod.Config.Data.DaysUntil;
 						this.Mod.Sky.TintScale = (float)days / (float)this.Mod.Config.Data.DaysUntil;
 					} else {
@@ -342,7 +343,7 @@ namespace TheLunatic.Logic {
 			if( Main.netMode == 0 ) {   // Single
 				Main.NewText( str, 192, 0, 48, false );
 			} else {    // Server
-				NetMessage.SendData( 25, -1, -1, str, 255, 192f, 0f, 48f, 0, 0, 0 );
+				NetMessage.SendData( 25, -1, -1, NetworkText.FromLiteral(str), 255, 192f, 0f, 48f, 0, 0, 0 );
 			}
 		}
 
@@ -367,7 +368,7 @@ namespace TheLunatic.Logic {
 			if( Main.netMode == 0 || Main.netMode == 1 ) {	// Single or client
 				Main.NewText( str, 64, 64, 96, false );
 			} else if( Main.netMode == 2 ) {	// Server
-				NetMessage.SendData( 25, -1, -1, str, 255, 64f, 64f, 96f, 0, 0, 0 );
+				NetMessage.SendData( 25, -1, -1, NetworkText.FromLiteral(str), 255, 64f, 64f, 96f, 0, 0, 0 );
 			}
 		}
 	}

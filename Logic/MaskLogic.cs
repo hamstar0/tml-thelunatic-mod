@@ -1,11 +1,14 @@
-﻿using System;
+﻿using HamstarHelpers.MiscHelpers;
+using HamstarHelpers.NPCHelpers;
+using HamstarHelpers.WorldHelpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using TheLunatic.Items;
-using Utils;
+
 
 namespace TheLunatic.Logic {
 	public class MaskLogic {
@@ -79,13 +82,13 @@ namespace TheLunatic.Logic {
 
 		public static string GetMaskDisplayName( Item mask ) {
 			if( MaskLogic.AllVanillaMasks.Contains(mask.type) ) {
-				return mask.name;
+				return mask.Name;
 			}
 
 			Mod mod = ModLoader.GetMod( "TheLunatic" );
 			int custom_type = mod.ItemType<CustomBossMaskItem>();
 			if( mask.type == custom_type ) {
-				var mask_item_info = mask.GetModInfo<CustomBossMaskItemInfo>( mod );
+				var mask_item_info = mask.GetGlobalItem<CustomBossMaskItemInfo>( mod );
 				if( mask_item_info != null ) {
 					return mask_item_info.BossDisplayName + " Mask";
 				}
@@ -105,18 +108,18 @@ namespace TheLunatic.Logic {
 
 		public void LoadOnce( int[] masks, string[] custom_masks ) {
 			if( this.IsLoaded ) {
-				DebugHelper.Log( "Redundant Mask Logic load. "+String.Join(",", masks)+" ("+String.Join(",", this.GivenVanillaMasksByType)+")" );
+				DebugHelpers.Log( "Redundant Mask Logic load. " + String.Join( ",", masks ) + " (" + String.Join( ",", this.GivenVanillaMasksByType ) + ")" );
 				return;
 			}
-			
+
 			this.GivenVanillaMasksByType = new HashSet<int>( masks );
 			this.GivenCustomMasksByBossUid = new HashSet<string>( custom_masks );
 
-			if( (DebugHelper.DEBUGMODE & 4) > 0 ) {
+			if( (TheLunaticMod.DEBUGMODE & 4) > 0 ) {
 				this.GivenVanillaMasksByType.Clear();
 				this.GivenCustomMasksByBossUid.Clear();
 			}
-			if( (DebugHelper.DEBUGMODE & 8) > 0 ) {
+			if( (TheLunaticMod.DEBUGMODE & 8) > 0 ) {
 				this.GivenVanillaMasksByType.Remove( 3373 );
 			}
 			this.IsLoaded = true;
@@ -130,13 +133,13 @@ namespace TheLunatic.Logic {
 			if( mask_type == this.Mod.ItemType<CustomBossMaskItem>() ) {
 				NPC npc = new NPC();
 				npc.SetDefaults( boss_type );
-				this.GivenCustomMasksByBossUid.Add( NPCHelper.GetUniqueId(npc) );
+				this.GivenCustomMasksByBossUid.Add( NPCHelpers.GetUniqueId(npc) );
 			} else {
 				this.GivenVanillaMasksByType.Add( mask_type );
 			}
 
-			if( (DebugHelper.DEBUGMODE & 1) > 0 ) {
-				DebugHelper.Log( "DEBUG Registering mask. "+giving_player.name+", "+mask_type );
+			if( (TheLunaticMod.DEBUGMODE & 1) > 0 ) {
+				DebugHelpers.Log( "DEBUG Registering mask. " + giving_player.name + ", " + mask_type );
 			}
 
 			// Buy time before the end comes
@@ -164,7 +167,7 @@ namespace TheLunatic.Logic {
 					break;
 				}
 
-				if( MiscHelper.GetDayOrNightPercentDone() > 0.5f ) {
+				if( WorldHelpers.GetDayOrNightPercentDone() > 0.5f ) {
 					recovered += 1;
 				}
 				
@@ -194,7 +197,7 @@ namespace TheLunatic.Logic {
 		public bool DoesLoonyHaveThisMask( Item mask_item ) {
 			if( this.GetRemainingVanillaMasks().Contains(mask_item.type) ) { return false; }
 
-			var mask_item_info = mask_item.GetModInfo<CustomBossMaskItemInfo>( this.Mod );
+			var mask_item_info = mask_item.GetGlobalItem<CustomBossMaskItemInfo>( this.Mod );
 			return this.GivenCustomMasksByBossUid.Contains( mask_item_info.BossUid );
 		}
 
@@ -286,7 +289,7 @@ namespace TheLunatic.Logic {
 
 			int boss_type = -1;
 			if( mask.type == this.Mod.ItemType<CustomBossMaskItem>() ) {
-				boss_type = mask.GetModInfo<CustomBossMaskItemInfo>( this.Mod ).BossNpcType;
+				boss_type = mask.GetGlobalItem<CustomBossMaskItemInfo>( this.Mod ).BossNpcType;
 			} else {
 				var boss_of_mask = MaskLogic.VanillaBossOfMask.Where( x => x.Value == mask.type ).First();
 				boss_type = boss_of_mask.Value > 0 ? boss_of_mask.Value : boss_type;

@@ -7,24 +7,41 @@ using TheLunatic.Logic;
 
 
 namespace TheLunatic {
-	public class TheLunaticGlobalItem : GlobalItem {
+	public class TheLunaticItem : GlobalItem {
+		public override bool InstancePerEntity { get { return true; } }
+		//public override bool CloneNewInstances { get { return true; } }
+
+		public string AddedTooltip = "";
+
+		public override GlobalItem Clone( Item item, Item item_clone ) {
+			var clone = (TheLunaticItem)base.Clone( item, item_clone );
+			clone.AddedTooltip = this.AddedTooltip;
+			return clone;
+		}
+
+
+
 		public override void ModifyTooltips( Item item, List<TooltipLine> tooltips ) {
 			var mymod = (TheLunaticMod)this.mod;
 			if( !mymod.Config.Data.Enabled ) { return; }
 
 			bool found = item.type == this.mod.ItemType<CustomBossMaskItem>();
 			if( !found ) { found = MaskLogic.AllVanillaMasks.Contains( item.type ); }
-			if( !found ) { return; }
-			
-			TooltipLine line = new TooltipLine( mod, "lunatic_info", "Contains latent spiritual essence" );
-			line.overrideColor = new Color( Main.DiscoR, 64, 64 );
-			tooltips.Add( line );
+			if( found ) {
+				TooltipLine line = new TooltipLine( mymod, "lunatic_info", "Contains latent spiritual essence" );
+				line.overrideColor = new Color( Main.DiscoR, 64, 64 );
+				tooltips.Add( line );
+			}
+
+			if( this.AddedTooltip != "" ) {
+				tooltips.Add( new TooltipLine( mymod, "lunatic_added", this.AddedTooltip ) );
+			}
 		}
 
 
 		public override void UpdateEquip( Item item, Player player ) {
 			var mymod = (TheLunaticMod)this.mod;
-			var modplayer = player.GetModPlayer<TheLunaticPlayer>( this.mod );
+			var modplayer = player.GetModPlayer<TheLunaticPlayer>( mymod );
 
 			if( !mymod.Config.Data.Enabled ) { return; }
 

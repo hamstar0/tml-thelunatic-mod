@@ -5,7 +5,7 @@ Undecided
 	-	Gift 2 with each mask given to NPC
 	-	Implement effect: Phasing FX + Blocked abilities + Invincibility
 	-	Add potion item
-v1.3
+v1.4
 -	Put 'Umbral Cowl' into separate mod (used as dependency)
 -	Add API for adding required custom bosses and mask submit events
 -	Post apocalypse
@@ -19,13 +19,14 @@ v1.3
 	-	Add config setting to remove active apocalypses (worlds are 'boring', though)
 	-	Randomly kill grass and tiles on surface
 	-	Set apocalypse mobs to be re-colored
+-	Fix tint (!)
+v1.3
 -	Set loony to drop a 'Paperback Necronomicon' (resummons Lunatic if dead)
 -	Add more 'baked goods' to shop
 -	Debug 'So it's begun' NPC speech spam
 -	Update to new config format and convert half days to days (as a float)
 -	Set elapsed time to use float for % of day instead of int
 -	Set loony to have a hardmode attack
--	Fix tint (!)
 
 v1.2.1
 -	Change config default initial days to 9 (from 10)

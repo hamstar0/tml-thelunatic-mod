@@ -1,11 +1,12 @@
-﻿using Microsoft.Xna.Framework;
+﻿using HamstarHelpers.PlayerHelpers;
+using HamstarHelpers.TileHelpers;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Utils;
 
 
 namespace TheLunatic.Buffs {
@@ -30,7 +31,7 @@ namespace TheLunatic.Buffs {
 		////////////////
 
 		public static bool CanShadowWalk( Player player ) {
-			float brightness = TileHelper.GaugeBrightness( (int)(player.position.X / 16f), (int)(player.position.Y / 16f), 2, 3 );
+			float brightness = TileHelpers.GaugeBrightnessWithin( (int)(player.position.X / 16f), (int)(player.position.Y / 16f), 2, 3 );
 			return brightness <= 0.005;
 		}
 
@@ -38,8 +39,9 @@ namespace TheLunatic.Buffs {
 		////////////////
 
 		public override void SetDefaults() {
-			Main.buffName[this.Type] = "Shadow Walker";
-			Main.buffTip[this.Type] = "Move through the shadows";
+			this.DisplayName.SetDefault( "Shadow Walker" );
+			this.Description.SetDefault( "Move freely through the shadows" );
+
 			Main.debuff[this.Type] = false;
 			Main.buffNoTimeDisplay[this.Type] = true;
 			Main.buffNoSave[this.Type] = true;
@@ -72,7 +74,7 @@ namespace TheLunatic.Buffs {
 			if( player.FindBuffIndex( this.Type ) == -1 ) { return; }
 
 			// Force item unselect
-			if( !PlayerHelper.UnhandItem(player) ) {
+			if( !PlayerItemHelpers.UnhandItem(player) ) {
 				player.DropSelectedItem();
 			}
 		}
