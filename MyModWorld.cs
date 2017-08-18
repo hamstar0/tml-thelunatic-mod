@@ -1,4 +1,4 @@
-﻿using HamstarHelpers.MiscHelpers;
+﻿using HamstarHelpers.DebugHelpers;
 using System;
 using System.IO;
 using System.Linq;
@@ -9,7 +9,7 @@ using TheLunatic.Logic;
 
 
 namespace TheLunatic {
-	public class TheLunaticWorld : ModWorld {
+	public class MyModWorld : ModWorld {
 		public string ID { get; private set; }
 		public bool HasCorrectID { get; private set; }	// Workaround for tml bug?
 
@@ -21,15 +21,15 @@ namespace TheLunatic {
 		////////////////
 		
 		public override void Initialize() {
-			var mymod = (TheLunaticMod)this.mod;
+			var mymod = (TheLunatic)this.mod;
 
 			this.ID = Guid.NewGuid().ToString( "D" );
 			this.HasCorrectID = false;  // 'Load()' decides if no pre-existing one is found
 
-			this.GameLogic = new GameLogic( mymod );
-			this.MaskLogic = new MaskLogic( mymod );
+			this.GameLogic = new GameLogic();
+			this.MaskLogic = new MaskLogic();
 
-			if( (TheLunaticMod.DEBUGMODE & 1) > 0 ) {
+			if( mymod.IsDisplayInfoDebugMode() ) {
 				DebugHelpers.Log( "DEBUG World created; logics (re)created." );
 			}
 		}
@@ -37,7 +37,7 @@ namespace TheLunatic {
 		////////////////
 
 		public override void Load( TagCompound tag ) {
-			var mymod = (TheLunaticMod)this.mod;
+			var mymod = (TheLunatic)this.mod;
 			bool has_arrived = false, has_quit = false, has_end = false, has_won = false, is_safe = false;
 			int time = 0;
 			int[] masks = new int[0];
@@ -66,11 +66,12 @@ namespace TheLunatic {
 
 			this.HasCorrectID = true;
 
-			this.GameLogic.LoadOnce( has_arrived, has_quit, has_end, has_won, is_safe, time );
-			this.MaskLogic.LoadOnce( masks, custom_masks );
+			this.GameLogic.LoadOnce( mymod, has_arrived, has_quit, has_end, has_won, is_safe, time );
+			this.MaskLogic.LoadOnce( mymod, masks, custom_masks );
 		}
 
 		public override TagCompound Save() {
+			var mymod = (TheLunatic)this.mod;
 			var tag = new TagCompound {
 				{ "world_id", this.ID },
 				{ "has_loony_arrived", (bool)this.GameLogic.HasLoonyArrived },
@@ -89,7 +90,7 @@ namespace TheLunatic {
 				i++;
 			}
 
-			if( (TheLunaticMod.DEBUGMODE & 1) > 0 ) {
+			if( mymod.IsDisplayInfoDebugMode() ) {
 				DebugHelpers.Log( "DEBUG Saving world. " + this.ID + ", "
 					+ this.GameLogic.HasLoonyArrived + ", "
 					+ this.GameLogic.HasLoonyQuit + ", "
@@ -123,12 +124,12 @@ namespace TheLunatic {
 		////////////////
 
 		public override void PreUpdate() {
-			var mymod = (TheLunaticMod)this.mod;
+			var mymod = (TheLunatic)this.mod;
 			if( !mymod.Config.Data.Enabled ) { return; }
 
 			if( Main.netMode == 2 ) { // Server only
 				if( this.HasCorrectID && this.GameLogic != null ) {
-					this.GameLogic.Update();
+					this.GameLogic.Update( mymod );
 				}
 			}
 		}

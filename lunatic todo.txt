@@ -27,6 +27,8 @@ v1.3
 -	Update to new config format and convert half days to days (as a float)
 -	Set elapsed time to use float for % of day instead of int
 -	Set loony to have a hardmode attack
+-	Refactor config format
+-	Refactor net code
 
 v1.2.1
 -	Change config default initial days to 9 (from 10)

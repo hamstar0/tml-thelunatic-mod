@@ -60,17 +60,19 @@
     <Compile Include="Items\UmbralCowlItem.cs" />
     <Compile Include="Logic\GameLogic.cs" />
     <Compile Include="Logic\MaskLogic.cs" />
+    <Compile Include="NetProtocol\ClientPacketHandlers.cs" />
+    <Compile Include="NetProtocol\NetProtocolTypes.cs" />
     <Compile Include="PlayerExtend\PlayerNoclip.cs" />
     <Compile Include="Sounds\Custom\EarthQuake.cs" />
-    <Compile Include="TheLunaticItem.cs" />
-    <Compile Include="TheLunaticNPC.cs" />
-    <Compile Include="TheLunaticProjectile.cs" />
-    <Compile Include="TheLunaticMod.cs" />
-    <Compile Include="TheLunaticNetProtocol.cs" />
-    <Compile Include="TheLunaticPlayer.cs" />
+    <Compile Include="MyGlobaltem.cs" />
+    <Compile Include="MyGlobalNPC.cs" />
+    <Compile Include="MyGlobalProjectile.cs" />
+    <Compile Include="TheLunatic.cs" />
+    <Compile Include="NetProtocol\ServerPacketHandlers.cs" />
+    <Compile Include="MyModPlayer.cs" />
     <Compile Include="NPCs\TheLunaticTownNPC.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TheLunaticWorld.cs" />
+    <Compile Include="MyModWorld.cs" />
     <Compile Include="Tiles\AnimatedSky.cs" />
   </ItemGroup>
   <ItemGroup>

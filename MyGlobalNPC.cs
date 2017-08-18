@@ -7,14 +7,14 @@ using TheLunatic.Logic;
 
 
 namespace TheLunatic {
-	public class TheLunaticNPC : GlobalNPC {
+	public class MyGlobalNPC : GlobalNPC {
 		public override void AI( NPC npc ) {
-			var mymod = (TheLunaticMod)this.mod;
+			var mymod = (TheLunatic)this.mod;
 			if( !mymod.Config.Data.Enabled ) { return; }
 
 			if( Main.rand == null ) { return; }
 
-			var modworld = this.mod.GetModWorld<TheLunaticWorld>();
+			var modworld = this.mod.GetModWorld<MyModWorld>();
 			if( modworld == null ) { return; }
 
 			// Kill town NPCs above ground every minute when set to do so
@@ -28,12 +28,12 @@ namespace TheLunatic {
 
 
 		public override void NPCLoot( NPC npc ) {
-			var mymod = (TheLunaticMod)this.mod;
+			var mymod = (TheLunatic)this.mod;
 			if( !mymod.Config.Data.Enabled ) { return; }
 
 			if( !npc.boss && npc.type != 551 && npc.type != 398 ) { return; }	// Betsy isn't a boss?
-			var modworld = this.mod.GetModWorld<TheLunaticWorld>();
-			if( !modworld.GameLogic.HaveWeHopeToWin() ) { return; }
+			var modworld = this.mod.GetModWorld<MyModWorld>();
+			if( !modworld.GameLogic.HaveWeHopeToWin(mymod) ) { return; }
 
 			Item item = null;
 			int mask_type = MaskLogic.GetMaskTypeOfNpc( npc.type );
@@ -42,7 +42,7 @@ namespace TheLunatic {
 			// Already given this mask?
 			bool is_vanilla = MaskLogic.AllVanillaMasks.Contains( mask_type );
 			if( !modworld.MaskLogic.GivenVanillaMasksByType.Contains( mask_type ) ) {
-				if( !is_vanilla && modworld.MaskLogic.GivenCustomMasksByBossUid.Contains( NPCHelpers.GetUniqueId( npc ) ) ) {
+				if( !is_vanilla && modworld.MaskLogic.GivenCustomMasksByBossUid.Contains( NPCIdentityHelpers.GetUniqueId( npc ) ) ) {
 					return;
 				}
 			}

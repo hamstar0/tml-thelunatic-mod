@@ -7,6 +7,7 @@ using TheLunatic.Logic;
 using HamstarHelpers.NPCHelpers;
 using System.IO;
 
+
 namespace TheLunatic.Items {
 	[AutoloadEquip( EquipType.Head )]
 	public class CustomBossMaskItem : ModItem {
@@ -105,7 +106,7 @@ namespace TheLunatic.Items {
 			int idx = npc.GetBossHeadTextureIndex();
 			if( idx == -1 || idx >= Main.npcHeadBossTexture.Length || Main.npcHeadBossTexture[idx] == null ) { return false; }
 
-			item_info.Load( npc_type, idx, NPCHelpers.GetUniqueId(npc), npc.GivenName );
+			item_info.Load( npc_type, idx, NPCIdentityHelpers.GetUniqueId(npc), npc.GivenName );
 			this.item.SetNameOverride( npc.GivenName + " Mask" );
 			
 
@@ -170,7 +171,7 @@ namespace TheLunatic.Items {
 		public void Load( int npc_type, int boss_head_index, string uid, string display_name ) {
 			var npc = new NPC();
 			npc.SetDefaults( npc_type );
-			if( NPCHelpers.GetUniqueId(npc) != uid ) {
+			if( NPCIdentityHelpers.GetUniqueId(npc) != uid ) {
 				npc_type = NPCFinderHelpers.FindNpcTypeByUniqueId( uid );
 				if( npc_type != -1 ) {
 					npc.SetDefaults( npc_type );

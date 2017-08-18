@@ -17,7 +17,7 @@ namespace TheLunatic.Items {
 
 		////////////////
 
-		public static void Give( TheLunaticMod mymod, Player player ) {
+		public static void Give( TheLunatic mymod, Player player ) {
 			int who = ItemHelpers.CreateItem( player.Center, mymod.ItemType<UmbralCowlItem>(), 1, UmbralCowlItem.Width, UmbralCowlItem.Height );
 			Item item = Main.item[who];
 			item.noGrabDelay = 15;
@@ -107,7 +107,7 @@ namespace TheLunatic.Items {
 					ShadowWalkerBuff.AddBuffFor( this.mod, player );
 				}
 
-				var modplayer = player.GetModPlayer<TheLunaticPlayer>( this.mod );
+				var modplayer = player.GetModPlayer<MyModPlayer>( this.mod );
 				if( modplayer.Noclip != null ) {
 					modplayer.Noclip.UpdateMode( player );   // Redundant?
 				}

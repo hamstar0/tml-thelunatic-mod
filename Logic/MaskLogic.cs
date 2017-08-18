@@ -1,4 +1,4 @@
-﻿using HamstarHelpers.MiscHelpers;
+﻿using HamstarHelpers.DebugHelpers;
 using HamstarHelpers.NPCHelpers;
 using HamstarHelpers.WorldHelpers;
 using System;
@@ -8,15 +8,13 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using TheLunatic.Items;
-
+using TheLunatic.NetProtocol;
 
 namespace TheLunatic.Logic {
 	public class MaskLogic {
 		public static ISet<int> AllVanillaMasks { get; private set; }
 		public static IDictionary<int, int> VanillaBossOfMask { get; private set; }
 		public static int AvailableMaskCount { get; private set; }
-
-		private TheLunaticMod Mod;
 
 		public ISet<int> GivenVanillaMasksByType { get; private set; }
 		public ISet<string> GivenCustomMasksByBossUid { get; private set; }
@@ -26,43 +24,43 @@ namespace TheLunatic.Logic {
 
 		static MaskLogic() {
 			MaskLogic.AllVanillaMasks = new HashSet<int> {
-				1281, // Skeletron Mask
-				2104, // Brain of Cthulhu Mask
-				2105, // Wall of Flesh Mask
-				2106, // Twin Mask
-				2107, // Skeletron Prime Mask
-				2108, // Queen Bee Mask
-				2109, // Plantera Mask
-				2110, // Golem Mask
-				2111, // Eater of Worlds Mask
-				2112, // Eye of Cthulhu Mask
-				2113, // Destroyer Mask
-				2493, // King Slime Mask
-				2588, // Duke Fishron Mask 	
-				3372, // Ancient Cultist Mask
-				3863, // Betsy Mask
-				3373 // Moon Lord Mask
+				ItemID.SkeletronMask,
+				ItemID.BrainMask,
+				ItemID.FleshMask,
+				ItemID.TwinMask,
+				ItemID.SkeletronPrimeMask,
+				ItemID.BeeMask,
+				ItemID.PlanteraMask,
+				ItemID.GolemMask,
+				ItemID.EaterMask,
+				ItemID.EyeMask,
+				ItemID.DestroyerMask,
+				ItemID.KingSlimeMask,
+				ItemID.DukeFishronMask,
+				ItemID.BossMaskCultist,
+				ItemID.BossMaskBetsy,
+				ItemID.BossMaskMoonlord
 			};
 			MaskLogic.VanillaBossOfMask = new Dictionary<int, int> {
-				{ 4, 2112 },	// Eye of Cthulhu
-				{ 50, 2493 },	// King Slime
-				{ 222, 2108 },	// Queen Bee
-				{ 13, 2111 },	// Eater of Worlds
-				{ 14, 2111 },	// Eater of Worlds
-				{ 15, 2111 },	// Eater of Worlds
-				{ 266, 2104 },	// Brain of Cthulhu
-				{ 35, 1281 },	// Skeletron
-				{ 113, 2105 },	// Wall of Flesh
-				{ 125, 2106 },	// The Twins
-				{ 126, 2106 },	// The Twins
-				{ 127, 2107 },	// Skeletron Prime
-				{ 134, 2113 },	// The Destroyer (head)
-				{ 245, 2110 },	// Golem (body)
-				{ 262, 2109 },	// Plantera
-				{ 370, 2588 },	// Duke Fishron
-				{ 439, 3372 },	// Lunatic Cultist
-				{ 551, 3863 },	// Betsy
-				{ 398, 3373 }	// Moon Lord (core)
+				{ NPCID.EyeofCthulhu, ItemID.EyeMask },
+				{ NPCID.KingSlime, ItemID.KingSlimeMask },
+				{ NPCID.QueenBee, ItemID.BeeMask },
+				{ NPCID.EaterofWorldsBody, ItemID.EaterMask },
+				{ NPCID.EaterofWorldsHead, ItemID.EaterMask },
+				{ NPCID.EaterofWorldsTail, ItemID.EaterMask },
+				{ NPCID.BrainofCthulhu, ItemID.BrainMask },
+				{ NPCID.SkeletronHead, ItemID.SkeletronMask },
+				{ NPCID.WallofFlesh, ItemID.FleshMask },
+				{ NPCID.Retinazer, ItemID.TwinMask },
+				{ NPCID.Spazmatism, ItemID.TwinMask },
+				{ NPCID.SkeletronPrime, ItemID.SkeletronPrimeMask },
+				{ NPCID.TheDestroyer, ItemID.DestroyerMask },
+				{ NPCID.Golem, ItemID.GolemMask },
+				{ NPCID.Plantera, ItemID.PlanteraMask },
+				{ NPCID.DukeFishron, ItemID.DukeFishronMask },
+				{ NPCID.CultistBoss, ItemID.BossMaskCultist },
+				{ NPCID.DD2Betsy, ItemID.BossMaskBetsy },
+				{ NPCID.MoonLordCore, ItemID.BossMaskMoonlord }
 			};
 			MaskLogic.AvailableMaskCount = MaskLogic.AllVanillaMasks.Count - 1;	// Either corruption or crimson; not both
 		}
@@ -99,14 +97,13 @@ namespace TheLunatic.Logic {
 
 		////////////////
 
-		public MaskLogic( TheLunaticMod mod ) {
-			this.Mod = mod;
+		public MaskLogic() {
 			this.GivenVanillaMasksByType = new HashSet<int>();
 			this.GivenCustomMasksByBossUid = new HashSet<string>();
 		}
 		
 
-		public void LoadOnce( int[] masks, string[] custom_masks ) {
+		public void LoadOnce( TheLunatic mymod, int[] masks, string[] custom_masks ) {
 			if( this.IsLoaded ) {
 				DebugHelpers.Log( "Redundant Mask Logic load. " + String.Join( ",", masks ) + " (" + String.Join( ",", this.GivenVanillaMasksByType ) + ")" );
 				return;
@@ -115,12 +112,12 @@ namespace TheLunatic.Logic {
 			this.GivenVanillaMasksByType = new HashSet<int>( masks );
 			this.GivenCustomMasksByBossUid = new HashSet<string>( custom_masks );
 
-			if( (TheLunaticMod.DEBUGMODE & 4) > 0 ) {
+			if( mymod.IsResetDebugMode() ) {
 				this.GivenVanillaMasksByType.Clear();
 				this.GivenCustomMasksByBossUid.Clear();
 			}
-			if( (TheLunaticMod.DEBUGMODE & 8) > 0 ) {
-				this.GivenVanillaMasksByType.Remove( 3373 );
+			if( mymod.IsResetWinDebugMode() ) {
+				this.GivenVanillaMasksByType.Remove( ItemID.BossMaskMoonlord );
 			}
 			this.IsLoaded = true;
 		}
@@ -129,41 +126,41 @@ namespace TheLunatic.Logic {
 
 		////////////////
 
-		public void RegisterReceiptOfMask( Player giving_player, int mask_type, int boss_type ) {
-			if( mask_type == this.Mod.ItemType<CustomBossMaskItem>() ) {
+		public void RegisterReceiptOfMask( TheLunatic mymod, Player giving_player, int mask_type, int boss_type ) {
+			if( mask_type == mymod.ItemType<CustomBossMaskItem>() ) {
 				NPC npc = new NPC();
 				npc.SetDefaults( boss_type );
-				this.GivenCustomMasksByBossUid.Add( NPCHelpers.GetUniqueId(npc) );
+				this.GivenCustomMasksByBossUid.Add( NPCIdentityHelpers.GetUniqueId(npc) );
 			} else {
 				this.GivenVanillaMasksByType.Add( mask_type );
 			}
-
-			if( (TheLunaticMod.DEBUGMODE & 1) > 0 ) {
+			
+			if( mymod.IsDisplayInfoDebugMode() ) {
 				DebugHelpers.Log( "DEBUG Registering mask. " + giving_player.name + ", " + mask_type );
 			}
 
 			// Buy time before the end comes
 			if( this.GivenVanillaMasksByType.Count < (MaskLogic.AvailableMaskCount) ) {
-				var modworld = this.Mod.GetModWorld<TheLunaticWorld>();
-				int recovered = this.Mod.Config.Data.HalfDaysRecoveredPerMask;
+				var modworld = mymod.GetModWorld<MyModWorld>();
+				int recovered = mymod.Config.Data.HalfDaysRecoveredPerMask;
 				
 				switch( mask_type ) {
-				case 2105: // Wall of Flesh Mask
-					recovered = (int)((float)recovered * this.Mod.Config.Data.WallOfFleshMultiplier);
+				case ItemID.FleshMask:
+					recovered = (int)((float)recovered * mymod.Config.Data.WallOfFleshMultiplier);
 					break;
-				case 2113: // Destroyer Mask
-				case 2106: // Twin Mask
-				case 2107: // Skeletron Prime Mask
-				case 2109: // Plantera Mask
-				case 2110: // Golem Mask
-				case 2588: // Duke Fishron Mask
-				case 3372: // Ancient Cultist Mask
-				case 3863: // Betsy Mask
-				case 3373: // Moon Lord Mask
-					if( mask_type == 3373 && this.Mod.Config.Data.MoonLordMaskWins ) {
+				case ItemID.DestroyerMask:
+				case ItemID.TwinMask:
+				case ItemID.SkeletronPrimeMask:
+				case ItemID.PlanteraMask:
+				case ItemID.GolemMask:
+				case ItemID.DukeFishronMask:
+				case ItemID.BossMaskBetsy:
+				case ItemID.BossMaskCultist:
+				case ItemID.BossMaskMoonlord:
+					if( mask_type == ItemID.BossMaskMoonlord && mymod.Config.Data.MoonLordMaskWins ) {
 						this.GiveAllVanillaMasks();
 					}
-					recovered = (int)((float)recovered * this.Mod.Config.Data.HardModeMultiplier);
+					recovered = (int)((float)recovered * mymod.Config.Data.HardModeMultiplier);
 					break;
 				}
 
@@ -177,7 +174,7 @@ namespace TheLunatic.Logic {
 			// Sky flash for all
 			if( Main.netMode != 2 ) {  // Not server
 				Player current_player = Main.player[Main.myPlayer];
-				var modplayer = current_player.GetModPlayer<TheLunaticPlayer>( this.Mod );
+				var modplayer = current_player.GetModPlayer<MyModPlayer>( mymod );
 				modplayer.FlashMe();
 			}
 		}
@@ -186,18 +183,18 @@ namespace TheLunatic.Logic {
 			ISet<int> masks = new HashSet<int>( MaskLogic.AllVanillaMasks.Where(x => !this.GivenVanillaMasksByType.Contains(x)) );
 
 			if( WorldGen.crimson ) {
-				masks.Remove( 2111 );
+				masks.Remove( ItemID.EaterMask );
 			} else {
-				masks.Remove( 2104 );
+				masks.Remove( ItemID.BrainMask );
 			}
 
 			return masks;
 		}
 
-		public bool DoesLoonyHaveThisMask( Item mask_item ) {
+		public bool DoesLoonyHaveThisMask( TheLunatic mymod, Item mask_item ) {
 			if( this.GetRemainingVanillaMasks().Contains(mask_item.type) ) { return false; }
 
-			var mask_item_info = mask_item.GetGlobalItem<CustomBossMaskItemInfo>( this.Mod );
+			var mask_item_info = mask_item.GetGlobalItem<CustomBossMaskItemInfo>( mymod );
 			return this.GivenCustomMasksByBossUid.Contains( mask_item_info.BossUid );
 		}
 
@@ -210,91 +207,91 @@ namespace TheLunatic.Logic {
 
 		////////////////
 
-		public bool IsValidMask( Item mask ) {
-			var modworld = this.Mod.GetModWorld<TheLunaticWorld>();
-			if( !modworld.GameLogic.HaveWeHopeToWin() ) { return false; }
+		public bool IsValidMask( TheLunatic mymod, Item mask ) {
+			var modworld = mymod.GetModWorld<MyModWorld>();
+			if( !modworld.GameLogic.HaveWeHopeToWin(mymod) ) { return false; }
 
-			if( !this.Mod.Config.Data.LoonyAcceptsMasksWithoutBossKill ) {
-				bool strict = this.Mod.Config.Data.LoonyEnforcesBossSequence;
+			if( !mymod.Config.Data.LoonyAcceptsMasksWithoutBossKill ) {
+				bool strict = mymod.Config.Data.LoonyEnforcesBossSequence;
 				bool downed_mech = NPC.downedMechBoss1 || NPC.downedMechBoss2 || NPC.downedMechBoss3;
 				//bool downed_towers = NPC.downedTowerSolar && NPC.downedTowerVortex && NPC.downedTowerNebula && NPC.downedTowerStardust;
 
 				switch( mask.type ) {
-				case 2112: // Eye of Cthulhu Mask
+				case ItemID.EyeMask:
 					if( !NPC.downedBoss1 ) { return false; }
 					break;
-				case 2104: // Brain of Cthulhu Mask
+				case ItemID.BrainMask:
 					if( !NPC.downedBoss2 ) { return false; }
 					break;
-				case 2111: // Eater of Worlds Mask
+				case ItemID.EaterMask:
 					if( !NPC.downedBoss2 ) { return false; }
 					break;
-				case 1281: // Skeletron Mask
+				case ItemID.SkeletronMask:
 					if( !NPC.downedBoss3 ) { return false; }
 					break;
-				case 2493: // King Slime Mask
+				case ItemID.KingSlimeMask:
 					if( !NPC.downedSlimeKing ) { return false; }
 					break;
-				case 2108: // Queen Bee Mask
+				case ItemID.BeeMask:
 					if( !NPC.downedQueenBee ) { return false; }
 					break;
-				case 2105: // Wall of Flesh Mask
+				case ItemID.FleshMask:
 					if( !Main.hardMode ) { return false; }
 					break;
-				case 2113: // Destroyer Mask
+				case ItemID.DestroyerMask:
 					if( (strict && (!Main.hardMode)) || !NPC.downedMechBoss1 ) { return false; }
 					break;
-				case 2106: // Twin Mask
+				case ItemID.TwinMask:
 					if( (strict && (!Main.hardMode)) || !NPC.downedMechBoss2 ) { return false; }
 					break;
-				case 2107: // Skeletron Prime Mask
+				case ItemID.SkeletronPrimeMask:
 					if( (strict && (!Main.hardMode)) || !NPC.downedMechBoss3 ) { return false; }
 					break;
-				case 2588: // Duke Fishron Mask
+				case ItemID.DukeFishronMask:
 					if( (strict && (!Main.hardMode)) || !NPC.downedFishron ) { return false; }
 					break;
-				case 2109: // Plantera Mask
+				case ItemID.PlanteraMask:
 					if( (strict && (!Main.hardMode || !downed_mech)) || !NPC.downedPlantBoss ) { return false; }
 					break;
-				case 2110: // Golem Mask
+				case ItemID.GolemMask:
 					if( (strict && (!Main.hardMode || !downed_mech || !NPC.downedPlantBoss)) || !NPC.downedGolemBoss ) { return false; }
 					break;
-				case 3863: // Betsy Mask
+				case ItemID.BossMaskBetsy:
 					if( (strict && (!Main.hardMode || !downed_mech || !NPC.downedPlantBoss || !NPC.downedGolemBoss)) ) { return false; }
 					break;
-				case 3372: // Ancient Cultist Mask
+				case ItemID.BossMaskCultist:
 					if( (strict && (!Main.hardMode || !downed_mech || !NPC.downedPlantBoss || !NPC.downedGolemBoss)) ||
 						!NPC.downedAncientCultist ) { return false; }
 					break;
-				case 3373: // Moon Lord Mask
+				case ItemID.BossMaskMoonlord:
 					if( (strict && (!Main.hardMode || !downed_mech || !NPC.downedPlantBoss || !NPC.downedGolemBoss || !NPC.downedAncientCultist)) ||
 						!NPC.downedMoonlord ) { return false; }  //|| !downed_towers
 					break;
 				}
 			}
 
-			if( (WorldGen.crimson && mask.type == 2111) || (!WorldGen.crimson && mask.type == 2104) ) {
+			if( (WorldGen.crimson && mask.type == ItemID.EaterMask) || (!WorldGen.crimson && mask.type == ItemID.BrainMask) ) {
 				return false;
 			}
 
 			return true;
 		}
 
-		public void GiveMaskToLoony( Player player, Item mask ) {
+		public void GiveMaskToLoony( TheLunatic mymod, Player player, Item mask ) {
 			if( Main.netMode == 1 ) {   // Client
-				TheLunaticNetProtocol.SendGivenMaskFromClient( this.Mod, mask );
+				ClientPacketHandlers.SendGivenMaskFromClient( mymod, mask );
 			} else if( Main.netMode == 2 ) {    // Server
 				throw new Exception( "Server should not be giving masks to loonys." );
 			}
 
 			int boss_type = -1;
-			if( mask.type == this.Mod.ItemType<CustomBossMaskItem>() ) {
-				boss_type = mask.GetGlobalItem<CustomBossMaskItemInfo>( this.Mod ).BossNpcType;
+			if( mask.type == mymod.ItemType<CustomBossMaskItem>() ) {
+				boss_type = mask.GetGlobalItem<CustomBossMaskItemInfo>( mymod ).BossNpcType;
 			} else {
 				var boss_of_mask = MaskLogic.VanillaBossOfMask.Where( x => x.Value == mask.type ).First();
 				boss_type = boss_of_mask.Value > 0 ? boss_of_mask.Value : boss_type;
 			}
-			this.RegisterReceiptOfMask( player, mask.type, boss_type );
+			this.RegisterReceiptOfMask( mymod, player, mask.type, boss_type );
 
 			mask.TurnToAir();
 

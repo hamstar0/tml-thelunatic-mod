@@ -31,7 +31,7 @@ namespace TheLunatic.Buffs {
 		////////////////
 
 		public static bool CanShadowWalk( Player player ) {
-			float brightness = TileHelpers.GaugeBrightnessWithin( (int)(player.position.X / 16f), (int)(player.position.Y / 16f), 2, 3 );
+			float brightness = TileWorldHelpers.GaugeBrightnessWithin( (int)(player.position.X / 16f), (int)(player.position.Y / 16f), 2, 3 );
 			return brightness <= 0.005;
 		}
 
@@ -82,7 +82,7 @@ namespace TheLunatic.Buffs {
 		////////////////
 
 		private void Run( Player player ) {
-			var modplayer = player.GetModPlayer<TheLunaticPlayer>( this.mod );
+			var modplayer = player.GetModPlayer<MyModPlayer>( this.mod );
 			if( modplayer.Noclip == null ) { return; }
 
 			player.AddBuff( mod.BuffType("ShadowWalkerBuff"), 4 );
@@ -122,7 +122,7 @@ namespace TheLunatic.Buffs {
 				return;
 			}
 
-			var modplayer = player.GetModPlayer<TheLunaticPlayer>( this.mod );
+			var modplayer = player.GetModPlayer<MyModPlayer>( this.mod );
 			if( modplayer.Noclip != null ) {
 				modplayer.Noclip.Off();
 			}

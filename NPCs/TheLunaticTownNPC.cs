@@ -1,4 +1,4 @@
-using HamstarHelpers.MiscHelpers;
+using HamstarHelpers.DebugHelpers;
 using HamstarHelpers.PlayerHelpers;
 using System;
 using System.Collections.Generic;
@@ -54,8 +54,8 @@ namespace TheLunatic.NPCs {
 			};
 		}
 
-		public static bool WantsToSpawnAnew( TheLunaticMod mymod ) {
-			var modworld = mymod.GetModWorld<TheLunaticWorld>();
+		public static bool WantsToSpawnAnew( TheLunatic mymod ) {
+			var modworld = mymod.GetModWorld<MyModWorld>();
 			if( modworld.GameLogic == null ) { throw new Exception( "Game logic not initialized." ); }
 
 			bool can_spawn = !modworld.GameLogic.HasLoonyQuit;
@@ -82,8 +82,8 @@ namespace TheLunatic.NPCs {
 			return can_spawn;
 		}
 
-		public static bool WantsToSpawn( TheLunaticMod mymod ) {
-			var modworld = mymod.GetModWorld<TheLunaticWorld>();
+		public static bool WantsToSpawn( TheLunatic mymod ) {
+			var modworld = mymod.GetModWorld<MyModWorld>();
 			if( modworld.GameLogic == null ) { throw new Exception("Game logic not initialized."); }
 
 			bool can_spawn = !modworld.GameLogic.HasLoonyQuit;
@@ -157,11 +157,11 @@ namespace TheLunatic.NPCs {
 		}
 
 		public override bool CanTownNPCSpawn( int numTownNPCs, int money ) {
-			var modworld = mod.GetModWorld<TheLunaticWorld>();
+			var modworld = mod.GetModWorld<MyModWorld>();
 			if( modworld.GameLogic == null ) { throw new Exception("Game logic not initialized."); }
 
 			if( modworld.GameLogic.KillSurfaceTownNPCs ) { return false; }
-			return TheLunaticTownNPC.WantsToSpawn( (TheLunaticMod)this.mod );
+			return TheLunaticTownNPC.WantsToSpawn( (TheLunatic)this.mod );
 		}
 
 		public override void TownNPCAttackStrength( ref int damage, ref float knockback ) {
@@ -190,16 +190,17 @@ namespace TheLunatic.NPCs {
 		}
 
 		public override bool UsesPartyHat() {
-			return false;	// :(
+			return false;   // :(
 		}
-
+		
 		public override void AI() {
-			var modworld = mod.GetModWorld<TheLunaticWorld>();
+			var mymod = (TheLunatic)this.mod;
+			var modworld = this.mod.GetModWorld<MyModWorld>();
 			if( modworld.GameLogic == null ) { throw new Exception( "Game logic not initialized." ); }
 
 			TheLunaticTownNPC.AmHere = true;
 
-			if( modworld.GameLogic.HaveWeEndSigns() ) {
+			if( modworld.GameLogic.HaveWeEndSigns( mymod ) ) {
 				TheLunaticTownNPC.AlertedToImpendingDoom = true;
 			}
 		}
@@ -207,8 +208,8 @@ namespace TheLunatic.NPCs {
 		////////////////
 
 		public override void SetupShop( Chest shop, ref int nextSlot ) {
-			var mymod = (TheLunaticMod)this.mod;
-			var modworld = mymod.GetModWorld<TheLunaticWorld>();
+			var mymod = (TheLunatic)this.mod;
+			var modworld = mymod.GetModWorld<MyModWorld>();
 			bool strict = mymod.Config.Data.LoonyEnforcesBossSequence;
 			bool downed_mech = NPC.downedMechBoss1 || NPC.downedMechBoss2 || NPC.downedMechBoss3;
 			bool downed_towers = NPC.downedTowerSolar && NPC.downedTowerVortex && NPC.downedTowerNebula && NPC.downedTowerStardust;
@@ -232,11 +233,11 @@ namespace TheLunatic.NPCs {
 			pumpkin_pie.value *= 9;
 			cooked_marshmallow.value *= 5;
 			
-			sugar_cookie.GetGlobalItem<TheLunaticItem>(mymod).AddedTooltip = "Bake sale!";
-			gingerbread_cookie.GetGlobalItem<TheLunaticItem>( mymod ).AddedTooltip = "Bake sale!";
-			christmas_pudding.GetGlobalItem<TheLunaticItem>( mymod ).AddedTooltip = "Bake sale!";
-			pumpkin_pie.GetGlobalItem<TheLunaticItem>( mymod ).AddedTooltip = "Bake sale!";
-			cooked_marshmallow.GetGlobalItem<TheLunaticItem>( mymod ).AddedTooltip = "Bake sale!";
+			sugar_cookie.GetGlobalItem<MyGlobalItem>(mymod).AddedTooltip = "Bake sale!";
+			gingerbread_cookie.GetGlobalItem<MyGlobalItem>( mymod ).AddedTooltip = "Bake sale!";
+			christmas_pudding.GetGlobalItem<MyGlobalItem>( mymod ).AddedTooltip = "Bake sale!";
+			pumpkin_pie.GetGlobalItem<MyGlobalItem>( mymod ).AddedTooltip = "Bake sale!";
+			cooked_marshmallow.GetGlobalItem<MyGlobalItem>( mymod ).AddedTooltip = "Bake sale!";
 
 			shop.item[nextSlot++] = sugar_cookie;
 			shop.item[nextSlot++] = gingerbread_cookie;
@@ -251,85 +252,96 @@ namespace TheLunatic.NPCs {
 			// Boss summon items
 			if( mymod.Config.Data.LoonySellsSummonItems ) {
 				// Eye of Cthulhu
-				if( /*NPC.downedBoss1*/ modworld.MaskLogic.GivenVanillaMasksByType.Contains(2112) ) {
+				if( /*NPC.downedBoss1*/ modworld.MaskLogic.GivenVanillaMasksByType.Contains( ItemID.EyeMask ) ) {
 					Item summon_item = new Item();
 					summon_item.SetDefaults( 43 );		// Suspicious Looking Eye
 					summon_item.value = 150000;
 					shop.item[nextSlot++] = summon_item;
 				}
 				// King Slime
-				if( /*NPC.downedSlimeKing*/ modworld.MaskLogic.GivenVanillaMasksByType.Contains(2112) ) {
+				if( /*NPC.downedSlimeKing*/ modworld.MaskLogic.GivenVanillaMasksByType.Contains( ItemID.KingSlimeMask ) ) {
 					Item summon_item = new Item();
 					summon_item.SetDefaults( 560 );    // Slime Crown
 					summon_item.value = 180000;
 					shop.item[nextSlot++] = summon_item;
 				}
 				// Queen Bee
-				if( /*NPC.downedQueenBee*/ modworld.MaskLogic.GivenVanillaMasksByType.Contains(2108) ) {
+				if( /*NPC.downedQueenBee &&*/ modworld.MaskLogic.GivenVanillaMasksByType.Contains( ItemID.BeeMask ) ) {
 					Item summon_item = new Item();
 					summon_item.SetDefaults( 1133 );    // Abeemination
 					summon_item.value = 200000;
 					shop.item[nextSlot++] = summon_item;
 				}
 				// Brain of Cthulhu
-				if( /*NPC.downedBoss2 && WorldGen.crimson*/ modworld.MaskLogic.GivenVanillaMasksByType.Contains(2104) ) {
+				if( /*NPC.downedBoss2 && WorldGen.crimson &&*/
+						modworld.MaskLogic.GivenVanillaMasksByType.Contains( ItemID.BrainMask ) ) {
 					Item summon_item = new Item();
 					summon_item.SetDefaults( 1331 );	// Bloody Spine
 					summon_item.value = 260000;
 					shop.item[nextSlot++] = summon_item;
 				}
 				// Eater of Worlds
-				if( /*NPC.downedBoss2 && !WorldGen.crimson*/ modworld.MaskLogic.GivenVanillaMasksByType.Contains(2111) ) {
+				if( /*NPC.downedBoss2 && !WorldGen.crimson &&*/
+						modworld.MaskLogic.GivenVanillaMasksByType.Contains( ItemID.EaterMask ) ) {
 					Item summon_item = new Item();
 					summon_item.SetDefaults( 70 );    // Worm Food
 					summon_item.value = 250000;
 					shop.item[nextSlot++] = summon_item;
 				}
 				// Skeletron
-				if( /*NPC.downedBoss3*/ modworld.MaskLogic.GivenVanillaMasksByType.Contains(1281) ) {
+				if( /*NPC.downedBoss3*/ modworld.MaskLogic.GivenVanillaMasksByType.Contains( ItemID.SkeletronMask ) ) {
 					Item summon_item = new Item();
 					summon_item.SetDefaults( 1307 );    // Clothier Voodoo Doll
 					summon_item.value = 300000;
 					shop.item[nextSlot++] = summon_item;
 				}
 				// Wall of Flesh
-				if( /*Main.hardMode*/ modworld.MaskLogic.GivenVanillaMasksByType.Contains(2105) ) {
+				if( /*Main.hardMode*/ modworld.MaskLogic.GivenVanillaMasksByType.Contains( ItemID.FleshMask ) ) {
 					Item summon_item = new Item();
 					summon_item.SetDefaults( 267 );    // Guide Voodoo Doll
 					summon_item.value = 320000;
 					shop.item[nextSlot++] = summon_item;
 				}
 				// Destroyer
-				if( (!strict || (Main.hardMode)) && /*NPC.downedMechBoss1*/ modworld.MaskLogic.GivenVanillaMasksByType.Contains(2113) ) {
+				if( (!strict || (Main.hardMode)) &&
+						/*NPC.downedMechBoss1 &&*/
+						modworld.MaskLogic.GivenVanillaMasksByType.Contains( ItemID.DestroyerMask ) ) {
 					Item summon_item = new Item();
 					summon_item.SetDefaults( 556 );    // Mechanical Worm
 					summon_item.value = 1000000;
 					shop.item[nextSlot++] = summon_item;
 				}
 				// Twins
-				if( (!strict || (Main.hardMode)) && /*NPC.downedMechBoss2*/ modworld.MaskLogic.GivenVanillaMasksByType.Contains(2106) ) {
+				if( (!strict || (Main.hardMode)) &&
+						/*NPC.downedMechBoss2 &&*/
+						modworld.MaskLogic.GivenVanillaMasksByType.Contains( ItemID.TwinMask ) ) {
 					Item summon_item = new Item();
 					summon_item.SetDefaults( 544 );    // Mechanical Worm
 					summon_item.value = 1000000;
 					shop.item[nextSlot++] = summon_item;
 				}
 				// Skeletron Prime
-				if( (!strict ||(Main.hardMode)) && /*NPC.downedMechBoss3*/ modworld.MaskLogic.GivenVanillaMasksByType.Contains(2107) ) {
+				if( (!strict ||(Main.hardMode)) &&
+						/*NPC.downedMechBoss3 &&*/
+						modworld.MaskLogic.GivenVanillaMasksByType.Contains( ItemID.SkeletronPrimeMask ) ) {
 					Item summon_item = new Item();
 					summon_item.SetDefaults( 557 );    // Mechanical Skull
 					summon_item.value = 1000000;
 					shop.item[nextSlot++] = summon_item;
 				}
 				// Golem
-				if( (!strict || (Main.hardMode && downed_mech && NPC.downedPlantBoss)) && /*NPC.downedGolemBoss*/
-						modworld.MaskLogic.GivenVanillaMasksByType.Contains(2110) ) {
+				if( (!strict || (Main.hardMode && downed_mech && NPC.downedPlantBoss)) &&
+						/*NPC.downedGolemBoss &&*/
+						modworld.MaskLogic.GivenVanillaMasksByType.Contains( ItemID.GolemMask ) ) {
 					Item summon_item = new Item();
 					summon_item.SetDefaults( 1293 );    // Lihzahrd Power Cell
 					summon_item.value = 2000000;
 					shop.item[nextSlot++] = summon_item;
 				}
 				// Duke Fishron
-				if( (!strict || (Main.hardMode)) && /*NPC.downedFishron*/ modworld.MaskLogic.GivenVanillaMasksByType.Contains(2588) ) {
+				if( (!strict || (Main.hardMode)) &&
+						/*NPC.downedFishron &&*/
+						modworld.MaskLogic.GivenVanillaMasksByType.Contains( ItemID.DukeFishronMask ) ) {
 					Item summon_item = new Item();
 					summon_item.SetDefaults( 2673 );    // Truffle Worm
 					summon_item.value = 3500000;
@@ -338,7 +350,7 @@ namespace TheLunatic.NPCs {
 				// Moon Lord
 				if( (!strict || (Main.hardMode && downed_mech && NPC.downedPlantBoss && NPC.downedGolemBoss && NPC.downedAncientCultist)) &&
 						/*NPC.downedMoonlord &&*/
-						modworld.MaskLogic.GivenVanillaMasksByType.Contains(3373) ) {    //&& downed_towers
+						modworld.MaskLogic.GivenVanillaMasksByType.Contains( ItemID.BossMaskMoonlord ) ) {    //&& downed_towers
 					Item summon_item = new Item();
 					summon_item.SetDefaults( 3601 );    // Celestial Sigil
 					summon_item.value = 8000000;
@@ -348,16 +360,15 @@ namespace TheLunatic.NPCs {
 		}
 
 		////////////////
-
-
+		
 		public override string GetChat() {
 			try {
-				var mymod = (TheLunaticMod)this.mod;
-				var modworld = mymod.GetModWorld<TheLunaticWorld>();
+				var mymod = (TheLunatic)this.mod;
+				var modworld = mymod.GetModWorld<MyModWorld>();
 				if( modworld.GameLogic == null ) { throw new Exception( "Game logic not initialized." ); }
 
 				Player player = Main.player[Main.myPlayer];
-				var modplayer = player.GetModPlayer<TheLunaticPlayer>( this.mod );
+				var modplayer = player.GetModPlayer<MyModPlayer>( this.mod );
 
 				if( modplayer.IsCheater() ) {
 					return TheLunaticTownNPC.DismissalReplies[ Main.rand.Next(TheLunaticTownNPC.DismissalReplies.Length) ];
@@ -399,13 +410,14 @@ namespace TheLunatic.NPCs {
 		private bool FirstButtonIsShop = false;
 
 		public override void SetChatButtons( ref string button1, ref string button2 ) {
-			var modworld = this.mod.GetModWorld<TheLunaticWorld>();
+			var mymod = (TheLunatic)this.mod;
+			var modworld = this.mod.GetModWorld<MyModWorld>();
 			if( modworld.GameLogic == null ) { throw new Exception( "Game logic not initialized." ); }
 
 			Player player = Main.player[Main.myPlayer];
-			var modplayer = player.GetModPlayer<TheLunaticPlayer>( this.mod );
+			var modplayer = player.GetModPlayer<MyModPlayer>( this.mod );
 			
-			if( !modplayer.IsCheater() && modworld.GameLogic.HaveWeHopeToWin() ) {
+			if( !modplayer.IsCheater() && modworld.GameLogic.HaveWeHopeToWin( mymod ) ) {
 				this.FirstButtonIsShop = false;
 				button1 = "Give boss mask";
 				button2 = "Shop";
@@ -429,10 +441,10 @@ namespace TheLunatic.NPCs {
 		}
 
 		////////////////
-
+		
 		private string onGiveMaskButtonClick() {
-			var mymod = (TheLunaticMod)this.mod;
-			var modworld = mymod.GetModWorld<TheLunaticWorld>();
+			var mymod = (TheLunatic)this.mod;
+			var modworld = mymod.GetModWorld<MyModWorld>();
 			if( modworld.MaskLogic == null ) { throw new Exception( "Mask logic not initialized." ); }
 
 			Player player = Main.player[Main.myPlayer];
@@ -447,7 +459,7 @@ namespace TheLunatic.NPCs {
 			if( mask == null ) {
 				mask = PlayerItemHelpers.FindFirstOfItemFor( player, new HashSet<int> { mymod.ItemType<CustomBossMaskItem>() } );
 				is_custom = mask != null;
-				is_given = is_custom && modworld.MaskLogic.DoesLoonyHaveThisMask( mask );
+				is_given = is_custom && modworld.MaskLogic.DoesLoonyHaveThisMask( mymod, mask );
 			}
 
 			if( mask == null || is_given ) {
@@ -469,7 +481,7 @@ namespace TheLunatic.NPCs {
 				return msg;
 			}
 
-			if( modworld.MaskLogic.IsValidMask( mask ) ) {
+			if( modworld.MaskLogic.IsValidMask( mymod, mask ) ) {
 				int remaining = remaining_masks.Count() - (is_custom?0:1);
 				string status, msg;
 
@@ -487,50 +499,50 @@ namespace TheLunatic.NPCs {
 				}
 
 				switch( mask.type ) {
-				case 2112: // Eye of Cthulhu Mask
+				case ItemID.EyeMask: // Eye of Cthulhu Mask
 					msg = "A genuine Eye of Cthulhu mask. Much thanks!\nThat wasn't really Cthulhu's eye, by the way. We tried getting a real one, but it saw right through us. Right THROUGH us.";
 					break;
-				case 2493: // King Slime Mask
+				case ItemID.KingSlimeMask: // King Slime Mask
 					msg = "A genuine King Slime mask. Much thanks!\nA bit sticky to the touch, though.";
 					break;
-				case 2108: // Queen Bee Mask
+				case ItemID.BeeMask: // Queen Bee Mask
 					msg = "A genuine Queen Bee mask. Much thanks!\nI'll take it. Not one of ours, but having it gone helps us cut back on the bug spray.";
 					break;
-				case 2104: // Brain of Cthulhu Mask
+				case ItemID.BrainMask: // Brain of Cthulhu Mask
 					msg = "A genuine Brain of Cthulhu mask. Much thanks!\nDon't be confused: It's a brain OF Cthulhu. Not Cthulhu's brain. Dang newbies.";
 					break;
-				case 2111: // Eater of Worlds Mask
+				case ItemID.EaterMask: // Eater of Worlds Mask
 					msg = "A genuine Eater of Worlds mask. Much thanks!\nSuch an ominous name. It really only nibbles them a bit...";
 					break;
-				case 1281: // Skeletron Mask
+				case ItemID.SkeletronMask: // Skeletron Mask
 					msg = "A genuine Skeletron mask. Much thanks!\nYou don't even want to know what it took to stuff that thing inside the old geezer. Took it like a champ, he did.";
 					break;
-				case 2105: // Wall of Flesh Mask
+				case ItemID.FleshMask: // Wall of Flesh Mask
 					msg = "A genuine Wall of Flesh mask. Much thanks!\nAh, you cleared up that fleshy blockage yourself. I wonder what happened to the plumber we called...";
 					break;
-				case 2113: // Destroyer Mask
+				case ItemID.DestroyerMask: // Destroyer Mask
 					msg = "A genuine Destroyer Mask mask. Much thanks!\nDo you have any idea how much assembly these req... er, thanks for the mask!";
 					break;
-				case 2106: // Twin Mask
+				case ItemID.TwinMask: // Twin Mask
 					msg = "A genuine Twins mask. Much thanks!\nI wonder what became of the larger thing these were supposed to be part of...";
 					break;
-				case 2107: // Skeletron Prime Mask
+				case ItemID.SkeletronPrimeMask: // Skeletron Prime Mask
 					msg = "A genuine Skeletron Prime mask. Much thanks!\nA favorite for terrorizing small children! Uh, I mean the mask, of course! That's right!";
 					break;
-				case 2109: // Plantera Mask
+				case ItemID.PlanteraMask: // Plantera Mask
 					msg = "A genuine Plantera mask. Much thanks!\nI have a strange urge to listen to heavy metal for some reason...";
 					break;
-				case 2110: // Golem Mask
+				case ItemID.GolemMask: // Golem Mask
 					msg = "A genuine Golem mask. Much thanks!\nServes those damn reptiles right for going rogue.";
 					break;
-				case 2588: // Duke Fishron Mask
+				case ItemID.DukeFishronMask: // Duke Fishron Mask
 					//msg = "A genuine Duke Fishron mask. Much thanks!\nThese are quite the delicacy. A heck of a fishing trip to catch, though.";
 					msg = "A genuine Duke Fishron mask. Much thanks!\nHere's what you get for breeding a shark, a pig, and a dragon. Just a little leftover from someone's previous party.";
 					break;
-				case 3372: // Ancient Cultist Mask
+				case ItemID.BossMaskCultist: // Ancient Cultist Mask
 					msg = "A genuine Ancient Cultist mask. Much thanks!\nFairwell, boss. The summoning ritual is now halted. Seems we're still getting a party of sorts, though...";
 					break;
-				case 3373: // Moon Lord Mask
+				case ItemID.BossMaskMoonlord: // Moon Lord Mask
 					msg = "PRAISE BE TO YOG-er, thank you very much!";
 					break;
 				default:
@@ -539,15 +551,18 @@ namespace TheLunatic.NPCs {
 					break;
 				}
 
-				modworld.MaskLogic.GiveMaskToLoony( player, mask );
+				modworld.MaskLogic.GiveMaskToLoony( mymod, player, mask );
 
 				return msg + "\n\n" + status;
 			}
 			else {
-				if( (TheLunaticMod.DEBUGMODE & 1) > 0 ) { DebugHelpers.Log("DEBUG cheater detected. "+ mask.Name); }
+				// 1: Display info, 2: Fast time, 4: Reset, 8: Reset win, 16: Skip to signs, 32: Display net info
+				if( mymod.IsDisplayInfoDebugMode() ) {
+					DebugHelpers.Log("DEBUG cheater detected. "+ mask.Name);
+				}
 
 				if( mymod.Config.Data.LoonyShunsCheaters ) {
-					player.GetModPlayer<TheLunaticPlayer>( this.mod ).SetCheater();
+					player.GetModPlayer<MyModPlayer>( this.mod ).SetCheater();
 					return "You... you aren't supposed to even have this. Bye.";
 				} else {
 					return "I don't know how you got this, but I'm not ready for it yet.";
@@ -557,42 +572,42 @@ namespace TheLunatic.NPCs {
 
 
 		public string GetHint() {
-			var modworld = this.mod.GetModWorld<TheLunaticWorld>();
+			var modworld = this.mod.GetModWorld<MyModWorld>();
 			if( modworld.MaskLogic == null ) { throw new Exception( "Mask logic not initialized." ); }
 			var masks = modworld.MaskLogic.GetRemainingVanillaMasks();
 			string msg;
-
-			if( masks.Contains( 2112 ) ) { // Eye of Cthulhu Mask
+			
+			if( masks.Contains( ItemID.EyeMask ) ) {
 				msg = "Where to find a mask? Keep an eye out for a big eye. No really!";
-			} else if( masks.Contains( 2493 ) ) { // King Slime Mask
+			} else if( masks.Contains( ItemID.KingSlimeMask ) ) {
 				msg = "You could try persuading a giant slime to give you one.";
-			} else if( masks.Contains( 2104 ) ) { // Brain of Cthulhu Mask
+			} else if( masks.Contains( ItemID.BrainMask ) ) {
 				msg = "I'll bet a certain big-brained abomination has one.";
-			} else if( masks.Contains( 2111 ) ) { // Eater of Worlds Mask
+			} else if( masks.Contains( ItemID.EaterMask ) ) {
 				msg = "I'll bet a certain giant worm's got the goods.";
-			} else if( masks.Contains( 2108 ) ) { // Queen Bee Mask
+			} else if( masks.Contains( ItemID.BeeMask ) ) {
 				msg = "Try asking bee momma politely.";
-			} else if( masks.Contains( 1281 ) ) { // Skeletron Mask
+			} else if( masks.Contains( ItemID.SkeletronMask ) ) {
 				msg = "Might have to take one from our dungeon guard dog.";
-			} else if( masks.Contains( 2105 ) ) { // Wall of Flesh Mask
+			} else if( masks.Contains( ItemID.FleshMask ) ) { 
 				msg = "That eldritch horror of the underworld's likely your next stop.";
-			} else if( masks.Contains( 2113 ) ) { // Destroyer Mask
+			} else if( masks.Contains( ItemID.DestroyerMask ) ) {
 				msg = "I expect the giant toy worm's got one.";
-			} else if( masks.Contains( 2106 ) ) { // Twin Mask
+			} else if( masks.Contains( ItemID.TwinMask ) ) {
 				msg = "I reckon the eyeball bros got one.";
-			} else if( masks.Contains( 2107 ) ) { // Skeletron Prime Mask
+			} else if( masks.Contains( ItemID.SkeletronPrimeMask ) ) {
 				msg = "That machine playing copycat to our guard dog must have one.";
-			} else if( masks.Contains( 2109 ) ) { // Plantera Mask
+			} else if( masks.Contains( ItemID.PlanteraMask ) ) {
 				msg = "It seems some horticulturalist's pet might give you your next mask.";
-			} else if( masks.Contains( 2110 ) ) { // Golem Mask
+			} else if( masks.Contains( ItemID.GolemMask ) ) {
 				msg = "Dang lizards. Check with their new punching toy.";
-			} else if( masks.Contains( 2588 ) ) { // Duke Fishron Mask
+			} else if( masks.Contains( ItemID.DukeFishronMask ) ) {
 				msg = "The fish lord for sure has the next.";
-			} else if( masks.Contains( 3863 ) ) { // Betsy Mask
+			} else if( masks.Contains( ItemID.BossMaskBetsy ) ) {
 				msg = "Buncha foreigners and their pet flying lizard brought one.";
-			} else if( masks.Contains( 3372 ) ) { // Ancient Cultist Mask
+			} else if( masks.Contains( ItemID.BossMaskCultist ) ) {
 				msg = "*sigh* Gonna have to get the next one from my boss. You didn't hear this from me.";
-			} else if( masks.Contains( 3373 ) ) { // Moon Lord Mask
+			} else if( masks.Contains( ItemID.BossMaskMoonlord ) ) {
 				msg = "You'll have to wrest the last one from Cthulhu's kin. Good luck!";
 			} else {
 				msg = "No additional masks required.";

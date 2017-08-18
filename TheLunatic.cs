@@ -7,7 +7,9 @@ using TheLunatic.Tiles;
 using Terraria.ID;
 using System;
 using HamstarHelpers.Utilities.Config;
-using HamstarHelpers.MiscHelpers;
+using HamstarHelpers.DebugHelpers;
+using TheLunatic.NetProtocol;
+
 
 namespace TheLunatic {
 	public class ConfigurationData {
@@ -30,23 +32,21 @@ namespace TheLunatic {
 		public bool OnlyVanillaBossesDropMasks = false;
 		public bool MoonLordMaskWins = false;
 		
-		public int DEBUGFLAGS = 0;	// 1: Display info, 2: Fast time, 4: Reset, 8: Reset win, 16: Skip to signs
+		public int DEBUGFLAGS = 0;	// 1: Display info, 2: Fast time, 4: Reset, 8: Reset win, 16: Skip to signs, 32: Display net info
 	}
 
 
 
-	public class TheLunaticMod : Mod {
-		public static int DEBUGMODE;
-		static TheLunaticMod() { TheLunaticMod.DEBUGMODE = 0; }
-
-
+	public class TheLunatic : Mod {
 		public readonly static Version ConfigVersion = new Version(1, 2, 5);
 		public JsonConfig<ConfigurationData> Config { get; private set; }
 
 		public AnimatedSky Sky { get; private set; }
 
+		public int DEBUGMODE = 0;
 
-		public TheLunaticMod() {
+
+		public TheLunatic() {
 			this.Properties = new ModProperties() {
 				Autoload = true,
 				AutoloadGores = true,
@@ -71,9 +71,9 @@ namespace TheLunatic {
 					new Version( this.Config.Data.VersionSinceUpdate ) :
 					new Version();
 
-				if( vers_since < TheLunaticMod.ConfigVersion ) {
+				if( vers_since < TheLunatic.ConfigVersion ) {
 					var new_config = new ConfigurationData();
-					ErrorLogger.Log( "The Lunatic config updated to " + TheLunaticMod.ConfigVersion.ToString() );
+					ErrorLogger.Log( "The Lunatic config updated to " + TheLunatic.ConfigVersion.ToString() );
 				
 					if( vers_since < new Version( 1, 2, 2 ) ) {
 						this.Config.Data.DaysUntil = new_config.DaysUntil;
@@ -81,7 +81,7 @@ namespace TheLunatic {
 						this.Config.Data.HalfDaysRecoveredPerMask = new_config.HalfDaysRecoveredPerMask;
 					}
 
-					this.Config.Data.VersionSinceUpdate = TheLunaticMod.ConfigVersion.ToString();
+					this.Config.Data.VersionSinceUpdate = TheLunatic.ConfigVersion.ToString();
 					this.Config.SaveFile();
 				}
 			}
@@ -91,23 +91,27 @@ namespace TheLunatic {
 				SkyManager.Instance["TheLunaticMod:AnimatedColorize"] = this.Sky;
 			}
 
-			TheLunaticMod.DEBUGMODE = this.Config.Data.DEBUGFLAGS;
+			this.DEBUGMODE = this.Config.Data.DEBUGFLAGS;
 		}
 
 
 
 		////////////////
 
-		public override void HandlePacket( BinaryReader reader, int whoAmI ) {
+		public override void HandlePacket( BinaryReader reader, int player_who ) {
 			try {
-				TheLunaticNetProtocol.RouteReceivedPackets( this, reader );
+				if( Main.netMode == 1 ) {
+					ClientPacketHandlers.HandlePacket( this, reader );
+				} else if( Main.netMode == 2 ) {
+					ServerPacketHandlers.HandlePacket( this, reader, player_who );
+				}
 			} catch( Exception e ) {
 				DebugHelpers.Log( "HandlePacket "+e.ToString() );
 			}
 		}
 
 		public override bool HijackGetData( ref byte messageType, ref BinaryReader reader, int playerNumber ) {
-			var modworld = this.GetModWorld<TheLunaticWorld>();
+			var modworld = this.GetModWorld<MyModWorld>();
 			if( modworld != null && modworld.GameLogic != null ) {
 				// Let not a peep of town NPC suffering be heard when set to do so
 				if( modworld.GameLogic.KillSurfaceTownNPCs ) {
@@ -126,7 +130,7 @@ namespace TheLunatic {
 		public override void PostDrawInterface( SpriteBatch sb ) {
 			if( !this.Config.Data.Enabled ) { return; }
 
-			var modworld = this.GetModWorld<TheLunaticWorld>();
+			var modworld = this.GetModWorld<MyModWorld>();
 			if( modworld.GameLogic != null ) {
 				modworld.GameLogic.ReadyClient = true;  // Ugh!
 			}
@@ -135,11 +139,38 @@ namespace TheLunatic {
 		public override void UpdateMusic( ref int music ) {
 			if( !this.Config.Data.Enabled ) { return; }
 
-			var modworld = this.GetModWorld<TheLunaticWorld>();
+			var modworld = this.GetModWorld<MyModWorld>();
 
 			if( modworld != null && modworld.GameLogic != null ) {
-				modworld.GameLogic.UpdateMyMusic( ref music );
+				modworld.GameLogic.UpdateMyMusic( this, ref music );
 			}
+		}
+
+
+		////////////////
+
+		public bool IsDisplayInfoDebugMode() {
+			return (this.DEBUGMODE & 1) > 0;
+		}
+
+		public bool IsFastTimeDebugMode() {
+			return (this.DEBUGMODE & 2) > 0;
+		}
+
+		public bool IsResetDebugMode() {
+			return (this.DEBUGMODE & 4) > 0;
+		}
+
+		public bool IsResetWinDebugMode() {
+			return (this.DEBUGMODE & 8) > 0;
+		}
+
+		public bool IsSkipToSignsDebugMode() {
+			return (this.DEBUGMODE & 16) > 0;
+		}
+
+		public bool IsDisplayNetInfoDebugMode() {
+			return (this.DEBUGMODE & 32) > 0;
 		}
 	}
 }

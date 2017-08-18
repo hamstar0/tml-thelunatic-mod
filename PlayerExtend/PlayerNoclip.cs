@@ -17,8 +17,7 @@ namespace PlayerExtend {
 
 		////////////////
 
-		public PlayerNoclip() {
-		}
+		public PlayerNoclip() { }
 
 		public void On( Player player, float speed ) {
 			if( this.IsOn ) { return; }

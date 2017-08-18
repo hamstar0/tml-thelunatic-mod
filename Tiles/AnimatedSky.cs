@@ -1,11 +1,11 @@
-using HamstarHelpers.MiscHelpers;
+using HamstarHelpers.DebugHelpers;
 using HamstarHelpers.WorldHelpers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.Graphics.Effects;
-
+using Terraria.ModLoader;
 
 namespace TheLunatic.Tiles {
 	public class AnimatedSky : CustomSky {
@@ -68,7 +68,7 @@ namespace TheLunatic.Tiles {
 			return color;
 		}
 
-		public Color GetTintColor() {
+		public Color GetTintColor( TheLunatic mymod ) {
 			Color color = Color.Black;
 			float tint_scale = MathHelper.Clamp( this.TintScale, 0f, 1f );
 			float day_spike = (float)Math.Abs( WorldHelpers.GetDayOrNightPercentDone() - 0.5d );
@@ -83,7 +83,7 @@ namespace TheLunatic.Tiles {
 			color.G = (byte)(128f * tint_scale);
 			color.A = (byte)(255f * tint_scale);
 
-			if( (TheLunaticMod.DEBUGMODE & 1) > 0 ) {
+			if( mymod.IsDisplayInfoDebugMode() ) {
 				DebugHelpers.Display["Sky"] = color.ToString();
 			}
 			return color;
@@ -120,7 +120,9 @@ namespace TheLunatic.Tiles {
 		
 		public override void Draw( SpriteBatch sb, float min_depth, float max_depth ) {
 			if( this.TintScale > 0f ) {
-				Color color = this.GetTintColor();
+				var mymod = (TheLunatic)ModLoader.GetMod( "TheLunatic" );
+				Color color = this.GetTintColor( mymod );
+
 				if( min_depth >= 6f ) {
 					sb.Draw( Main.blackTileTexture, new Rectangle( 0, 0, Main.screenWidth, Main.screenHeight ), color );
 				}
@@ -128,6 +130,7 @@ namespace TheLunatic.Tiles {
 
 			if( this.SkyFlash != 0 ) {  // && max_depth >= 0f && min_depth < 0f
 				Color color = this.GetFlashColor();
+
 				sb.Draw( Main.blackTileTexture, new Rectangle( 0, 0, Main.screenWidth, Main.screenHeight ), color );
 			}
 		}
