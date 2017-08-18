@@ -7,7 +7,7 @@ using TheLunatic.Items;
 
 
 namespace TheLunatic.NetProtocol {
-	public static class ClientPacketHandlers {
+	static class ClientPacketHandlers {
 		public static void HandlePacket( TheLunatic mymod, BinaryReader reader ) {
 			NetProtocolTypes protocol = (NetProtocolTypes)reader.ReadByte();
 

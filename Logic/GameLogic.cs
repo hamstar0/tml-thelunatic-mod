@@ -11,7 +11,7 @@ using TheLunatic.NPCs;
 
 
 namespace TheLunatic.Logic {
-	public class GameLogic {
+	class GameLogic {
 		public bool ReadyServer = false;
 		public bool ReadyClient = false;
 

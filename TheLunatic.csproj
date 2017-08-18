@@ -56,6 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Buffs\ShadowWalkerBuff.cs" />
+    <Compile Include="ConfigDefaults.cs" />
     <Compile Include="Items\CustomBossMaskItem.cs" />
     <Compile Include="Items\UmbralCowlItem.cs" />
     <Compile Include="Logic\GameLogic.cs" />
@@ -85,7 +86,10 @@
     <Content Include="NPCs\TheLunaticTownNPC_Head.png" />
     <Content Include="Sounds\Custom\EarthQuake.wav" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="LICENSE" />
+    <None Include="README.md" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>"C:\Program Files\Steam\steamapps\common\Terraria\tModLoaderServer.exe" -build "$(ProjectDir)\" -eac "$(TargetPath)"</PostBuildEvent>

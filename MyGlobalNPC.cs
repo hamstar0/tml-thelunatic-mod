@@ -7,7 +7,7 @@ using TheLunatic.Logic;
 
 
 namespace TheLunatic {
-	public class MyGlobalNPC : GlobalNPC {
+	class MyGlobalNPC : GlobalNPC {
 		public override void AI( NPC npc ) {
 			var mymod = (TheLunatic)this.mod;
 			if( !mymod.Config.Data.Enabled ) { return; }

@@ -1,5 +1,5 @@
 ﻿namespace TheLunatic.NetProtocol {
-	public enum NetProtocolTypes : byte {
+	enum NetProtocolTypes : byte {
 		RequestModSettings,
 		RequestModData,
 		ModSettings,

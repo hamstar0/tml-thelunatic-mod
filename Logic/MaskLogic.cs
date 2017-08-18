@@ -11,7 +11,7 @@ using TheLunatic.Items;
 using TheLunatic.NetProtocol;
 
 namespace TheLunatic.Logic {
-	public class MaskLogic {
+	class MaskLogic {
 		public static ISet<int> AllVanillaMasks { get; private set; }
 		public static IDictionary<int, int> VanillaBossOfMask { get; private set; }
 		public static int AvailableMaskCount { get; private set; }

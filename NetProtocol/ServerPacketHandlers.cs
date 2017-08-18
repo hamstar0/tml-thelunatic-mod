@@ -8,7 +8,7 @@ using TheLunatic.Items;
 
 
 namespace TheLunatic.NetProtocol {
-	public static class ServerPacketHandlers {
+	static class ServerPacketHandlers {
 		public static void HandlePacket( TheLunatic mymod, BinaryReader reader, int player_who ) {
 			NetProtocolTypes protocol = (NetProtocolTypes)reader.ReadByte();
 

@@ -10,7 +10,7 @@ using TheLunatic.Buffs;
 
 namespace TheLunatic.Items {
 	[AutoloadEquip( EquipType.Back, EquipType.Front )]
-	public class UmbralCowlItem : ModItem {
+	class UmbralCowlItem : ModItem {
 		public static int Width = 26;
 		public static int Height = 30;
 

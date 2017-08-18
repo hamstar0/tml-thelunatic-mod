@@ -12,38 +12,10 @@ using TheLunatic.NetProtocol;
 
 
 namespace TheLunatic {
-	public class ConfigurationData {
-		public string VersionSinceUpdate = "";
-
-		public bool Enabled = true;
-
-		public int DaysUntil = 9;  // Days until The End
-		public int HalfDaysRecoveredPerMask = 4;    // Half days recovered per mask
-		public float WallOfFleshMultiplier = 2.5f;    // Added time for WoF kill
-		public float HardModeMultiplier = 1.5f;	// Added time for hard mode bosses
-
-		public bool LoonyEnforcesBossSequence = true;
-		public bool LoonyAcceptsMasksWithoutBossKill = false;
-		public bool LoonySellsSummonItems = true;
-		public bool LoonyShunsCheaters = false;
-		public bool LoonyGivesCompletionReward = true;
-		public bool LoonyIndicatesDaysRemaining = true;
-
-		public bool OnlyVanillaBossesDropMasks = false;
-		public bool MoonLordMaskWins = false;
-		
-		public int DEBUGFLAGS = 0;	// 1: Display info, 2: Fast time, 4: Reset, 8: Reset win, 16: Skip to signs, 32: Display net info
-	}
-
-
-
 	public class TheLunatic : Mod {
-		public readonly static Version ConfigVersion = new Version(1, 2, 5);
 		public JsonConfig<ConfigurationData> Config { get; private set; }
-
-		public AnimatedSky Sky { get; private set; }
-
-		public int DEBUGMODE = 0;
+		internal AnimatedSky Sky { get; private set; }
+		internal int DEBUGMODE = 0;
 
 
 		public TheLunatic() {
@@ -58,33 +30,7 @@ namespace TheLunatic {
 		}
 
 		public override void Load() {
-			var old_config = new JsonConfig<ConfigurationData>( "The Lunatic 1.0.1.json", "", new ConfigurationData() );
-			// Update old config to new location
-			if( old_config.LoadFile() ) {
-				old_config.DestroyFile();
-				old_config.SetFilePath( this.Config.FileName, "Mod Configs" );
-				this.Config = old_config;
-			} else if( !this.Config.LoadFile() ) {
-				this.Config.SaveFile();
-			} else {
-				Version vers_since = this.Config.Data.VersionSinceUpdate != "" ?
-					new Version( this.Config.Data.VersionSinceUpdate ) :
-					new Version();
-
-				if( vers_since < TheLunatic.ConfigVersion ) {
-					var new_config = new ConfigurationData();
-					ErrorLogger.Log( "The Lunatic config updated to " + TheLunatic.ConfigVersion.ToString() );
-				
-					if( vers_since < new Version( 1, 2, 2 ) ) {
-						this.Config.Data.DaysUntil = new_config.DaysUntil;
-						this.Config.Data.HardModeMultiplier = new_config.HardModeMultiplier;
-						this.Config.Data.HalfDaysRecoveredPerMask = new_config.HalfDaysRecoveredPerMask;
-					}
-
-					this.Config.Data.VersionSinceUpdate = TheLunatic.ConfigVersion.ToString();
-					this.Config.SaveFile();
-				}
-			}
+			this.LoadConfig();
 
 			if( !Main.dedServ ) {
 				this.Sky = new AnimatedSky();
@@ -92,6 +38,26 @@ namespace TheLunatic {
 			}
 
 			this.DEBUGMODE = this.Config.Data.DEBUGFLAGS;
+		}
+
+		private void LoadConfig() {
+			var old_config = new JsonConfig<ConfigurationData>( "The Lunatic 1.0.1.json", "", new ConfigurationData() );
+
+			// Update old config to new location
+			if( old_config.LoadFile() ) {
+				old_config.DestroyFile();
+				old_config.SetFilePath( this.Config.FileName, "Mod Configs" );
+				this.Config = old_config;
+			}
+
+			if( !this.Config.LoadFile() ) {
+				this.Config.SaveFile();
+			}
+
+			if( this.Config.Data.UpdateToLatestVersion() ) {
+				ErrorLogger.Log( "The Lunatic updated to " + ConfigurationData.CurrentVersion.ToString() );
+				this.Config.SaveFile();
+			}
 		}
 
 

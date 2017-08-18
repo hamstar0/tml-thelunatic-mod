@@ -7,7 +7,7 @@ using TheLunatic.Logic;
 
 
 namespace TheLunatic {
-	public class MyGlobalItem : GlobalItem {
+	class MyGlobalItem : GlobalItem {
 		public override bool InstancePerEntity { get { return true; } }
 		//public override bool CloneNewInstances { get { return true; } }
 

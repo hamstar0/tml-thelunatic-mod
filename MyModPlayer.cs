@@ -15,7 +15,7 @@ using TheLunatic.NetProtocol;
 
 
 namespace TheLunatic {
-	public class MyModPlayer : ModPlayer {
+	class MyModPlayer : ModPlayer {
 		public IDictionary<string, bool> Bye { get; private set; }
 		public PlayerNoclip Noclip { get; private set; }
 		

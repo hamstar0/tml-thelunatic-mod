@@ -8,7 +8,7 @@ using Terraria.Graphics.Effects;
 using Terraria.ModLoader;
 
 namespace TheLunatic.Tiles {
-	public class AnimatedSky : CustomSky {
+	class AnimatedSky : CustomSky {
 		public int SkyFlashMaxDuration = 64;
 		public int SkyFlash { get; private set; }
 		public int SkyFlashDuration { get; private set; }

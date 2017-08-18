@@ -10,7 +10,7 @@ using System.IO;
 
 namespace TheLunatic.Items {
 	[AutoloadEquip( EquipType.Head )]
-	public class CustomBossMaskItem : ModItem {
+	class CustomBossMaskItem : ModItem {
 		public static Texture2D GetMaskTextureOfPlayer( Player player, Mod mod ) {
 			int item_type = mod.ItemType<CustomBossMaskItem>();
 			CustomBossMaskItem moditem = null;

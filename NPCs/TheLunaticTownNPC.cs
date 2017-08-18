@@ -12,7 +12,7 @@ using TheLunatic.Logic;
 
 namespace TheLunatic.NPCs {
 	[AutoloadHead]
-	public class TheLunaticTownNPC : ModNPC {
+	class TheLunaticTownNPC : ModNPC {
 		public static string[] PossibleNames { get; private set; }
 		public static string[] DismissalReplies { get; private set; }
 		public static string[] NormalReplies { get; private set; }
