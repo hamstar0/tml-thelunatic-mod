@@ -30,6 +30,13 @@ namespace TheLunatic {
 		}
 
 		public override void Load() {
+			var hamhelpmod = ModLoader.GetMod( "HamstarHelpers" );
+			var min_vers = new Version( 1, 0, 17 );
+
+			if( hamhelpmod.Version < min_vers ) {
+				throw new Exception( "Hamstar's Helpers must be version " + min_vers.ToString() + " or greater." );
+			}
+
 			this.LoadConfig();
 
 			if( !Main.dedServ ) {
@@ -118,23 +125,18 @@ namespace TheLunatic {
 		public bool IsDisplayInfoDebugMode() {
 			return (this.DEBUGMODE & 1) > 0;
 		}
-
 		public bool IsFastTimeDebugMode() {
 			return (this.DEBUGMODE & 2) > 0;
 		}
-
 		public bool IsResetDebugMode() {
 			return (this.DEBUGMODE & 4) > 0;
 		}
-
 		public bool IsResetWinDebugMode() {
 			return (this.DEBUGMODE & 8) > 0;
 		}
-
 		public bool IsSkipToSignsDebugMode() {
 			return (this.DEBUGMODE & 16) > 0;
 		}
-
 		public bool IsDisplayNetInfoDebugMode() {
 			return (this.DEBUGMODE & 32) > 0;
 		}

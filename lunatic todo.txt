@@ -24,14 +24,13 @@ v1.3
 -	Set loony to drop a 'Paperback Necronomicon' (resummons Lunatic if dead)
 -	Add more 'baked goods' to shop
 -	Debug 'So it's begun' NPC speech spam
--	Update to new config format and convert half days to days (as a float)
 -	Set elapsed time to use float for % of day instead of int
 -	Set loony to have a hardmode attack
--	Privatize DEBUGMODE
+
+v1.2.6
+-	Fix soft crash
 -	Refactor config format
-
 -	Refactor net code
-
 v1.2.1
 -	Change config default initial days to 9 (from 10)
 -	Change config default days per mask to 2 (from 2.5)
