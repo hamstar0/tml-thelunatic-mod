@@ -12,6 +12,16 @@ using TheLunatic.NetProtocol;
 
 
 namespace TheLunatic {
+	public static class LunaticInterface {
+		public static bool HasCurrentGameEnded() {
+			var mymod = (TheLunaticMod)ModLoader.GetMod( "TheLunatic" );
+			var modworld = mymod.GetModWorld<MyModWorld>();
+			return modworld.GameLogic.HasGameEnded;
+		}
+	}
+
+
+
 	class TheLunaticMod : Mod {
 		public JsonConfig<LunaticConfigData> Config { get; private set; }
 		internal AnimatedSky Sky { get; private set; }
