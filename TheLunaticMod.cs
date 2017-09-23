@@ -12,13 +12,12 @@ using TheLunatic.NetProtocol;
 
 
 namespace TheLunatic {
-	public class TheLunatic : Mod {
-		public JsonConfig<ConfigurationData> Config { get; private set; }
+	class TheLunaticMod : Mod {
+		public JsonConfig<LunaticConfigData> Config { get; private set; }
 		internal AnimatedSky Sky { get; private set; }
-		internal int DEBUGMODE = 0;
 
 
-		public TheLunatic() {
+		public TheLunaticMod() {
 			this.Properties = new ModProperties() {
 				Autoload = true,
 				AutoloadGores = true,
@@ -26,7 +25,7 @@ namespace TheLunatic {
 			};
 
 			string filename = "The Lunatic Config.json";
-			this.Config = new JsonConfig<ConfigurationData>( filename, "Mod Configs", new ConfigurationData() );
+			this.Config = new JsonConfig<LunaticConfigData>( filename, "Mod Configs", new LunaticConfigData() );
 		}
 
 		public override void Load() {
@@ -43,12 +42,10 @@ namespace TheLunatic {
 				this.Sky = new AnimatedSky();
 				SkyManager.Instance["TheLunaticMod:AnimatedColorize"] = this.Sky;
 			}
-
-			this.DEBUGMODE = this.Config.Data.DEBUGFLAGS;
 		}
 
 		private void LoadConfig() {
-			var old_config = new JsonConfig<ConfigurationData>( "The Lunatic 1.0.1.json", "", new ConfigurationData() );
+			var old_config = new JsonConfig<LunaticConfigData>( "The Lunatic 1.0.1.json", "", new LunaticConfigData() );
 
 			// Update old config to new location
 			if( old_config.LoadFile() ) {
@@ -57,12 +54,17 @@ namespace TheLunatic {
 				this.Config = old_config;
 			}
 
-			if( !this.Config.LoadFile() ) {
+			try {
+				if( !this.Config.LoadFile() ) {
+					this.Config.SaveFile();
+				}
+			} catch( Exception e ) {
+				DebugHelpers.Log( e.Message );
 				this.Config.SaveFile();
 			}
 
 			if( this.Config.Data.UpdateToLatestVersion() ) {
-				ErrorLogger.Log( "The Lunatic updated to " + ConfigurationData.CurrentVersion.ToString() );
+				ErrorLogger.Log( "The Lunatic updated to " + LunaticConfigData.CurrentVersion.ToString() );
 				this.Config.SaveFile();
 			}
 		}
@@ -123,22 +125,22 @@ namespace TheLunatic {
 		////////////////
 
 		public bool IsDisplayInfoDebugMode() {
-			return (this.DEBUGMODE & 1) > 0;
+			return (this.Config.Data.DEBUGFLAGS & 1) > 0;
 		}
 		public bool IsFastTimeDebugMode() {
-			return (this.DEBUGMODE & 2) > 0;
+			return (this.Config.Data.DEBUGFLAGS & 2) > 0;
 		}
 		public bool IsResetDebugMode() {
-			return (this.DEBUGMODE & 4) > 0;
+			return (this.Config.Data.DEBUGFLAGS & 4) > 0;
 		}
 		public bool IsResetWinDebugMode() {
-			return (this.DEBUGMODE & 8) > 0;
+			return (this.Config.Data.DEBUGFLAGS & 8) > 0;
 		}
 		public bool IsSkipToSignsDebugMode() {
-			return (this.DEBUGMODE & 16) > 0;
+			return (this.Config.Data.DEBUGFLAGS & 16) > 0;
 		}
 		public bool IsDisplayNetInfoDebugMode() {
-			return (this.DEBUGMODE & 32) > 0;
+			return (this.Config.Data.DEBUGFLAGS & 32) > 0;
 		}
 	}
 }

@@ -8,7 +8,7 @@ using TheLunatic.Items;
 
 namespace TheLunatic.NetProtocol {
 	static class ClientPacketHandlers {
-		public static void HandlePacket( TheLunatic mymod, BinaryReader reader ) {
+		public static void HandlePacket( TheLunaticMod mymod, BinaryReader reader ) {
 			NetProtocolTypes protocol = (NetProtocolTypes)reader.ReadByte();
 
 			switch( protocol ) {
@@ -40,7 +40,7 @@ namespace TheLunatic.NetProtocol {
 		// Client Senders
 		////////////////
 		
-		public static void SendRequestModSettingsFromClient( TheLunatic mymod ) {
+		public static void SendRequestModSettingsFromClient( TheLunaticMod mymod ) {
 			// Clients only
 			if( Main.netMode != 1 ) { return; }
 
@@ -51,7 +51,7 @@ namespace TheLunatic.NetProtocol {
 			packet.Send();
 		}
 
-		public static void SendRequestModDataFromClient( TheLunatic mymod ) {
+		public static void SendRequestModDataFromClient( TheLunaticMod mymod ) {
 			// Clients only
 			if( Main.netMode != 1 ) { return; }
 
@@ -62,7 +62,7 @@ namespace TheLunatic.NetProtocol {
 			packet.Send();
 		}
 
-		public static void SendGivenMaskFromClient( TheLunatic mymod, Item mask ) {
+		public static void SendGivenMaskFromClient( TheLunaticMod mymod, Item mask ) {
 			// Clients only
 			if( Main.netMode != 1 ) { return; }
 
@@ -85,7 +85,7 @@ namespace TheLunatic.NetProtocol {
 		// Client Receivers
 		////////////////
 
-		private static void ReceiveModSettingsOnClient( TheLunatic mymod, BinaryReader reader ) {
+		private static void ReceiveModSettingsOnClient( TheLunaticMod mymod, BinaryReader reader ) {
 			// Clients only
 			if( Main.netMode != 1 ) { return; }
 
@@ -95,12 +95,10 @@ namespace TheLunatic.NetProtocol {
 			//	DebugHelper.Log( "TheLunaticNetProtocol.ReceiveModSettingsOnClient - Invalid 'DaysUntil' quantity." );
 			//	return;
 			//}
-
-			mymod.DEBUGMODE = mymod.Config.Data.DEBUGFLAGS;
 		}
 
 
-		private static void ReceiveModDataOnClient( TheLunatic mymod, BinaryReader reader ) {
+		private static void ReceiveModDataOnClient( TheLunaticMod mymod, BinaryReader reader ) {
 			// Clients only
 			if( Main.netMode != 1 ) { return; }
 			
@@ -141,7 +139,7 @@ namespace TheLunatic.NetProtocol {
 		}
 
 
-		private static void ReceiveEndSignOnClient( TheLunatic mymod, BinaryReader reader ) {
+		private static void ReceiveEndSignOnClient( TheLunaticMod mymod, BinaryReader reader ) {
 			// Clients only
 			if( Main.netMode != 1 ) { return; }
 
@@ -159,7 +157,7 @@ namespace TheLunatic.NetProtocol {
 		}
 
 
-		private static void ReceiveGivenMaskOnClient( TheLunatic mymod, BinaryReader reader ) {
+		private static void ReceiveGivenMaskOnClient( TheLunaticMod mymod, BinaryReader reader ) {
 			// Clients only
 			if( Main.netMode != 1 ) { return; }
 

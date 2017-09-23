@@ -10,6 +10,7 @@ using Terraria.ModLoader;
 using TheLunatic.Items;
 using TheLunatic.NetProtocol;
 
+
 namespace TheLunatic.Logic {
 	class MaskLogic {
 		public static ISet<int> AllVanillaMasks { get; private set; }
@@ -103,7 +104,7 @@ namespace TheLunatic.Logic {
 		}
 		
 
-		public void LoadOnce( TheLunatic mymod, int[] masks, string[] custom_masks ) {
+		public void LoadOnce( TheLunaticMod mymod, int[] masks, string[] custom_masks ) {
 			if( this.IsLoaded ) {
 				DebugHelpers.Log( "Redundant Mask Logic load. " + String.Join( ",", masks ) + " (" + String.Join( ",", this.GivenVanillaMasksByType ) + ")" );
 				return;
@@ -126,7 +127,7 @@ namespace TheLunatic.Logic {
 
 		////////////////
 
-		public void RegisterReceiptOfMask( TheLunatic mymod, Player giving_player, int mask_type, int boss_type ) {
+		public void RegisterReceiptOfMask( TheLunaticMod mymod, Player giving_player, int mask_type, int boss_type ) {
 			if( mask_type == mymod.ItemType<CustomBossMaskItem>() ) {
 				NPC npc = new NPC();
 				npc.SetDefaults( boss_type );
@@ -191,7 +192,7 @@ namespace TheLunatic.Logic {
 			return masks;
 		}
 
-		public bool DoesLoonyHaveThisMask( TheLunatic mymod, Item mask_item ) {
+		public bool DoesLoonyHaveThisMask( TheLunaticMod mymod, Item mask_item ) {
 			if( this.GetRemainingVanillaMasks().Contains(mask_item.type) ) { return false; }
 
 			var mask_item_info = mask_item.GetGlobalItem<CustomBossMaskItemInfo>( mymod );
@@ -207,7 +208,7 @@ namespace TheLunatic.Logic {
 
 		////////////////
 
-		public bool IsValidMask( TheLunatic mymod, Item mask ) {
+		public bool IsValidMask( TheLunaticMod mymod, Item mask ) {
 			var modworld = mymod.GetModWorld<MyModWorld>();
 			if( !modworld.GameLogic.HaveWeHopeToWin(mymod) ) { return false; }
 
@@ -277,7 +278,7 @@ namespace TheLunatic.Logic {
 			return true;
 		}
 
-		public void GiveMaskToLoony( TheLunatic mymod, Player player, Item mask ) {
+		public void GiveMaskToLoony( TheLunaticMod mymod, Player player, Item mask ) {
 			if( Main.netMode == 1 ) {   // Client
 				ClientPacketHandlers.SendGivenMaskFromClient( mymod, mask );
 			} else if( Main.netMode == 2 ) {    // Server

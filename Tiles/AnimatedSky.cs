@@ -7,6 +7,7 @@ using Terraria;
 using Terraria.Graphics.Effects;
 using Terraria.ModLoader;
 
+
 namespace TheLunatic.Tiles {
 	class AnimatedSky : CustomSky {
 		public int SkyFlashMaxDuration = 64;
@@ -68,7 +69,7 @@ namespace TheLunatic.Tiles {
 			return color;
 		}
 
-		public Color GetTintColor( TheLunatic mymod ) {
+		public Color GetTintColor( TheLunaticMod mymod ) {
 			Color color = Color.Black;
 			float tint_scale = MathHelper.Clamp( this.TintScale, 0f, 1f );
 			float day_spike = (float)Math.Abs( WorldHelpers.GetDayOrNightPercentDone() - 0.5d );
@@ -120,7 +121,7 @@ namespace TheLunatic.Tiles {
 		
 		public override void Draw( SpriteBatch sb, float min_depth, float max_depth ) {
 			if( this.TintScale > 0f ) {
-				var mymod = (TheLunatic)ModLoader.GetMod( "TheLunatic" );
+				var mymod = (TheLunaticMod)ModLoader.GetMod( "TheLunatic" );
 				Color color = this.GetTintColor( mymod );
 
 				if( min_depth >= 6f ) {

@@ -9,7 +9,7 @@ using TheLunatic.Logic;
 namespace TheLunatic {
 	class MyGlobalNPC : GlobalNPC {
 		public override void AI( NPC npc ) {
-			var mymod = (TheLunatic)this.mod;
+			var mymod = (TheLunaticMod)this.mod;
 			if( !mymod.Config.Data.Enabled ) { return; }
 
 			if( Main.rand == null ) { return; }
@@ -28,7 +28,7 @@ namespace TheLunatic {
 
 
 		public override void NPCLoot( NPC npc ) {
-			var mymod = (TheLunatic)this.mod;
+			var mymod = (TheLunaticMod)this.mod;
 			if( !mymod.Config.Data.Enabled ) { return; }
 
 			if( !npc.boss && npc.type != 551 && npc.type != 398 ) { return; }	// Betsy isn't a boss?

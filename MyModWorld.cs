@@ -21,7 +21,7 @@ namespace TheLunatic {
 		////////////////
 		
 		public override void Initialize() {
-			var mymod = (TheLunatic)this.mod;
+			var mymod = (TheLunaticMod)this.mod;
 
 			this.ID = Guid.NewGuid().ToString( "D" );
 			this.HasCorrectID = false;  // 'Load()' decides if no pre-existing one is found
@@ -37,7 +37,7 @@ namespace TheLunatic {
 		////////////////
 
 		public override void Load( TagCompound tag ) {
-			var mymod = (TheLunatic)this.mod;
+			var mymod = (TheLunaticMod)this.mod;
 			bool has_arrived = false, has_quit = false, has_end = false, has_won = false, is_safe = false;
 			int time = 0;
 			int[] masks = new int[0];
@@ -71,7 +71,7 @@ namespace TheLunatic {
 		}
 
 		public override TagCompound Save() {
-			var mymod = (TheLunatic)this.mod;
+			var mymod = (TheLunaticMod)this.mod;
 			var tag = new TagCompound {
 				{ "world_id", this.ID },
 				{ "has_loony_arrived", (bool)this.GameLogic.HasLoonyArrived },
@@ -124,7 +124,7 @@ namespace TheLunatic {
 		////////////////
 
 		public override void PreUpdate() {
-			var mymod = (TheLunatic)this.mod;
+			var mymod = (TheLunaticMod)this.mod;
 			if( !mymod.Config.Data.Enabled ) { return; }
 
 			if( Main.netMode == 2 ) { // Server only

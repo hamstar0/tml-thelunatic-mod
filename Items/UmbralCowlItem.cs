@@ -17,7 +17,7 @@ namespace TheLunatic.Items {
 
 		////////////////
 
-		public static void Give( TheLunatic mymod, Player player ) {
+		public static void Give( TheLunaticMod mymod, Player player ) {
 			int who = ItemHelpers.CreateItem( player.Center, mymod.ItemType<UmbralCowlItem>(), 1, UmbralCowlItem.Width, UmbralCowlItem.Height );
 			Item item = Main.item[who];
 			item.noGrabDelay = 15;

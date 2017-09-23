@@ -22,7 +22,7 @@ namespace TheLunatic {
 
 
 		public override void ModifyTooltips( Item item, List<TooltipLine> tooltips ) {
-			var mymod = (TheLunatic)this.mod;
+			var mymod = (TheLunaticMod)this.mod;
 			if( !mymod.Config.Data.Enabled ) { return; }
 
 			bool found = item.type == this.mod.ItemType<CustomBossMaskItem>();
@@ -40,7 +40,7 @@ namespace TheLunatic {
 
 
 		public override void UpdateEquip( Item item, Player player ) {
-			var mymod = (TheLunatic)this.mod;
+			var mymod = (TheLunaticMod)this.mod;
 			var modplayer = player.GetModPlayer<MyModPlayer>( mymod );
 
 			if( !mymod.Config.Data.Enabled ) { return; }

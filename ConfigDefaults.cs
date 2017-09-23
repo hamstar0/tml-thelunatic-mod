@@ -1,10 +1,20 @@
-﻿using System;
+﻿using HamstarHelpers.Utilities.Config;
+using System;
+using Terraria.ModLoader;
 
 
 namespace TheLunatic {
-	public class ConfigurationData {
+	public class LunaticConfigData : ConfigurationDataBase {
 		public readonly static Version CurrentVersion = new Version( 1, 2, 6 );
 
+
+		public static LunaticConfigData GetCurrent() {
+			var mymod = (TheLunaticMod)ModLoader.GetMod( "TheLunatic" );
+			return mymod.Config.Data;
+		}
+
+
+		////////////////
 
 		public string VersionSinceUpdate = "";
 
@@ -32,28 +42,28 @@ namespace TheLunatic {
 		////////////////
 
 		public bool UpdateToLatestVersion() {
-			var new_config = new ConfigurationData();
+			var new_config = new LunaticConfigData();
 			var vers_since = this.VersionSinceUpdate != "" ?
 				new Version( this.VersionSinceUpdate ) :
 				new Version();
 
-			if( vers_since >= ConfigurationData.CurrentVersion ) {
+			if( vers_since >= LunaticConfigData.CurrentVersion ) {
 				return false;
 			}
 
 			if( vers_since < new Version( 1, 2, 2 ) ) {
-				if( this.DaysUntil == ConfigurationData._1_2_1_DaysUntil ) {
+				if( this.DaysUntil == LunaticConfigData._1_2_1_DaysUntil ) {
 					this.DaysUntil = new_config.DaysUntil;
 				}
-				if( this.HardModeMultiplier == ConfigurationData._1_2_1_HardModeMultiplier ) {
+				if( this.HardModeMultiplier == LunaticConfigData._1_2_1_HardModeMultiplier ) {
 					this.HardModeMultiplier = new_config.HardModeMultiplier;
 				}
-				if( this.HalfDaysRecoveredPerMask == ConfigurationData._1_2_1_HalfDaysRecoveredPerMask ) {
+				if( this.HalfDaysRecoveredPerMask == LunaticConfigData._1_2_1_HalfDaysRecoveredPerMask ) {
 					this.HalfDaysRecoveredPerMask = new_config.HalfDaysRecoveredPerMask;
 				}
 			}
 
-			this.VersionSinceUpdate = ConfigurationData.CurrentVersion.ToString();
+			this.VersionSinceUpdate = LunaticConfigData.CurrentVersion.ToString();
 
 			return true;
 		}

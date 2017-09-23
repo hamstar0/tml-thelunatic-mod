@@ -9,7 +9,7 @@ using TheLunatic.Items;
 
 namespace TheLunatic.NetProtocol {
 	static class ServerPacketHandlers {
-		public static void HandlePacket( TheLunatic mymod, BinaryReader reader, int player_who ) {
+		public static void HandlePacket( TheLunaticMod mymod, BinaryReader reader, int player_who ) {
 			NetProtocolTypes protocol = (NetProtocolTypes)reader.ReadByte();
 
 			switch( protocol ) {
@@ -37,7 +37,7 @@ namespace TheLunatic.NetProtocol {
 		// Server Senders
 		////////////////
 
-		public static void SendModSettingsFromServer( TheLunatic mymod, Player player ) {
+		public static void SendModSettingsFromServer( TheLunaticMod mymod, Player player ) {
 			// Server only
 			if( Main.netMode != 2 ) { return; }
 			
@@ -49,7 +49,7 @@ namespace TheLunatic.NetProtocol {
 			packet.Send( (int)player.whoAmI );
 		}
 
-		public static void SendModDataFromServer( TheLunatic mymod, Player player ) {
+		public static void SendModDataFromServer( TheLunaticMod mymod, Player player ) {
 			// Server only
 			if( Main.netMode != 2 ) { return; }
 
@@ -92,7 +92,7 @@ namespace TheLunatic.NetProtocol {
 			packet.Send( (int)player.whoAmI );
 		}
 
-		public static void BroadcastEndSignFromServer( TheLunatic mymod, int duration ) {
+		public static void BroadcastEndSignFromServer( TheLunaticMod mymod, int duration ) {
 			// Server only
 			if( Main.netMode != 2 ) { return; }
 
@@ -108,7 +108,7 @@ namespace TheLunatic.NetProtocol {
 			}
 		}
 
-		public static void BroadcastGivenMaskFromServer( TheLunatic mymod, int from_who, int mask_type, int boss_mask ) {
+		public static void BroadcastGivenMaskFromServer( TheLunaticMod mymod, int from_who, int mask_type, int boss_mask ) {
 			// Server only
 			if( Main.netMode != 2 ) { return; }
 
@@ -132,7 +132,7 @@ namespace TheLunatic.NetProtocol {
 		// Server Receivers
 		////////////////
 
-		private static void ReceiveRequestModSettingsOnServer( TheLunatic mymod, BinaryReader reader, int player_who ) {
+		private static void ReceiveRequestModSettingsOnServer( TheLunaticMod mymod, BinaryReader reader, int player_who ) {
 			// Server only
 			if( Main.netMode != 2 ) { return; }
 			
@@ -149,7 +149,7 @@ namespace TheLunatic.NetProtocol {
 		}
 
 
-		private static void ReceiveRequestModDataOnServer( TheLunatic mymod, BinaryReader reader, int player_who ) {
+		private static void ReceiveRequestModDataOnServer( TheLunaticMod mymod, BinaryReader reader, int player_who ) {
 			// Server only
 			if( Main.netMode != 2 ) { return; }
 			
@@ -166,7 +166,7 @@ namespace TheLunatic.NetProtocol {
 		}
 
 
-		private static void ReceiveGivenMaskOnServer( TheLunatic mymod, BinaryReader reader, int player_who ) {
+		private static void ReceiveGivenMaskOnServer( TheLunaticMod mymod, BinaryReader reader, int player_who ) {
 			// Server only
 			if( Main.netMode != 2 ) { return; }
 

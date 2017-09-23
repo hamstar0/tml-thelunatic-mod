@@ -68,7 +68,7 @@
     <Compile Include="MyGlobaltem.cs" />
     <Compile Include="MyGlobalNPC.cs" />
     <Compile Include="MyGlobalProjectile.cs" />
-    <Compile Include="TheLunatic.cs" />
+    <Compile Include="TheLunaticMod.cs" />
     <Compile Include="NetProtocol\ServerPacketHandlers.cs" />
     <Compile Include="MyModPlayer.cs" />
     <Compile Include="NPCs\TheLunaticTownNPC.cs" />

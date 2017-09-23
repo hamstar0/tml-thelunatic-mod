@@ -51,7 +51,7 @@ namespace TheLunatic {
 		
 		public override void OnEnterWorld( Player player ) {    // This seems to be as close to a constructor as we're gonna get!
 			if( player.whoAmI == this.player.whoAmI ) {    // Current player
-				var mymod = (TheLunatic)this.mod;
+				var mymod = (TheLunaticMod)this.mod;
 				var modworld = mymod.GetModWorld<MyModWorld>();
 
 				if( Main.netMode != 2 ) {   // Not server
@@ -71,7 +71,7 @@ namespace TheLunatic {
 		}
 
 		public void PostEnterWorld() {
-			var mymod = (TheLunatic)this.mod;
+			var mymod = (TheLunaticMod)this.mod;
 			var modworld = mymod.GetModWorld<MyModWorld>();
 
 			if( modworld.GameLogic.HasGameEnded && !modworld.GameLogic.HasWon ) {
@@ -84,7 +84,7 @@ namespace TheLunatic {
 		////////////////
 
 		public override void Load( TagCompound tags ) {
-			var mymod = (TheLunatic)this.mod;
+			var mymod = (TheLunaticMod)this.mod;
 
 			try {
 				int worlds = tags.GetInt( "world_count" );
@@ -105,7 +105,7 @@ namespace TheLunatic {
 		}
 
 		public override TagCompound Save() {
-			var mymod = (TheLunatic)this.mod;
+			var mymod = (TheLunaticMod)this.mod;
 			var tags = new TagCompound { { "world_count", this.Bye.Count } };
 			int i = 0;
 
@@ -128,7 +128,7 @@ namespace TheLunatic {
 		////////////////
 
 		public override void PreUpdate() {
-			var mymod = (TheLunatic)this.mod;
+			var mymod = (TheLunaticMod)this.mod;
 			if( !mymod.Config.Data.Enabled ) { return; }
 			var modworld = this.mod.GetModWorld<MyModWorld>();
 
@@ -162,7 +162,7 @@ namespace TheLunatic {
 
 
 		public override void PostUpdate() {
-			var mymod = (TheLunatic)this.mod;
+			var mymod = (TheLunaticMod)this.mod;
 			if( !mymod.Config.Data.Enabled ) { return; }
 
 			if( Main.netMode == 2 || this.player.whoAmI == Main.myPlayer ) {   // Server or current player only
@@ -174,7 +174,7 @@ namespace TheLunatic {
 
 
 		public override bool PreItemCheck() {
-			var mymod = (TheLunatic)this.mod;
+			var mymod = (TheLunaticMod)this.mod;
 			if( !mymod.Config.Data.Enabled ) { base.PreItemCheck(); }
 
 			// Force de-select of items while shadow walking
@@ -191,7 +191,7 @@ namespace TheLunatic {
 		////////////////
 
 		public override void ModifyScreenPosition() {
-			var mymod = (TheLunatic)this.mod;
+			var mymod = (TheLunaticMod)this.mod;
 			if( !mymod.Config.Data.Enabled ) { return; }
 
 			if( this.QuakeDuration != 0 ) {
@@ -216,7 +216,7 @@ namespace TheLunatic {
 		}
 
 		public override void UpdateBiomes() {
-			var mymod = (TheLunatic)this.mod;
+			var mymod = (TheLunaticMod)this.mod;
 			var modworld = this.mod.GetModWorld<MyModWorld>();
 
 			if( !mymod.Config.Data.Enabled ) { return; }
@@ -226,7 +226,7 @@ namespace TheLunatic {
 		}
 
 		public override void UpdateBiomeVisuals() {
-			var mymod = (TheLunatic)this.mod;
+			var mymod = (TheLunaticMod)this.mod;
 			var modworld = this.mod.GetModWorld<MyModWorld>();
 
 			if( !mymod.Config.Data.Enabled ) { return; }
@@ -260,7 +260,7 @@ namespace TheLunatic {
 		);
 
 		public override void ModifyDrawLayers( List<PlayerLayer> layers ) {
-			var mymod = (TheLunatic)this.mod;
+			var mymod = (TheLunaticMod)this.mod;
 			if( !mymod.Config.Data.Enabled ) { return; }
 
 			this.MaskTex = CustomBossMaskItem.GetMaskTextureOfPlayer( this.player, mymod );
@@ -288,7 +288,7 @@ namespace TheLunatic {
 		}
 
 		public void FlashMe() {
-			var mymod = (TheLunatic)this.mod;
+			var mymod = (TheLunaticMod)this.mod;
 			mymod.Sky.LightenSky();
 		}
 

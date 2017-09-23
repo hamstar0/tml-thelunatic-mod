@@ -54,7 +54,7 @@ namespace TheLunatic.NPCs {
 			};
 		}
 
-		public static bool WantsToSpawnAnew( TheLunatic mymod ) {
+		public static bool WantsToSpawnAnew( TheLunaticMod mymod ) {
 			var modworld = mymod.GetModWorld<MyModWorld>();
 			if( modworld.GameLogic == null ) { throw new Exception( "Game logic not initialized." ); }
 
@@ -82,7 +82,7 @@ namespace TheLunatic.NPCs {
 			return can_spawn;
 		}
 
-		public static bool WantsToSpawn( TheLunatic mymod ) {
+		public static bool WantsToSpawn( TheLunaticMod mymod ) {
 			var modworld = mymod.GetModWorld<MyModWorld>();
 			if( modworld.GameLogic == null ) { throw new Exception("Game logic not initialized."); }
 
@@ -161,7 +161,7 @@ namespace TheLunatic.NPCs {
 			if( modworld.GameLogic == null ) { throw new Exception("Game logic not initialized."); }
 
 			if( modworld.GameLogic.KillSurfaceTownNPCs ) { return false; }
-			return TheLunaticTownNPC.WantsToSpawn( (TheLunatic)this.mod );
+			return TheLunaticTownNPC.WantsToSpawn( (TheLunaticMod)this.mod );
 		}
 
 		public override void TownNPCAttackStrength( ref int damage, ref float knockback ) {
@@ -194,7 +194,7 @@ namespace TheLunatic.NPCs {
 		}
 		
 		public override void AI() {
-			var mymod = (TheLunatic)this.mod;
+			var mymod = (TheLunaticMod)this.mod;
 			var modworld = this.mod.GetModWorld<MyModWorld>();
 			if( modworld.GameLogic == null ) { throw new Exception( "Game logic not initialized." ); }
 
@@ -208,7 +208,7 @@ namespace TheLunatic.NPCs {
 		////////////////
 
 		public override void SetupShop( Chest shop, ref int nextSlot ) {
-			var mymod = (TheLunatic)this.mod;
+			var mymod = (TheLunaticMod)this.mod;
 			var modworld = mymod.GetModWorld<MyModWorld>();
 			bool strict = mymod.Config.Data.LoonyEnforcesBossSequence;
 			bool downed_mech = NPC.downedMechBoss1 || NPC.downedMechBoss2 || NPC.downedMechBoss3;
@@ -363,7 +363,7 @@ namespace TheLunatic.NPCs {
 		
 		public override string GetChat() {
 			try {
-				var mymod = (TheLunatic)this.mod;
+				var mymod = (TheLunaticMod)this.mod;
 				var modworld = mymod.GetModWorld<MyModWorld>();
 				if( modworld.GameLogic == null ) { throw new Exception( "Game logic not initialized." ); }
 
@@ -410,7 +410,7 @@ namespace TheLunatic.NPCs {
 		private bool FirstButtonIsShop = false;
 
 		public override void SetChatButtons( ref string button1, ref string button2 ) {
-			var mymod = (TheLunatic)this.mod;
+			var mymod = (TheLunaticMod)this.mod;
 			var modworld = this.mod.GetModWorld<MyModWorld>();
 			if( modworld.GameLogic == null ) { throw new Exception( "Game logic not initialized." ); }
 
@@ -443,7 +443,7 @@ namespace TheLunatic.NPCs {
 		////////////////
 		
 		private string onGiveMaskButtonClick() {
-			var mymod = (TheLunatic)this.mod;
+			var mymod = (TheLunaticMod)this.mod;
 			var modworld = mymod.GetModWorld<MyModWorld>();
 			if( modworld.MaskLogic == null ) { throw new Exception( "Mask logic not initialized." ); }
 
