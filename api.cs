@@ -2,7 +2,7 @@
 
 
 namespace TheLunatic {
-	public static class TheLunaticApi {
+	public static class TheLunaticAPI {
 		public static LunaticConfigData GetModSettings() {
 			if( TheLunaticMod.Instance == null ) {
 				throw new Exception( "Lunatic mod not loaded." );

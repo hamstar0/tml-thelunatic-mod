@@ -45,21 +45,20 @@ namespace TheLunatic {
 				AutoloadGores = true,
 				AutoloadSounds = true
 			};
-
-			string filename = "The Lunatic Config.json";
-			this.Config = new JsonConfig<LunaticConfigData>( filename, "Mod Configs", new LunaticConfigData() );
+			
+			this.Config = new JsonConfig<LunaticConfigData>( LunaticConfigData.ConfigFileName,
+				ConfigurationDataBase.RelativePath, new LunaticConfigData() );
 		}
 
 		////////////////
 
 		public override void Load() {
 			TheLunaticMod.Instance = this;
-
+			
 			var hamhelpmod = ModLoader.GetMod( "HamstarHelpers" );
-			var min_vers = new Version( 1, 0, 17 );
-
+			var min_vers = new Version( 1, 2, 0 );
 			if( hamhelpmod.Version < min_vers ) {
-				throw new Exception( "Hamstar's Helpers must be version " + min_vers.ToString() + " or greater." );
+				throw new Exception( "Hamstar Helpers must be version " + min_vers.ToString() + " or greater." );
 			}
 
 			this.LoadConfig();
@@ -76,7 +75,7 @@ namespace TheLunatic {
 			// Update old config to new location
 			if( old_config.LoadFile() ) {
 				old_config.DestroyFile();
-				old_config.SetFilePath( this.Config.FileName, "Mod Configs" );
+				old_config.SetFilePath( this.Config.FileName, ConfigurationDataBase.RelativePath );
 				this.Config = old_config;
 			}
 

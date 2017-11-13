@@ -1,5 +1,5 @@
 author = hamstar
-version = 1.2.7
+version = 1.2.7.1
 displayName = The Lunatic
 modReferences = HamstarHelpers
 buildIgnore = *.csproj, *.user, obj\*, bin\*, .vs\*
