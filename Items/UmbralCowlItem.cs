@@ -107,7 +107,7 @@ namespace TheLunatic.Items {
 					ShadowWalkerBuff.AddBuffFor( this.mod, player );
 				}
 
-				var modplayer = player.GetModPlayer<MyModPlayer>( this.mod );
+				var modplayer = player.GetModPlayer<MyPlayer>( this.mod );
 				if( modplayer.Noclip != null ) {
 					modplayer.Noclip.UpdateMode( player );   // Redundant?
 				}

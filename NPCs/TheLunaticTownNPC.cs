@@ -55,7 +55,7 @@ namespace TheLunatic.NPCs {
 		}
 
 		public static bool WantsToSpawnAnew( TheLunaticMod mymod ) {
-			var modworld = mymod.GetModWorld<MyModWorld>();
+			var modworld = mymod.GetModWorld<MyWorld>();
 			if( modworld.GameLogic == null ) { throw new Exception( "Game logic not initialized." ); }
 
 			bool can_spawn = !modworld.GameLogic.HasLoonyQuit;
@@ -83,7 +83,7 @@ namespace TheLunatic.NPCs {
 		}
 
 		public static bool WantsToSpawn( TheLunaticMod mymod ) {
-			var modworld = mymod.GetModWorld<MyModWorld>();
+			var modworld = mymod.GetModWorld<MyWorld>();
 			if( modworld.GameLogic == null ) { throw new Exception("Game logic not initialized."); }
 
 			bool can_spawn = !modworld.GameLogic.HasLoonyQuit;
@@ -157,7 +157,7 @@ namespace TheLunatic.NPCs {
 		}
 
 		public override bool CanTownNPCSpawn( int numTownNPCs, int money ) {
-			var modworld = mod.GetModWorld<MyModWorld>();
+			var modworld = mod.GetModWorld<MyWorld>();
 			if( modworld.GameLogic == null ) { throw new Exception("Game logic not initialized."); }
 
 			if( modworld.GameLogic.KillSurfaceTownNPCs ) { return false; }
@@ -195,7 +195,7 @@ namespace TheLunatic.NPCs {
 		
 		public override void AI() {
 			var mymod = (TheLunaticMod)this.mod;
-			var modworld = this.mod.GetModWorld<MyModWorld>();
+			var modworld = this.mod.GetModWorld<MyWorld>();
 			if( modworld.GameLogic == null ) { throw new Exception( "Game logic not initialized." ); }
 
 			TheLunaticTownNPC.AmHere = true;
@@ -209,7 +209,7 @@ namespace TheLunatic.NPCs {
 
 		public override void SetupShop( Chest shop, ref int nextSlot ) {
 			var mymod = (TheLunaticMod)this.mod;
-			var modworld = mymod.GetModWorld<MyModWorld>();
+			var modworld = mymod.GetModWorld<MyWorld>();
 			bool strict = mymod.Config.Data.LoonyEnforcesBossSequence;
 			bool downed_mech = NPC.downedMechBoss1 || NPC.downedMechBoss2 || NPC.downedMechBoss3;
 			bool downed_towers = NPC.downedTowerSolar && NPC.downedTowerVortex && NPC.downedTowerNebula && NPC.downedTowerStardust;
@@ -364,11 +364,11 @@ namespace TheLunatic.NPCs {
 		public override string GetChat() {
 			try {
 				var mymod = (TheLunaticMod)this.mod;
-				var modworld = mymod.GetModWorld<MyModWorld>();
+				var modworld = mymod.GetModWorld<MyWorld>();
 				if( modworld.GameLogic == null ) { throw new Exception( "Game logic not initialized." ); }
 
 				Player player = Main.player[Main.myPlayer];
-				var modplayer = player.GetModPlayer<MyModPlayer>( this.mod );
+				var modplayer = player.GetModPlayer<MyPlayer>( this.mod );
 
 				if( modplayer.IsCheater() ) {
 					return TheLunaticTownNPC.DismissalReplies[ Main.rand.Next(TheLunaticTownNPC.DismissalReplies.Length) ];
@@ -411,11 +411,11 @@ namespace TheLunatic.NPCs {
 
 		public override void SetChatButtons( ref string button1, ref string button2 ) {
 			var mymod = (TheLunaticMod)this.mod;
-			var modworld = this.mod.GetModWorld<MyModWorld>();
+			var modworld = this.mod.GetModWorld<MyWorld>();
 			if( modworld.GameLogic == null ) { throw new Exception( "Game logic not initialized." ); }
 
 			Player player = Main.player[Main.myPlayer];
-			var modplayer = player.GetModPlayer<MyModPlayer>( this.mod );
+			var modplayer = player.GetModPlayer<MyPlayer>( this.mod );
 			
 			if( !modplayer.IsCheater() && modworld.GameLogic.HaveWeHopeToWin( mymod ) ) {
 				this.FirstButtonIsShop = false;
@@ -444,7 +444,7 @@ namespace TheLunatic.NPCs {
 		
 		private string onGiveMaskButtonClick() {
 			var mymod = (TheLunaticMod)this.mod;
-			var modworld = mymod.GetModWorld<MyModWorld>();
+			var modworld = mymod.GetModWorld<MyWorld>();
 			if( modworld.MaskLogic == null ) { throw new Exception( "Mask logic not initialized." ); }
 
 			Player player = Main.player[Main.myPlayer];
@@ -562,7 +562,7 @@ namespace TheLunatic.NPCs {
 				}
 
 				if( mymod.Config.Data.LoonyShunsCheaters ) {
-					player.GetModPlayer<MyModPlayer>( this.mod ).SetCheater();
+					player.GetModPlayer<MyPlayer>( this.mod ).SetCheater();
 					return "You... you aren't supposed to even have this. Bye.";
 				} else {
 					return "I don't know how you got this, but I'm not ready for it yet.";
@@ -572,7 +572,7 @@ namespace TheLunatic.NPCs {
 
 
 		public string GetHint() {
-			var modworld = this.mod.GetModWorld<MyModWorld>();
+			var modworld = this.mod.GetModWorld<MyWorld>();
 			if( modworld.MaskLogic == null ) { throw new Exception( "Mask logic not initialized." ); }
 			var masks = modworld.MaskLogic.GetRemainingVanillaMasks();
 			string msg;

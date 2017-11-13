@@ -15,7 +15,7 @@ using TheLunatic.NetProtocol;
 
 
 namespace TheLunatic {
-	class MyModPlayer : ModPlayer {
+	class MyPlayer : ModPlayer {
 		public IDictionary<string, bool> Bye { get; private set; }
 		public PlayerNoclip Noclip { get; private set; }
 		
@@ -39,7 +39,7 @@ namespace TheLunatic {
 		}
 
 		public override void clientClone( ModPlayer clone ) {
-			var myclone = (MyModPlayer)clone;
+			var myclone = (MyPlayer)clone;
 			myclone.Bye = this.Bye;
 			myclone.Noclip = this.Noclip;
 			myclone.HasVerifiedGameData = this.HasVerifiedGameData;
@@ -52,7 +52,7 @@ namespace TheLunatic {
 		public override void OnEnterWorld( Player player ) {    // This seems to be as close to a constructor as we're gonna get!
 			if( player.whoAmI == this.player.whoAmI ) {    // Current player
 				var mymod = (TheLunaticMod)this.mod;
-				var modworld = mymod.GetModWorld<MyModWorld>();
+				var modworld = mymod.GetModWorld<MyWorld>();
 
 				if( Main.netMode != 2 ) {   // Not server
 					if( !mymod.Config.LoadFile() ) {
@@ -72,7 +72,7 @@ namespace TheLunatic {
 
 		public void PostEnterWorld() {
 			var mymod = (TheLunaticMod)this.mod;
-			var modworld = mymod.GetModWorld<MyModWorld>();
+			var modworld = mymod.GetModWorld<MyWorld>();
 
 			if( modworld.GameLogic.HasGameEnded && !modworld.GameLogic.HasWon ) {
 				Main.NewText( "You inexplicably feel like this will now be a boring adventure.", 64, 64, 96, false );
@@ -130,7 +130,7 @@ namespace TheLunatic {
 		public override void PreUpdate() {
 			var mymod = (TheLunaticMod)this.mod;
 			if( !mymod.Config.Data.Enabled ) { return; }
-			var modworld = this.mod.GetModWorld<MyModWorld>();
+			var modworld = this.mod.GetModWorld<MyWorld>();
 
 			if( this.player.position.Y < Main.worldSurface * 16.0 ) {
 				this.IsInDangerZone = true;
@@ -217,7 +217,7 @@ namespace TheLunatic {
 
 		public override void UpdateBiomes() {
 			var mymod = (TheLunaticMod)this.mod;
-			var modworld = this.mod.GetModWorld<MyModWorld>();
+			var modworld = this.mod.GetModWorld<MyWorld>();
 
 			if( !mymod.Config.Data.Enabled ) { return; }
 			if( modworld.GameLogic == null ) { throw new Exception( "Game logic not initialized." ); }
@@ -227,7 +227,7 @@ namespace TheLunatic {
 
 		public override void UpdateBiomeVisuals() {
 			var mymod = (TheLunaticMod)this.mod;
-			var modworld = this.mod.GetModWorld<MyModWorld>();
+			var modworld = this.mod.GetModWorld<MyWorld>();
 
 			if( !mymod.Config.Data.Enabled ) { return; }
 			if( modworld.GameLogic == null ) { throw new Exception( "Game logic not initialized." ); }
@@ -243,7 +243,7 @@ namespace TheLunatic {
 				Player player = draw_info.drawPlayer;
 
 				var mod = ModLoader.GetMod( "TheLunatic" );
-				var modplayer = player.GetModPlayer<MyModPlayer>( mod );
+				var modplayer = player.GetModPlayer<MyPlayer>( mod );
 				var tex = modplayer.MaskTex;
 
 				var se = player.direction != 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
@@ -265,8 +265,8 @@ namespace TheLunatic {
 
 			this.MaskTex = CustomBossMaskItem.GetMaskTextureOfPlayer( this.player, mymod );
 			if( this.MaskTex != null ) {
-				MyModPlayer.CustomBossMask.visible = !this.player.dead;
-				layers.Add( MyModPlayer.CustomBossMask );
+				MyPlayer.CustomBossMask.visible = !this.player.dead;
+				layers.Add( MyPlayer.CustomBossMask );
 			}
 		}
 
@@ -275,7 +275,7 @@ namespace TheLunatic {
 		////////////////
 
 		public bool IsCheater() {
-			var modworld = this.mod.GetModWorld<MyModWorld>();
+			var modworld = this.mod.GetModWorld<MyWorld>();
 			if( !this.Bye.Keys.Contains( modworld.ID ) ) { return false; }
 			return this.Bye[ modworld.ID ];
 		}
@@ -283,7 +283,7 @@ namespace TheLunatic {
 		////////////////
 
 		public void SetCheater() {
-			var modworld = this.mod.GetModWorld<MyModWorld>();
+			var modworld = this.mod.GetModWorld<MyWorld>();
 			this.Bye[modworld.ID] = true;
 		}
 
@@ -296,11 +296,10 @@ namespace TheLunatic {
 			this.QuakeScale = scale;
 			this.QuakeDuration = duration;
 			this.QuakeStartDuration = duration;
-
-			int sound_type = SoundLoader.customSoundType;
+			
 			float vol = scale / 2;
 			int sound_slot = this.mod.GetSoundSlot( SoundType.Custom, "Sounds/Custom/EarthQuake" );
-			Main.PlaySound( sound_type, -1, -1, sound_slot, vol );
+			Main.PlaySound( (int)SoundType.Custom, -1, -1, sound_slot, vol );
 		}
 	}
 }

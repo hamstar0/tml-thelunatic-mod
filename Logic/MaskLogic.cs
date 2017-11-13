@@ -142,7 +142,7 @@ namespace TheLunatic.Logic {
 
 			// Buy time before the end comes
 			if( this.GivenVanillaMasksByType.Count < (MaskLogic.AvailableMaskCount) ) {
-				var modworld = mymod.GetModWorld<MyModWorld>();
+				var modworld = mymod.GetModWorld<MyWorld>();
 				int recovered = mymod.Config.Data.HalfDaysRecoveredPerMask;
 				
 				switch( mask_type ) {
@@ -175,7 +175,7 @@ namespace TheLunatic.Logic {
 			// Sky flash for all
 			if( Main.netMode != 2 ) {  // Not server
 				Player current_player = Main.player[Main.myPlayer];
-				var modplayer = current_player.GetModPlayer<MyModPlayer>( mymod );
+				var modplayer = current_player.GetModPlayer<MyPlayer>( mymod );
 				modplayer.FlashMe();
 			}
 		}
@@ -209,7 +209,7 @@ namespace TheLunatic.Logic {
 		////////////////
 
 		public bool IsValidMask( TheLunaticMod mymod, Item mask ) {
-			var modworld = mymod.GetModWorld<MyModWorld>();
+			var modworld = mymod.GetModWorld<MyWorld>();
 			if( !modworld.GameLogic.HaveWeHopeToWin(mymod) ) { return false; }
 
 			if( !mymod.Config.Data.LoonyAcceptsMasksWithoutBossKill ) {

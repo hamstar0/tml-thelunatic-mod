@@ -9,7 +9,7 @@ using TheLunatic.Logic;
 
 
 namespace TheLunatic {
-	class MyModWorld : ModWorld {
+	class MyWorld : ModWorld {
 		public string ID { get; private set; }
 		public bool HasCorrectID { get; private set; }	// Workaround for tml bug?
 

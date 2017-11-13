@@ -55,6 +55,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="API.cs" />
     <Compile Include="Buffs\ShadowWalkerBuff.cs" />
     <Compile Include="ConfigDefaults.cs" />
     <Compile Include="Items\CustomBossMaskItem.cs" />
@@ -65,20 +66,21 @@
     <Compile Include="NetProtocol\NetProtocolTypes.cs" />
     <Compile Include="PlayerExtend\PlayerNoclip.cs" />
     <Compile Include="Sounds\Custom\EarthQuake.cs" />
-    <Compile Include="MyGlobaltem.cs" />
-    <Compile Include="MyGlobalNPC.cs" />
-    <Compile Include="MyGlobalProjectile.cs" />
+    <Compile Include="MyItem.cs" />
+    <Compile Include="MyNPC.cs" />
+    <Compile Include="MyProjectile.cs" />
     <Compile Include="TheLunaticMod.cs" />
     <Compile Include="NetProtocol\ServerPacketHandlers.cs" />
-    <Compile Include="MyModPlayer.cs" />
+    <Compile Include="MyPlayer.cs" />
     <Compile Include="NPCs\TheLunaticTownNPC.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="MyModWorld.cs" />
+    <Compile Include="MyWorld.cs" />
     <Compile Include="Tiles\AnimatedSky.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="build.txt" />
     <Content Include="description.txt" />
+    <Content Include="icon.png" />
     <Content Include="Items\UmbralCowlItem.png" />
     <Content Include="Items\UmbralCowlItem_Back.png" />
     <Content Include="Items\UmbralCowlItem_Front.png" />

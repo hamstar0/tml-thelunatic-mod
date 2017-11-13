@@ -53,7 +53,7 @@ namespace TheLunatic.NetProtocol {
 			// Server only
 			if( Main.netMode != 2 ) { return; }
 
-			var modworld = mymod.GetModWorld<MyModWorld>();
+			var modworld = mymod.GetModWorld<MyWorld>();
 			if( modworld.GameLogic == null ) { throw new Exception( "Game logic not initialized." ); }
 
 			ModPacket packet = mymod.GetPacket();
@@ -170,7 +170,7 @@ namespace TheLunatic.NetProtocol {
 			// Server only
 			if( Main.netMode != 2 ) { return; }
 
-			var modworld = mymod.GetModWorld<MyModWorld>();
+			var modworld = mymod.GetModWorld<MyWorld>();
 			if( modworld.MaskLogic == null ) { throw new Exception( "Mask logic not initialized." ); }
 			
 			int mask_type = reader.ReadInt32();

@@ -102,7 +102,7 @@ namespace TheLunatic.NetProtocol {
 			// Clients only
 			if( Main.netMode != 1 ) { return; }
 			
-			var modworld = mymod.GetModWorld<MyModWorld>();
+			var modworld = mymod.GetModWorld<MyWorld>();
 			if( modworld.GameLogic == null ) { throw new Exception( "Game logic not initialized." ); }
 			if( modworld.MaskLogic == null ) { throw new Exception( "Mask logic not initialized." ); }
 
@@ -134,7 +134,7 @@ namespace TheLunatic.NetProtocol {
 			modworld.GameLogic.LoadOnce( mymod, has_loony_arrived, has_loony_quit, has_game_end, has_won, is_safe, time );
 			modworld.MaskLogic.LoadOnce( mymod, masks, custom_masks );
 
-			var modplayer = Main.player[Main.myPlayer].GetModPlayer<MyModPlayer>( mymod );
+			var modplayer = Main.player[Main.myPlayer].GetModPlayer<MyPlayer>( mymod );
 			modplayer.PostEnterWorld();
 		}
 
@@ -143,7 +143,7 @@ namespace TheLunatic.NetProtocol {
 			// Clients only
 			if( Main.netMode != 1 ) { return; }
 
-			var modworld = mymod.GetModWorld<MyModWorld>();
+			var modworld = mymod.GetModWorld<MyWorld>();
 			if( modworld.GameLogic == null ) { throw new Exception( "Game logic not initialized." ); }
 
 			int duration = reader.ReadInt32();
@@ -161,7 +161,7 @@ namespace TheLunatic.NetProtocol {
 			// Clients only
 			if( Main.netMode != 1 ) { return; }
 
-			var modworld = mymod.GetModWorld<MyModWorld>();
+			var modworld = mymod.GetModWorld<MyWorld>();
 			if( modworld.MaskLogic == null ) { throw new Exception( "Mask logic not initialized." ); }
 
 			// Mask is given discreetly

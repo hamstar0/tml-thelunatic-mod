@@ -1,19 +1,13 @@
 ﻿using HamstarHelpers.Utilities.Config;
 using System;
-using Terraria.ModLoader;
 
 
 namespace TheLunatic {
 	public class LunaticConfigData : ConfigurationDataBase {
 		public readonly static Version CurrentVersion = new Version( 1, 2, 6 );
-
-
-		public static LunaticConfigData GetCurrent() {
-			var mymod = (TheLunaticMod)ModLoader.GetMod( "TheLunatic" );
-			return mymod.Config.Data;
-		}
-
-
+		public readonly static string ConfigFileName = "The Lunatic Config.json";
+		
+		
 		////////////////
 
 		public string VersionSinceUpdate = "";

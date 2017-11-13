@@ -4,7 +4,7 @@ using TheLunatic.Buffs;
 
 
 namespace TheLunatic {
-	class MyGlobalProjectile : GlobalProjectile {
+	class MyProjectile : GlobalProjectile {
 		public override bool? CanUseGrapple( int type, Player player ) {
 			var mymod = (TheLunaticMod)this.mod;
 			if( !mymod.Config.Data.Enabled ) { base.CanUseGrapple( type, player ); }

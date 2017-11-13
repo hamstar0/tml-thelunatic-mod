@@ -7,14 +7,14 @@ using TheLunatic.Logic;
 
 
 namespace TheLunatic {
-	class MyGlobalNPC : GlobalNPC {
+	class MyNPC : GlobalNPC {
 		public override void AI( NPC npc ) {
 			var mymod = (TheLunaticMod)this.mod;
 			if( !mymod.Config.Data.Enabled ) { return; }
 
 			if( Main.rand == null ) { return; }
 
-			var modworld = this.mod.GetModWorld<MyModWorld>();
+			var modworld = this.mod.GetModWorld<MyWorld>();
 			if( modworld == null ) { return; }
 
 			// Kill town NPCs above ground every minute when set to do so
@@ -32,7 +32,7 @@ namespace TheLunatic {
 			if( !mymod.Config.Data.Enabled ) { return; }
 
 			if( !npc.boss && npc.type != 551 && npc.type != 398 ) { return; }	// Betsy isn't a boss?
-			var modworld = this.mod.GetModWorld<MyModWorld>();
+			var modworld = this.mod.GetModWorld<MyWorld>();
 			if( !modworld.GameLogic.HaveWeHopeToWin(mymod) ) { return; }
 
 			Item item = null;

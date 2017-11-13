@@ -12,20 +12,32 @@ using TheLunatic.NetProtocol;
 
 
 namespace TheLunatic {
-	public static class LunaticInterface {
-		public static bool HasCurrentGameEnded() {
-			var mymod = (TheLunaticMod)ModLoader.GetMod( "TheLunatic" );
-			var modworld = mymod.GetModWorld<MyModWorld>();
-			return modworld.GameLogic.HasGameEnded;
-		}
-	}
-
-
-
 	class TheLunaticMod : Mod {
+		public static string GithubUserName { get { return "hamstar0"; } }
+		public static string GithubProjectName { get { return "tml-thelunatic-mod"; } }
+
+		public static string ConfigRelativeFilePath {
+			get { return ConfigurationDataBase.RelativePath + Path.DirectorySeparatorChar + LunaticConfigData.ConfigFileName; }
+		}
+		public static void ReloadConfigFromFile() {
+			if( Main.netMode != 0 ) {
+				throw new Exception( "Cannot reload configs outside of single player." );
+			}
+			if( TheLunaticMod.Instance != null ) {
+				TheLunaticMod.Instance.Config.LoadFile();
+			}
+		}
+
+		public static TheLunaticMod Instance { get; private set; }
+
+
+		////////////////
+
 		public JsonConfig<LunaticConfigData> Config { get; private set; }
 		internal AnimatedSky Sky { get; private set; }
 
+
+		////////////////
 
 		public TheLunaticMod() {
 			this.Properties = new ModProperties() {
@@ -38,7 +50,11 @@ namespace TheLunatic {
 			this.Config = new JsonConfig<LunaticConfigData>( filename, "Mod Configs", new LunaticConfigData() );
 		}
 
+		////////////////
+
 		public override void Load() {
+			TheLunaticMod.Instance = this;
+
 			var hamhelpmod = ModLoader.GetMod( "HamstarHelpers" );
 			var min_vers = new Version( 1, 0, 17 );
 
@@ -79,6 +95,9 @@ namespace TheLunatic {
 			}
 		}
 
+		public override void Unload() {
+			TheLunaticMod.Instance = null;
+		}
 
 
 		////////////////
@@ -96,7 +115,7 @@ namespace TheLunatic {
 		}
 
 		public override bool HijackGetData( ref byte messageType, ref BinaryReader reader, int playerNumber ) {
-			var modworld = this.GetModWorld<MyModWorld>();
+			var modworld = this.GetModWorld<MyWorld>();
 			if( modworld != null && modworld.GameLogic != null ) {
 				// Let not a peep of town NPC suffering be heard when set to do so
 				if( modworld.GameLogic.KillSurfaceTownNPCs ) {
@@ -115,7 +134,7 @@ namespace TheLunatic {
 		public override void PostDrawInterface( SpriteBatch sb ) {
 			if( !this.Config.Data.Enabled ) { return; }
 
-			var modworld = this.GetModWorld<MyModWorld>();
+			var modworld = this.GetModWorld<MyWorld>();
 			if( modworld.GameLogic != null ) {
 				modworld.GameLogic.ReadyClient = true;  // Ugh!
 			}
@@ -124,7 +143,7 @@ namespace TheLunatic {
 		public override void UpdateMusic( ref int music ) {
 			if( !this.Config.Data.Enabled ) { return; }
 
-			var modworld = this.GetModWorld<MyModWorld>();
+			var modworld = this.GetModWorld<MyWorld>();
 
 			if( modworld != null && modworld.GameLogic != null ) {
 				modworld.GameLogic.UpdateMyMusic( this, ref music );

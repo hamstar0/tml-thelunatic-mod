@@ -46,7 +46,7 @@ namespace TheLunatic.Logic {
 
 
 		public void LoadOnce( TheLunaticMod mymod, bool has_loony_arrived, bool has_loony_quit, bool has_game_ended, bool has_won, bool is_safe, int time ) {
-			var modworld = mymod.GetModWorld<MyModWorld>();
+			var modworld = mymod.GetModWorld<MyWorld>();
 
 			if( this.IsLoaded ) {
 				DebugHelpers.Log( "Redundant Game Logic load. " + has_loony_arrived + "," + has_loony_quit + "," + has_game_ended + "," + has_won + "," + is_safe + "," + time +
@@ -127,7 +127,7 @@ namespace TheLunatic.Logic {
 			}
 			
 			if( mymod.IsDisplayInfoDebugMode() ) {
-				var modworld = mymod.GetModWorld<MyModWorld>();
+				var modworld = mymod.GetModWorld<MyWorld>();
 				DebugHelpers.Display["WorldID"] = "" + modworld.ID;
 				DebugHelpers.Display["IsApocalypse"] = "" + this.IsApocalypse;
 				DebugHelpers.Display["IsSafe"] = "" + this.IsSafe;
@@ -199,7 +199,7 @@ namespace TheLunatic.Logic {
 
 		public void UpdateMyMusic( TheLunaticMod mymod, ref int music ) {
 			Player player = Main.player[Main.myPlayer];
-			var modplayer = player.GetModPlayer<MyModPlayer>( mymod );
+			var modplayer = player.GetModPlayer<MyPlayer>( mymod );
 
 			if( this.IsApocalypse ) {
 				if( modplayer.IsInDangerZone ) {
@@ -210,7 +210,7 @@ namespace TheLunatic.Logic {
 
 		public void UpdateBiomes( TheLunaticMod mymod, Player player ) {
 			if( this.IsApocalypse ) {
-				var modplayer = player.GetModPlayer<MyModPlayer>( mymod );
+				var modplayer = player.GetModPlayer<MyPlayer>( mymod );
 
 				if( modplayer.IsInDangerZone ) {
 					player.ZoneTowerSolar = true;
@@ -223,7 +223,7 @@ namespace TheLunatic.Logic {
 
 		public void UpdateBiomeVisuals( TheLunaticMod mymod, Player player ) {
 			if( this.IsApocalypse ) {
-				var modplayer = player.GetModPlayer<MyModPlayer>( mymod );
+				var modplayer = player.GetModPlayer<MyPlayer>( mymod );
 				
 				if( modplayer.IsInDangerZone ) {
 					Filters.Scene.Activate( "HeatDistortion", player.Center, new object[0] );
@@ -272,7 +272,7 @@ namespace TheLunatic.Logic {
 			if( this.IsApocalypse ) {
 				if( Main.netMode != 2 ) { // Not server
 					Player player = Main.player[Main.myPlayer];
-					var modplayer = player.GetModPlayer<MyModPlayer>( mymod );
+					var modplayer = player.GetModPlayer<MyPlayer>( mymod );
 
 					modplayer.QuakeMeFor( -1, 0.1f );	// Perpetual rumble
 				}
@@ -306,7 +306,7 @@ namespace TheLunatic.Logic {
 		}
 
 		private bool HaveWeWon( TheLunaticMod mymod ) {
-			var modworld = mymod.GetModWorld<MyModWorld>();
+			var modworld = mymod.GetModWorld<MyWorld>();
 
 			return this.HasWon || ( this.HasLoonyArrived
 				//&& this.IsSafe
@@ -325,7 +325,7 @@ namespace TheLunatic.Logic {
 			if( Main.netMode == 2 ) { return; }	// Not server
 
 			Player player = Main.player[Main.myPlayer];
-			var modplayer = player.GetModPlayer<MyModPlayer>( mymod );
+			var modplayer = player.GetModPlayer<MyPlayer>( mymod );
 
 			// Quake
 			modplayer.QuakeMeFor( duration, 0.35f );

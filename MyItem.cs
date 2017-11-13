@@ -41,7 +41,7 @@ namespace TheLunatic {
 
 		public override void UpdateEquip( Item item, Player player ) {
 			var mymod = (TheLunaticMod)this.mod;
-			var modplayer = player.GetModPlayer<MyModPlayer>( mymod );
+			var modplayer = player.GetModPlayer<MyPlayer>( mymod );
 
 			if( !mymod.Config.Data.Enabled ) { return; }
 
