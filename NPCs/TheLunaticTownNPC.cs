@@ -17,11 +17,12 @@ namespace TheLunatic.NPCs {
 		public static string[] DismissalReplies { get; private set; }
 		public static string[] NormalReplies { get; private set; }
 
-		public static bool AlertedToImpendingDoom = false;
+		public static bool AlertedToImpendingDoom { get; private set; }
 		public static bool AmHere { get; private set; }
 
 
 		static TheLunaticTownNPC() {
+			TheLunaticTownNPC.AlertedToImpendingDoom = false;
 			TheLunaticTownNPC.AmHere = false;
 
 			TheLunaticTownNPC.NormalReplies = new string[] {

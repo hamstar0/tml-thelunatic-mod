@@ -12,7 +12,16 @@ using TheLunatic.NetProtocol;
 
 
 namespace TheLunatic {
+	public class LunaticModContext {
+		internal TheLunaticMod MyMod;
+		internal LunaticModContext( TheLunaticMod mymod ) { this.MyMod = mymod; }
+	}
+
+
+
 	class TheLunaticMod : Mod {
+		public static TheLunaticMod Instance { get; private set; }
+
 		public static string GithubUserName { get { return "hamstar0"; } }
 		public static string GithubProjectName { get { return "tml-thelunatic-mod"; } }
 
@@ -28,11 +37,10 @@ namespace TheLunatic {
 			}
 		}
 
-		public static TheLunaticMod Instance { get; private set; }
-
 
 		////////////////
 
+		public LunaticModContext Context { get; private set; }
 		public JsonConfig<LunaticConfigData> Config { get; private set; }
 		internal AnimatedSky Sky { get; private set; }
 
@@ -45,7 +53,8 @@ namespace TheLunatic {
 				AutoloadGores = true,
 				AutoloadSounds = true
 			};
-			
+
+			this.Context = new LunaticModContext( this );
 			this.Config = new JsonConfig<LunaticConfigData>( LunaticConfigData.ConfigFileName,
 				ConfigurationDataBase.RelativePath, new LunaticConfigData() );
 		}
