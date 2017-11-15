@@ -3,10 +3,6 @@
 
 namespace TheLunatic {
 	public static class TheLunaticAPI {
-		public static LunaticModContext GetModContext() {
-			return TheLunaticMod.Instance.Context;
-		}
-
 		public static LunaticConfigData GetModSettings() {
 			return TheLunaticMod.Instance.Config.Data;
 		}
