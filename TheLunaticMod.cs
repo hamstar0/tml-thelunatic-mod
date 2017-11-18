@@ -89,7 +89,7 @@ namespace TheLunatic {
 			}
 
 			if( this.Config.Data.UpdateToLatestVersion() ) {
-				ErrorLogger.Log( "The Lunatic updated to " + LunaticConfigData.CurrentVersion.ToString() );
+				ErrorLogger.Log( "The Lunatic updated to " + LunaticConfigData.ConfigVersion.ToString() );
 				this.Config.SaveFile();
 			}
 		}
