@@ -1,4 +1,5 @@
 ﻿using HamstarHelpers.Helpers.DebugHelpers;
+using HamstarHelpers.Helpers.PlayerHelpers;
 using Microsoft.Xna.Framework.Graphics;
 using PlayerExtend;
 using System;
@@ -51,26 +52,71 @@ namespace TheLunatic {
 
 		////////////////
 
-		public override void OnEnterWorld( Player player ) {    // This seems to be as close to a constructor as we're gonna get!
-			if( player.whoAmI == this.player.whoAmI ) {    // Current player
-				var mymod = (TheLunaticMod)this.mod;
-				var modworld = mymod.GetModWorld<TheLunaticWorld>();
+		public override void SyncPlayer( int to_who, int from_who, bool new_player ) {
+			var mymod = (TheLunaticMod)this.mod;
 
-				if( Main.netMode != 2 ) {   // Not server
-					if( !mymod.ConfigJson.LoadFile() ) {
-						mymod.ConfigJson.SaveFile();
-					}
-				}
-				modworld.GameLogic.ApplyDebugOverrides( mymod );
-
-				if( Main.netMode == 1 ) {	// Client
-					ClientPacketHandlers.SendRequestModSettingsFromClient( mymod );
-					ClientPacketHandlers.SendRequestModDataFromClient( mymod );
-				} else if( Main.netMode == 0 ) {	// Single
-					this.PostEnterWorld();
+			if( Main.netMode == 2 ) {
+				if( to_who == -1 && from_who == this.player.whoAmI ) {
+					this.OnServerConnect();
 				}
 			}
 		}
+
+		public override void OnEnterWorld( Player player ) {
+			if( player.whoAmI != this.player.whoAmI ) { return; }
+
+			var mymod = (TheLunaticMod)this.mod;
+
+			if( Main.netMode == 0 ) {
+				if( !mymod.ConfigJson.LoadFile() ) {
+					mymod.ConfigJson.SaveFile();
+					ErrorLogger.Log( "Lunatic config " + LunaticConfigData.ConfigVersion.ToString() + " created (ModPlayer.OnEnterWorld())." );
+				}
+			}
+
+			if( mymod.Config.DebugModeInfo ) {
+				bool _;
+				ErrorLogger.Log( "TheLunatic.TheLunaticPlayer.OnEnterWorld - " + player.name + " joined (" + PlayerIdentityHelpers.GetUniqueId( player, out _ ) + ")" );
+			}
+
+			if( Main.netMode == 0 ) {
+				this.OnSingleConnect();
+			}
+			if( Main.netMode == 1 ) {
+				this.OnClientConnect();
+			}
+		}
+
+		private void OnSingleConnect() {
+			if( player.whoAmI == this.player.whoAmI ) {    // Current player
+				var mymod = (TheLunaticMod)this.mod;
+				var myworld = mymod.GetModWorld<TheLunaticWorld>();
+
+				myworld.GameLogic.ApplyDebugOverrides( mymod );
+
+				this.PostEnterWorld();
+			}
+		}
+		private void OnClientConnect() {
+			if( player.whoAmI == this.player.whoAmI ) {    // Current player
+				var mymod = (TheLunaticMod)this.mod;
+				var myworld = mymod.GetModWorld<TheLunaticWorld>();
+
+				myworld.GameLogic.ApplyDebugOverrides( mymod );
+
+				ClientPacketHandlers.SendRequestModSettingsFromClient( mymod );
+				ClientPacketHandlers.SendRequestModDataFromClient( mymod );
+			}
+		}
+		private void OnServerConnect() {
+			if( player.whoAmI == this.player.whoAmI ) {    // Current player
+				var mymod = (TheLunaticMod)this.mod;
+				var myworld = mymod.GetModWorld<TheLunaticWorld>();
+
+				myworld.GameLogic.ApplyDebugOverrides( mymod );
+			}
+		}
+
 
 		public void PostEnterWorld() {
 			var mymod = (TheLunaticMod)this.mod;
