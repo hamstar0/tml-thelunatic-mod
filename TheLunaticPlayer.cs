@@ -10,7 +10,6 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using TheLunatic.Buffs;
 using TheLunatic.Items;
-using TheLunatic.NetProtocol;
 
 
 namespace TheLunatic {
@@ -85,48 +84,6 @@ namespace TheLunatic {
 			if( Main.netMode == 1 ) {
 				this.OnClientConnect();
 			}
-		}
-
-		private void OnSingleConnect() {
-			if( player.whoAmI == this.player.whoAmI ) {    // Current player
-				var mymod = (TheLunaticMod)this.mod;
-				var myworld = mymod.GetModWorld<TheLunaticWorld>();
-
-				myworld.GameLogic.ApplyDebugOverrides( mymod );
-
-				this.PostEnterWorld();
-			}
-		}
-		private void OnClientConnect() {
-			if( player.whoAmI == this.player.whoAmI ) {    // Current player
-				var mymod = (TheLunaticMod)this.mod;
-				var myworld = mymod.GetModWorld<TheLunaticWorld>();
-
-				myworld.GameLogic.ApplyDebugOverrides( mymod );
-
-				ClientPacketHandlers.SendRequestModSettingsFromClient( mymod );
-				ClientPacketHandlers.SendRequestModDataFromClient( mymod );
-			}
-		}
-		private void OnServerConnect() {
-			if( player.whoAmI == this.player.whoAmI ) {    // Current player
-				var mymod = (TheLunaticMod)this.mod;
-				var myworld = mymod.GetModWorld<TheLunaticWorld>();
-
-				myworld.GameLogic.ApplyDebugOverrides( mymod );
-			}
-		}
-
-
-		public void PostEnterWorld() {
-			var mymod = (TheLunaticMod)this.mod;
-			var modworld = mymod.GetModWorld<TheLunaticWorld>();
-
-			if( modworld.GameLogic.HasGameEnded && !modworld.GameLogic.HasWon ) {
-				Main.NewText( "You inexplicably feel like this will now be a boring adventure.", 64, 64, 96, false );
-			}
-
-			this.HasVerifiedGameData = true;
 		}
 
 		////////////////

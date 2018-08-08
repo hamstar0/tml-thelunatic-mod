@@ -72,6 +72,7 @@
     <Compile Include="TheLunaticItem.cs" />
     <Compile Include="TheLunaticMod_Meta.cs" />
     <Compile Include="TheLunaticNPC.cs" />
+    <Compile Include="TheLunaticPlayer_Load.cs" />
     <Compile Include="TheLunaticPlayer_Draw.cs" />
     <Compile Include="TheLunaticPlayer_Update.cs" />
     <Compile Include="TheLunaticProjectile.cs" />
