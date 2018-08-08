@@ -1,4 +1,4 @@
-﻿using HamstarHelpers.ItemHelpers;
+﻿using HamstarHelpers.Helpers.ItemHelpers;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System.IO;
@@ -107,7 +107,7 @@ namespace TheLunatic.Items {
 					ShadowWalkerBuff.AddBuffFor( this.mod, player );
 				}
 
-				var modplayer = player.GetModPlayer<MyPlayer>( this.mod );
+				var modplayer = player.GetModPlayer<TheLunaticPlayer>( this.mod );
 				if( modplayer.Noclip != null ) {
 					modplayer.Noclip.UpdateMode( player );   // Redundant?
 				}

@@ -1,5 +1,5 @@
-﻿using HamstarHelpers.ItemHelpers;
-using HamstarHelpers.NPCHelpers;
+﻿using HamstarHelpers.Helpers.ItemHelpers;
+using HamstarHelpers.Helpers.NPCHelpers;
 using Terraria;
 using Terraria.ModLoader;
 using TheLunatic.Items;
@@ -7,14 +7,14 @@ using TheLunatic.Logic;
 
 
 namespace TheLunatic {
-	class MyNPC : GlobalNPC {
+	class TheLunaticNPC : GlobalNPC {
 		public override void AI( NPC npc ) {
 			var mymod = (TheLunaticMod)this.mod;
-			if( !mymod.Config.Data.Enabled ) { return; }
+			if( !mymod.ConfigJson.Data.Enabled ) { return; }
 
 			if( Main.rand == null ) { return; }
 
-			var modworld = this.mod.GetModWorld<MyWorld>();
+			var modworld = this.mod.GetModWorld<TheLunaticWorld>();
 			if( modworld == null ) { return; }
 
 			// Kill town NPCs above ground every minute when set to do so
@@ -29,10 +29,10 @@ namespace TheLunatic {
 
 		public override void NPCLoot( NPC npc ) {
 			var mymod = (TheLunaticMod)this.mod;
-			if( !mymod.Config.Data.Enabled ) { return; }
+			if( !mymod.ConfigJson.Data.Enabled ) { return; }
 
 			if( !npc.boss && npc.type != 551 && npc.type != 398 ) { return; }	// Betsy isn't a boss?
-			var modworld = this.mod.GetModWorld<MyWorld>();
+			var modworld = this.mod.GetModWorld<TheLunaticWorld>();
 			if( !modworld.GameLogic.HaveWeHopeToWin(mymod) ) { return; }
 
 			Item item = null;
@@ -48,7 +48,7 @@ namespace TheLunatic {
 			}
 
 			// No modded masks allowed?
-			if( !is_vanilla && mymod.Config.Data.OnlyVanillaBossesDropMasks ) {
+			if( !is_vanilla && mymod.ConfigJson.Data.OnlyVanillaBossesDropMasks ) {
 				return;
 			}
 			

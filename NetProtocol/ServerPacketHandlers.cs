@@ -1,4 +1,4 @@
-﻿using HamstarHelpers.DebugHelpers;
+﻿using HamstarHelpers.Helpers.DebugHelpers;
 using System;
 using System.IO;
 using System.Linq;
@@ -14,19 +14,19 @@ namespace TheLunatic.NetProtocol {
 
 			switch( protocol ) {
 			case NetProtocolTypes.RequestModSettings:
-				if( mymod.IsDisplayNetInfoDebugMode() ) { DebugHelpers.Log( "Server RequestModSettings" ); }
+				if( mymod.Config.DebugModeNetInfo ) { LogHelpers.Log( "Server RequestModSettings" ); }
 				ServerPacketHandlers.ReceiveRequestModSettingsOnServer( mymod, reader, player_who );
 				break;
 			case NetProtocolTypes.RequestModData:
-				if( mymod.IsDisplayNetInfoDebugMode() ) { DebugHelpers.Log( "Server RequestModData" ); }
+				if( mymod.Config.DebugModeNetInfo ) { LogHelpers.Log( "Server RequestModData" ); }
 				ServerPacketHandlers.ReceiveRequestModDataOnServer( mymod, reader, player_who );
 				break;
 			case NetProtocolTypes.GiveMaskToServer:
-				if( mymod.IsDisplayNetInfoDebugMode() ) { DebugHelpers.Log( "Server GiveMaskToServer" ); }
+				if( mymod.Config.DebugModeNetInfo ) { LogHelpers.Log( "Server GiveMaskToServer" ); }
 				ServerPacketHandlers.ReceiveGivenMaskOnServer( mymod, reader, player_who );
 				break;
 			default:
-				DebugHelpers.Log( "Invalid packet protocol: " + protocol );
+				LogHelpers.Log( "Invalid packet protocol: " + protocol );
 				break;
 			}
 		}
@@ -44,7 +44,7 @@ namespace TheLunatic.NetProtocol {
 			ModPacket packet = mymod.GetPacket();
 
 			packet.Write( (byte)NetProtocolTypes.ModSettings );
-			packet.Write( (string)mymod.Config.SerializeMe() );
+			packet.Write( (string)mymod.ConfigJson.SerializeMe() );
 			
 			packet.Send( (int)player.whoAmI );
 		}
@@ -53,7 +53,7 @@ namespace TheLunatic.NetProtocol {
 			// Server only
 			if( Main.netMode != 2 ) { return; }
 
-			var modworld = mymod.GetModWorld<MyWorld>();
+			var modworld = mymod.GetModWorld<TheLunaticWorld>();
 			if( modworld.GameLogic == null ) { throw new Exception( "Game logic not initialized." ); }
 
 			ModPacket packet = mymod.GetPacket();
@@ -75,8 +75,8 @@ namespace TheLunatic.NetProtocol {
 				packet.Write( (string)mask_id );
 			}
 
-			if( mymod.IsDisplayNetInfoDebugMode() ) {
-				DebugHelpers.Log( "DEBUG Sending mod data from server. " + modworld.ID + ", " +
+			if( mymod.Config.DebugModeNetInfo ) {
+				LogHelpers.Log( "DEBUG Sending mod data from server. " + modworld.ID + ", " +
 					modworld.GameLogic.HasLoonyArrived + ", " +
 					modworld.GameLogic.HasLoonyQuit + ", " +
 					modworld.GameLogic.HasGameEnded + ", " +
@@ -137,7 +137,7 @@ namespace TheLunatic.NetProtocol {
 			if( Main.netMode != 2 ) { return; }
 			
 			if( player_who < 0 || player_who >= Main.player.Length || Main.player[player_who] == null ) {
-				DebugHelpers.Log( "TheLunaticNetProtocol.ReceiveRequestModSettingsOnServer - Invalid player id " + player_who );
+				LogHelpers.Log( "TheLunaticNetProtocol.ReceiveRequestModSettingsOnServer - Invalid player id " + player_who );
 				return;
 			}
 			//if( !Main.player[player_who].active ) {
@@ -154,7 +154,7 @@ namespace TheLunatic.NetProtocol {
 			if( Main.netMode != 2 ) { return; }
 			
 			if( player_who < 0 || player_who >= Main.player.Length || Main.player[player_who] == null ) {
-				DebugHelpers.Log( "TheLunaticNetProtocol.ReceiveRequestModDataOnServer - Invalid player id " + player_who );
+				LogHelpers.Log( "TheLunaticNetProtocol.ReceiveRequestModDataOnServer - Invalid player id " + player_who );
 				return;
 			}
 			//if( !Main.player[player_who].active ) {
@@ -170,7 +170,7 @@ namespace TheLunatic.NetProtocol {
 			// Server only
 			if( Main.netMode != 2 ) { return; }
 
-			var modworld = mymod.GetModWorld<MyWorld>();
+			var modworld = mymod.GetModWorld<TheLunaticWorld>();
 			if( modworld.MaskLogic == null ) { throw new Exception( "Mask logic not initialized." ); }
 			
 			int mask_type = reader.ReadInt32();
@@ -184,7 +184,7 @@ namespace TheLunatic.NetProtocol {
 			}
 			
 			if( player_who < 0 || player_who >= Main.player.Length || Main.player[player_who] == null ) {
-				DebugHelpers.Log( "TheLunaticNetProtocol.ReceiveGivenMaskOnServer - Invalid player id " + player_who );
+				LogHelpers.Log( "TheLunaticNetProtocol.ReceiveGivenMaskOnServer - Invalid player id " + player_who );
 				return;
 			}
 			//if( !Main.player[player_who].active ) {
@@ -192,7 +192,7 @@ namespace TheLunatic.NetProtocol {
 			//	return;
 			//}
 			if( modworld.MaskLogic.DoesLoonyHaveThisMask( mymod, fake_mask ) ) {
-				DebugHelpers.Log( "TheLunaticNetProtocol.ReceiveGivenMaskOnServer - Invalid mask from player " + Main.player[player_who].name + " of type " + mask_type );
+				LogHelpers.Log( "TheLunaticNetProtocol.ReceiveGivenMaskOnServer - Invalid mask from player " + Main.player[player_who].name + " of type " + mask_type );
 				return;
 			}
 

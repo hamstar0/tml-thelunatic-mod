@@ -1,5 +1,5 @@
-using HamstarHelpers.DebugHelpers;
-using HamstarHelpers.WorldHelpers;
+using HamstarHelpers.Helpers.DebugHelpers;
+using HamstarHelpers.Helpers.WorldHelpers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -84,7 +84,7 @@ namespace TheLunatic.Tiles {
 			color.G = (byte)(128f * tint_scale);
 			color.A = (byte)(255f * tint_scale);
 
-			if( mymod.IsDisplayInfoDebugMode() ) {
+			if( mymod.Config.DebugModeInfo ) {
 				DebugHelpers.Display["Sky"] = color.ToString();
 			}
 			return color;

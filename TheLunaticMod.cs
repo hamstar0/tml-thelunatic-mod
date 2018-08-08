@@ -6,34 +6,21 @@ using Terraria.ModLoader;
 using TheLunatic.Tiles;
 using Terraria.ID;
 using System;
-using HamstarHelpers.Utilities.Config;
-using HamstarHelpers.DebugHelpers;
+using HamstarHelpers.Helpers.DebugHelpers;
 using TheLunatic.NetProtocol;
+using HamstarHelpers.Components.Config;
 
 
 namespace TheLunatic {
-	class TheLunaticMod : Mod {
+	partial class TheLunaticMod : Mod {
 		public static TheLunaticMod Instance { get; private set; }
-
-		public static string GithubUserName { get { return "hamstar0"; } }
-		public static string GithubProjectName { get { return "tml-thelunatic-mod"; } }
-
-		public static string ConfigFileRelativePath {
-			get { return ConfigurationDataBase.RelativePath + Path.DirectorySeparatorChar + LunaticConfigData.ConfigFileName; }
-		}
-		public static void ReloadConfigFromFile() {
-			if( Main.netMode != 0 ) {
-				throw new Exception( "Cannot reload configs outside of single player." );
-			}
-			if( TheLunaticMod.Instance != null ) {
-				TheLunaticMod.Instance.Config.LoadFile();
-			}
-		}
 
 
 		////////////////
 		
-		public JsonConfig<LunaticConfigData> Config { get; private set; }
+		public JsonConfig<LunaticConfigData> ConfigJson { get; private set; }
+		public LunaticConfigData Config { get { return this.ConfigJson.Data; } }
+
 		internal AnimatedSky Sky { get; private set; }
 
 
@@ -46,7 +33,7 @@ namespace TheLunatic {
 				AutoloadSounds = true
 			};
 			
-			this.Config = new JsonConfig<LunaticConfigData>( LunaticConfigData.ConfigFileName,
+			this.ConfigJson = new JsonConfig<LunaticConfigData>( LunaticConfigData.ConfigFileName,
 				ConfigurationDataBase.RelativePath, new LunaticConfigData() );
 		}
 
@@ -54,12 +41,6 @@ namespace TheLunatic {
 
 		public override void Load() {
 			TheLunaticMod.Instance = this;
-			
-			var hamhelpmod = ModLoader.GetMod( "HamstarHelpers" );
-			var min_vers = new Version( 1, 2, 0 );
-			if( hamhelpmod.Version < min_vers ) {
-				throw new Exception( "Hamstar Helpers must be version " + min_vers.ToString() + " or greater." );
-			}
 
 			this.LoadConfig();
 
@@ -70,27 +51,18 @@ namespace TheLunatic {
 		}
 
 		private void LoadConfig() {
-			var old_config = new JsonConfig<LunaticConfigData>( "The Lunatic 1.0.1.json", "", new LunaticConfigData() );
-
-			// Update old config to new location
-			if( old_config.LoadFile() ) {
-				old_config.DestroyFile();
-				old_config.SetFilePath( this.Config.FileName, ConfigurationDataBase.RelativePath );
-				this.Config = old_config;
-			}
-
 			try {
-				if( !this.Config.LoadFile() ) {
-					this.Config.SaveFile();
+				if( !this.ConfigJson.LoadFile() ) {
+					this.ConfigJson.SaveFile();
 				}
 			} catch( Exception e ) {
-				DebugHelpers.Log( e.Message );
-				this.Config.SaveFile();
+				LogHelpers.Log( e.Message );
+				this.ConfigJson.SaveFile();
 			}
 
-			if( this.Config.Data.UpdateToLatestVersion() ) {
+			if( this.ConfigJson.Data.UpdateToLatestVersion() ) {
 				ErrorLogger.Log( "The Lunatic updated to " + LunaticConfigData.ConfigVersion.ToString() );
-				this.Config.SaveFile();
+				this.ConfigJson.SaveFile();
 			}
 		}
 
@@ -109,66 +81,44 @@ namespace TheLunatic {
 					ServerPacketHandlers.HandlePacket( this, reader, player_who );
 				}
 			} catch( Exception e ) {
-				DebugHelpers.Log( "HandlePacket "+e.ToString() );
+				LogHelpers.Log( "HandlePacket "+e.ToString() );
 			}
 		}
 
-		public override bool HijackGetData( ref byte messageType, ref BinaryReader reader, int playerNumber ) {
-			var modworld = this.GetModWorld<MyWorld>();
+		public override bool HijackGetData( ref byte message_type, ref BinaryReader reader, int player_number ) {
+			var modworld = this.GetModWorld<TheLunaticWorld>();
 			if( modworld != null && modworld.GameLogic != null ) {
 				// Let not a peep of town NPC suffering be heard when set to do so
 				if( modworld.GameLogic.KillSurfaceTownNPCs ) {
-					if( (int)messageType == MessageID.SyncNPCName ) {
+					if( (int)message_type == MessageID.SyncNPCName ) {
 						//reader.ReadInt16();
 						//reader.ReadString();
 						return true;
 					}
 				}
 			}
-			return base.HijackGetData( ref messageType, ref reader, playerNumber );
+			return base.HijackGetData( ref message_type, ref reader, player_number );
 		}
 
 		////////////////
 
 		public override void PostDrawInterface( SpriteBatch sb ) {
-			if( !this.Config.Data.Enabled ) { return; }
+			if( !this.ConfigJson.Data.Enabled ) { return; }
 
-			var modworld = this.GetModWorld<MyWorld>();
+			var modworld = this.GetModWorld<TheLunaticWorld>();
 			if( modworld.GameLogic != null ) {
 				modworld.GameLogic.ReadyClient = true;  // Ugh!
 			}
 		}
 
-		public override void UpdateMusic( ref int music ) {
-			if( !this.Config.Data.Enabled ) { return; }
+		public override void UpdateMusic( ref int music, ref MusicPriority priority ) {
+			if( !this.ConfigJson.Data.Enabled ) { return; }
 
-			var modworld = this.GetModWorld<MyWorld>();
+			var modworld = this.GetModWorld<TheLunaticWorld>();
 
 			if( modworld != null && modworld.GameLogic != null ) {
 				modworld.GameLogic.UpdateMyMusic( this, ref music );
 			}
-		}
-
-
-		////////////////
-
-		public bool IsDisplayInfoDebugMode() {
-			return (this.Config.Data.DEBUGFLAGS & 1) > 0;
-		}
-		public bool IsFastTimeDebugMode() {
-			return (this.Config.Data.DEBUGFLAGS & 2) > 0;
-		}
-		public bool IsResetDebugMode() {
-			return (this.Config.Data.DEBUGFLAGS & 4) > 0;
-		}
-		public bool IsResetWinDebugMode() {
-			return (this.Config.Data.DEBUGFLAGS & 8) > 0;
-		}
-		public bool IsSkipToSignsDebugMode() {
-			return (this.Config.Data.DEBUGFLAGS & 16) > 0;
-		}
-		public bool IsDisplayNetInfoDebugMode() {
-			return (this.Config.Data.DEBUGFLAGS & 32) > 0;
 		}
 	}
 }

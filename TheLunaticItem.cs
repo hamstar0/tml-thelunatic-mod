@@ -7,14 +7,14 @@ using TheLunatic.Logic;
 
 
 namespace TheLunatic {
-	class MyGlobalItem : GlobalItem {
+	class TheLunaticItem : GlobalItem {
 		public override bool InstancePerEntity { get { return true; } }
 		//public override bool CloneNewInstances { get { return true; } }
 
 		public string AddedTooltip = "";
 
 		public override GlobalItem Clone( Item item, Item item_clone ) {
-			var clone = (MyGlobalItem)base.Clone( item, item_clone );
+			var clone = (TheLunaticItem)base.Clone( item, item_clone );
 			clone.AddedTooltip = this.AddedTooltip;
 			return clone;
 		}
@@ -23,7 +23,7 @@ namespace TheLunatic {
 
 		public override void ModifyTooltips( Item item, List<TooltipLine> tooltips ) {
 			var mymod = (TheLunaticMod)this.mod;
-			if( !mymod.Config.Data.Enabled ) { return; }
+			if( !mymod.ConfigJson.Data.Enabled ) { return; }
 
 			bool found = item.type == this.mod.ItemType<CustomBossMaskItem>();
 			if( !found ) { found = MaskLogic.AllVanillaMasks.Contains( item.type ); }
@@ -41,9 +41,9 @@ namespace TheLunatic {
 
 		public override void UpdateEquip( Item item, Player player ) {
 			var mymod = (TheLunaticMod)this.mod;
-			var modplayer = player.GetModPlayer<MyPlayer>( mymod );
+			var modplayer = player.GetModPlayer<TheLunaticPlayer>( mymod );
 
-			if( !mymod.Config.Data.Enabled ) { return; }
+			if( !mymod.ConfigJson.Data.Enabled ) { return; }
 
 			if( modplayer.Noclip.IsOn ) {
 				for( int i = 0; i < 50; i++ ) {

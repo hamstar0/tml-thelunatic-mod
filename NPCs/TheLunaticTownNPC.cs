@@ -1,5 +1,5 @@
-using HamstarHelpers.DebugHelpers;
-using HamstarHelpers.PlayerHelpers;
+using HamstarHelpers.Helpers.DebugHelpers;
+using HamstarHelpers.Helpers.PlayerHelpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -56,12 +56,12 @@ namespace TheLunatic.NPCs {
 		}
 
 		public static bool WantsToSpawnAnew( TheLunaticMod mymod ) {
-			var modworld = mymod.GetModWorld<MyWorld>();
+			var modworld = mymod.GetModWorld<TheLunaticWorld>();
 			if( modworld.GameLogic == null ) { throw new Exception( "Game logic not initialized." ); }
 
 			bool can_spawn = !modworld.GameLogic.HasLoonyQuit;
 
-			if( can_spawn && mymod.Config.Data.LoonyEnforcesBossSequence ) {
+			if( can_spawn && mymod.ConfigJson.Data.LoonyEnforcesBossSequence ) {
 				// Allow spawning if moon lord gone (shop use only)
 				if( !NPC.downedMoonlord ) {
 					//if( NPC.downedSlimeKing ) { can_spawn = false; }		// King Slime
@@ -84,12 +84,12 @@ namespace TheLunatic.NPCs {
 		}
 
 		public static bool WantsToSpawn( TheLunaticMod mymod ) {
-			var modworld = mymod.GetModWorld<MyWorld>();
+			var modworld = mymod.GetModWorld<TheLunaticWorld>();
 			if( modworld.GameLogic == null ) { throw new Exception("Game logic not initialized."); }
 
 			bool can_spawn = !modworld.GameLogic.HasLoonyQuit;
 
-			if( mymod.Config.Data.LoonyEnforcesBossSequence ) {
+			if( mymod.ConfigJson.Data.LoonyEnforcesBossSequence ) {
 				if( can_spawn && !Main.hardMode ) {
 					can_spawn = !NPC.downedMechBoss1 && !NPC.downedMechBoss2 && !NPC.downedMechBoss3 && !NPC.downedFishron
 						&& !NPC.downedPlantBoss && !NPC.downedGolemBoss && !NPC.downedAncientCultist && !NPC.downedMoonlord;
@@ -158,7 +158,7 @@ namespace TheLunatic.NPCs {
 		}
 
 		public override bool CanTownNPCSpawn( int numTownNPCs, int money ) {
-			var modworld = mod.GetModWorld<MyWorld>();
+			var modworld = mod.GetModWorld<TheLunaticWorld>();
 			if( modworld.GameLogic == null ) { throw new Exception("Game logic not initialized."); }
 
 			if( modworld.GameLogic.KillSurfaceTownNPCs ) { return false; }
@@ -196,7 +196,7 @@ namespace TheLunatic.NPCs {
 		
 		public override void AI() {
 			var mymod = (TheLunaticMod)this.mod;
-			var modworld = this.mod.GetModWorld<MyWorld>();
+			var modworld = this.mod.GetModWorld<TheLunaticWorld>();
 			if( modworld.GameLogic == null ) { throw new Exception( "Game logic not initialized." ); }
 
 			TheLunaticTownNPC.AmHere = true;
@@ -210,8 +210,8 @@ namespace TheLunatic.NPCs {
 
 		public override void SetupShop( Chest shop, ref int nextSlot ) {
 			var mymod = (TheLunaticMod)this.mod;
-			var modworld = mymod.GetModWorld<MyWorld>();
-			bool strict = mymod.Config.Data.LoonyEnforcesBossSequence;
+			var modworld = mymod.GetModWorld<TheLunaticWorld>();
+			bool strict = mymod.ConfigJson.Data.LoonyEnforcesBossSequence;
 			bool downed_mech = NPC.downedMechBoss1 || NPC.downedMechBoss2 || NPC.downedMechBoss3;
 			bool downed_towers = NPC.downedTowerSolar && NPC.downedTowerVortex && NPC.downedTowerNebula && NPC.downedTowerStardust;
 
@@ -234,11 +234,11 @@ namespace TheLunatic.NPCs {
 			pumpkin_pie.value *= 9;
 			cooked_marshmallow.value *= 5;
 			
-			sugar_cookie.GetGlobalItem<MyGlobalItem>(mymod).AddedTooltip = "Bake sale!";
-			gingerbread_cookie.GetGlobalItem<MyGlobalItem>( mymod ).AddedTooltip = "Bake sale!";
-			christmas_pudding.GetGlobalItem<MyGlobalItem>( mymod ).AddedTooltip = "Bake sale!";
-			pumpkin_pie.GetGlobalItem<MyGlobalItem>( mymod ).AddedTooltip = "Bake sale!";
-			cooked_marshmallow.GetGlobalItem<MyGlobalItem>( mymod ).AddedTooltip = "Bake sale!";
+			sugar_cookie.GetGlobalItem<TheLunaticItem>(mymod).AddedTooltip = "Bake sale!";
+			gingerbread_cookie.GetGlobalItem<TheLunaticItem>( mymod ).AddedTooltip = "Bake sale!";
+			christmas_pudding.GetGlobalItem<TheLunaticItem>( mymod ).AddedTooltip = "Bake sale!";
+			pumpkin_pie.GetGlobalItem<TheLunaticItem>( mymod ).AddedTooltip = "Bake sale!";
+			cooked_marshmallow.GetGlobalItem<TheLunaticItem>( mymod ).AddedTooltip = "Bake sale!";
 
 			shop.item[nextSlot++] = sugar_cookie;
 			shop.item[nextSlot++] = gingerbread_cookie;
@@ -251,7 +251,7 @@ namespace TheLunatic.NPCs {
 			}
 
 			// Boss summon items
-			if( mymod.Config.Data.LoonySellsSummonItems ) {
+			if( mymod.ConfigJson.Data.LoonySellsSummonItems ) {
 				// Eye of Cthulhu
 				if( /*NPC.downedBoss1*/ modworld.MaskLogic.GivenVanillaMasksByType.Contains( ItemID.EyeMask ) ) {
 					Item summon_item = new Item();
@@ -365,18 +365,18 @@ namespace TheLunatic.NPCs {
 		public override string GetChat() {
 			try {
 				var mymod = (TheLunaticMod)this.mod;
-				var modworld = mymod.GetModWorld<MyWorld>();
+				var modworld = mymod.GetModWorld<TheLunaticWorld>();
 				if( modworld.GameLogic == null ) { throw new Exception( "Game logic not initialized." ); }
 
 				Player player = Main.player[Main.myPlayer];
-				var modplayer = player.GetModPlayer<MyPlayer>( this.mod );
+				var modplayer = player.GetModPlayer<TheLunaticPlayer>( this.mod );
 
 				if( modplayer.IsCheater() ) {
 					return TheLunaticTownNPC.DismissalReplies[ Main.rand.Next(TheLunaticTownNPC.DismissalReplies.Length) ];
 				}
 				
 				string msg;
-				int days_left = mymod.Config.Data.DaysUntil - (modworld.GameLogic.HalfDaysElapsed / 2);
+				int days_left = mymod.ConfigJson.Data.DaysUntil - (modworld.GameLogic.HalfDaysElapsed / 2);
 				int rand = Main.rand.Next( Math.Max((days_left / 2), 2) );	// Closer to apocalypose, less chit chat
 
 				if( modworld.GameLogic.HasWon || rand != 0 ) {
@@ -401,7 +401,7 @@ namespace TheLunatic.NPCs {
 				
 				return msg;
 			} catch( Exception e ) {
-				DebugHelpers.Log( e.ToString() );
+				LogHelpers.Log( e.ToString() );
 				throw e;
 			}
 		}
@@ -412,11 +412,11 @@ namespace TheLunatic.NPCs {
 
 		public override void SetChatButtons( ref string button1, ref string button2 ) {
 			var mymod = (TheLunaticMod)this.mod;
-			var modworld = this.mod.GetModWorld<MyWorld>();
+			var modworld = this.mod.GetModWorld<TheLunaticWorld>();
 			if( modworld.GameLogic == null ) { throw new Exception( "Game logic not initialized." ); }
 
 			Player player = Main.player[Main.myPlayer];
-			var modplayer = player.GetModPlayer<MyPlayer>( this.mod );
+			var modplayer = player.GetModPlayer<TheLunaticPlayer>( this.mod );
 			
 			if( !modplayer.IsCheater() && modworld.GameLogic.HaveWeHopeToWin( mymod ) ) {
 				this.FirstButtonIsShop = false;
@@ -445,7 +445,7 @@ namespace TheLunatic.NPCs {
 		
 		private string onGiveMaskButtonClick() {
 			var mymod = (TheLunaticMod)this.mod;
-			var modworld = mymod.GetModWorld<MyWorld>();
+			var modworld = mymod.GetModWorld<TheLunaticWorld>();
 			if( modworld.MaskLogic == null ) { throw new Exception( "Mask logic not initialized." ); }
 
 			Player player = Main.player[Main.myPlayer];
@@ -456,16 +456,17 @@ namespace TheLunatic.NPCs {
 
 			bool is_custom = false;
 			bool is_given = false;
-			Item mask = PlayerItemHelpers.FindFirstOfItemFor( player, remaining_masks );
+			
+			Item mask = PlayerItemFinderHelpers.FindFirstOfItemFor( player, remaining_masks );
 			if( mask == null ) {
-				mask = PlayerItemHelpers.FindFirstOfItemFor( player, new HashSet<int> { mymod.ItemType<CustomBossMaskItem>() } );
+				mask = PlayerItemFinderHelpers.FindFirstOfItemFor( player, new HashSet<int> { mymod.ItemType<CustomBossMaskItem>() } );
 				is_custom = mask != null;
 				is_given = is_custom && modworld.MaskLogic.DoesLoonyHaveThisMask( mymod, mask );
 			}
 
 			if( mask == null || is_given ) {
 				if( mask == null ) {
-					mask = PlayerItemHelpers.FindFirstOfItemFor( player, MaskLogic.AllVanillaMasks );
+					mask = PlayerItemFinderHelpers.FindFirstOfItemFor( player, MaskLogic.AllVanillaMasks );
 				}
 				string msg, hint = this.GetHint();
 
@@ -475,8 +476,8 @@ namespace TheLunatic.NPCs {
 					msg = "Very nice, but I've already got a " + MaskLogic.GetMaskDisplayName( mask ) + ".\n" + hint;
 				}
 
-				if( !modworld.GameLogic.HasGameEnded && mymod.Config.Data.LoonyIndicatesDaysRemaining ) {
-					int days_left = mymod.Config.Data.DaysUntil - (modworld.GameLogic.HalfDaysElapsed / 2);
+				if( !modworld.GameLogic.HasGameEnded && mymod.ConfigJson.Data.LoonyIndicatesDaysRemaining ) {
+					int days_left = mymod.ConfigJson.Data.DaysUntil - (modworld.GameLogic.HalfDaysElapsed / 2);
 					msg += "\n \nDays remaining: " + days_left;
 				}
 				return msg;
@@ -491,7 +492,7 @@ namespace TheLunatic.NPCs {
 				} else if( remaining == 1 ) {
 					status = "I require one final mask.";
 				} else {
-					if( mymod.Config.Data.LoonyGivesCompletionReward ) {
+					if( mymod.ConfigJson.Data.LoonyGivesCompletionReward ) {
 						status = "At last! Seems this world gets to live a little bit longer. I won't need this anymore. Enjoy!";
 						UmbralCowlItem.Give( mymod, player );
 					} else {
@@ -558,12 +559,12 @@ namespace TheLunatic.NPCs {
 			}
 			else {
 				// 1: Display info, 2: Fast time, 4: Reset, 8: Reset win, 16: Skip to signs, 32: Display net info
-				if( mymod.IsDisplayInfoDebugMode() ) {
-					DebugHelpers.Log("DEBUG cheater detected. "+ mask.Name);
+				if( mymod.Config.DebugModeInfo ) {
+					LogHelpers.Log("DEBUG cheater detected. "+ mask.Name);
 				}
 
-				if( mymod.Config.Data.LoonyShunsCheaters ) {
-					player.GetModPlayer<MyPlayer>( this.mod ).SetCheater();
+				if( mymod.ConfigJson.Data.LoonyShunsCheaters ) {
+					player.GetModPlayer<TheLunaticPlayer>( this.mod ).SetCheater();
 					return "You... you aren't supposed to even have this. Bye.";
 				} else {
 					return "I don't know how you got this, but I'm not ready for it yet.";
@@ -573,7 +574,7 @@ namespace TheLunatic.NPCs {
 
 
 		public string GetHint() {
-			var modworld = this.mod.GetModWorld<MyWorld>();
+			var modworld = this.mod.GetModWorld<TheLunaticWorld>();
 			if( modworld.MaskLogic == null ) { throw new Exception( "Mask logic not initialized." ); }
 			var masks = modworld.MaskLogic.GetRemainingVanillaMasks();
 			string msg;

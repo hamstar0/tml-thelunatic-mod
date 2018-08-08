@@ -1,16 +1,23 @@
-﻿using HamstarHelpers.Utilities.Config;
+﻿using HamstarHelpers.Components.Config;
 using System;
 
 
 namespace TheLunatic {
 	public class LunaticConfigData : ConfigurationDataBase {
-		public readonly static Version ConfigVersion = new Version( 1, 2, 6 );
+		public readonly static Version ConfigVersion = new Version( 1, 3, 1 );
 		public readonly static string ConfigFileName = "The Lunatic Config.json";
 		
 		
 		////////////////
 
 		public string VersionSinceUpdate = "";
+
+		public bool DebugModeInfo = false;
+		public bool DebugModeNetInfo = false;
+		public bool DebugModeFastTime = false;
+		public bool DebugModeReset = false;
+		public bool DebugModeResetWin = false;
+		public bool DebugModeSkipToSigns = false;
 
 		public bool Enabled = true;
 
@@ -29,8 +36,6 @@ namespace TheLunatic {
 		public bool OnlyVanillaBossesDropMasks = false;
 		public bool MoonLordMaskWins = false;
 
-		public int DEBUGFLAGS = 0;  // 1: Display info, 2: Fast time, 4: Reset, 8: Reset win, 16: Skip to signs, 32: Display net info
-
 
 
 		////////////////
@@ -45,30 +50,9 @@ namespace TheLunatic {
 				return false;
 			}
 
-			if( vers_since < new Version( 1, 2, 2 ) ) {
-				if( this.DaysUntil == LunaticConfigData._1_2_1_DaysUntil ) {
-					this.DaysUntil = new_config.DaysUntil;
-				}
-				if( this.HardModeMultiplier == LunaticConfigData._1_2_1_HardModeMultiplier ) {
-					this.HardModeMultiplier = new_config.HardModeMultiplier;
-				}
-				if( this.HalfDaysRecoveredPerMask == LunaticConfigData._1_2_1_HalfDaysRecoveredPerMask ) {
-					this.HalfDaysRecoveredPerMask = new_config.HalfDaysRecoveredPerMask;
-				}
-			}
-
 			this.VersionSinceUpdate = LunaticConfigData.ConfigVersion.ToString();
 
 			return true;
 		}
-
-
-		////////////////
-
-		public string _OLD_SETTINGS_BELOW = "";
-
-		public readonly static int _1_2_1_DaysUntil = 9;
-		public readonly static float _1_2_1_HardModeMultiplier = 1.5f;
-		public readonly static int _1_2_1_HalfDaysRecoveredPerMask = 4;
 	}
 }

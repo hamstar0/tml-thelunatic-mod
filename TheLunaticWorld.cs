@@ -1,4 +1,4 @@
-﻿using HamstarHelpers.DebugHelpers;
+﻿using HamstarHelpers.Helpers.DebugHelpers;
 using System;
 using System.IO;
 using System.Linq;
@@ -9,7 +9,7 @@ using TheLunatic.Logic;
 
 
 namespace TheLunatic {
-	class MyWorld : ModWorld {
+	class TheLunaticWorld : ModWorld {
 		public string ID { get; private set; }
 		public bool HasCorrectID { get; private set; }	// Workaround for tml bug?
 
@@ -29,8 +29,8 @@ namespace TheLunatic {
 			this.GameLogic = new GameLogic();
 			this.MaskLogic = new MaskLogic();
 
-			if( mymod.IsDisplayInfoDebugMode() ) {
-				DebugHelpers.Log( "DEBUG World created; logics (re)created." );
+			if( mymod.Config.DebugModeInfo ) {
+				LogHelpers.Log( "DEBUG World created; logics (re)created." );
 			}
 		}
 
@@ -90,8 +90,8 @@ namespace TheLunatic {
 				i++;
 			}
 
-			if( mymod.IsDisplayInfoDebugMode() ) {
-				DebugHelpers.Log( "DEBUG Saving world. " + this.ID + ", "
+			if( mymod.Config.DebugModeInfo ) {
+				LogHelpers.Log( "DEBUG Saving world. " + this.ID + ", "
 					+ this.GameLogic.HasLoonyArrived + ", "
 					+ this.GameLogic.HasLoonyQuit + ", "
 					+ this.GameLogic.HasGameEnded + ", "
@@ -125,7 +125,7 @@ namespace TheLunatic {
 
 		public override void PreUpdate() {
 			var mymod = (TheLunaticMod)this.mod;
-			if( !mymod.Config.Data.Enabled ) { return; }
+			if( !mymod.ConfigJson.Data.Enabled ) { return; }
 
 			if( Main.netMode == 2 ) { // Server only
 				if( this.HasCorrectID && this.GameLogic != null ) {

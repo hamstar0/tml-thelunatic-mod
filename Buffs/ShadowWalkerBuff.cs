@@ -1,5 +1,5 @@
-﻿using HamstarHelpers.PlayerHelpers;
-using HamstarHelpers.TileHelpers;
+﻿using HamstarHelpers.Helpers.PlayerHelpers;
+using HamstarHelpers.Helpers.TileHelpers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
@@ -82,7 +82,7 @@ namespace TheLunatic.Buffs {
 		////////////////
 
 		private void Run( Player player ) {
-			var modplayer = player.GetModPlayer<MyPlayer>( this.mod );
+			var modplayer = player.GetModPlayer<TheLunaticPlayer>( this.mod );
 			if( modplayer.Noclip == null ) { return; }
 
 			player.AddBuff( mod.BuffType("ShadowWalkerBuff"), 4 );
@@ -122,7 +122,7 @@ namespace TheLunatic.Buffs {
 				return;
 			}
 
-			var modplayer = player.GetModPlayer<MyPlayer>( this.mod );
+			var modplayer = player.GetModPlayer<TheLunaticPlayer>( this.mod );
 			if( modplayer.Noclip != null ) {
 				modplayer.Noclip.Off();
 			}

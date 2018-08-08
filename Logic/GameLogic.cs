@@ -1,6 +1,6 @@
-﻿using HamstarHelpers.DebugHelpers;
-using HamstarHelpers.Utilities.Messages;
-using HamstarHelpers.WorldHelpers;
+﻿using HamstarHelpers.Helpers.DebugHelpers;
+using HamstarHelpers.Helpers.WorldHelpers;
+using HamstarHelpers.Services.Messages;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
@@ -46,16 +46,16 @@ namespace TheLunatic.Logic {
 
 
 		public void LoadOnce( TheLunaticMod mymod, bool has_loony_arrived, bool has_loony_quit, bool has_game_ended, bool has_won, bool is_safe, int time ) {
-			var modworld = mymod.GetModWorld<MyWorld>();
+			var modworld = mymod.GetModWorld<TheLunaticWorld>();
 
 			if( this.IsLoaded ) {
-				DebugHelpers.Log( "Redundant Game Logic load. " + has_loony_arrived + "," + has_loony_quit + "," + has_game_ended + "," + has_won + "," + is_safe + "," + time +
+				LogHelpers.Log( "Redundant Game Logic load. " + has_loony_arrived + "," + has_loony_quit + "," + has_game_ended + "," + has_won + "," + is_safe + "," + time +
 					"   (" + this.HasLoonyArrived + "," + this.HasLoonyQuit + "," + this.HasGameEnded + "," + this.HasWon + "," + this.IsSafe + "," + this.HalfDaysElapsed + ") " +
 					modworld.ID );
 				return;
 			}
-			if( mymod.IsDisplayInfoDebugMode() ) {
-				DebugHelpers.Log( "DEBUG Game Logic loading. " + has_loony_arrived + "," + has_loony_quit + "," + has_game_ended + "," + has_won + "," + is_safe + "," + time +
+			if( mymod.Config.DebugModeInfo ) {
+				LogHelpers.Log( "DEBUG Game Logic loading. " + has_loony_arrived + "," + has_loony_quit + "," + has_game_ended + "," + has_won + "," + is_safe + "," + time +
 					"   (" + this.HasLoonyArrived + "," + this.HasLoonyQuit + "," + this.HasGameEnded + "," + this.HasWon + "," + this.IsSafe + "," + this.HalfDaysElapsed + ") " +
 					modworld.ID );
 			}
@@ -79,11 +79,11 @@ namespace TheLunatic.Logic {
 		}
 
 		public void ApplyDebugOverrides( TheLunaticMod mymod ) {
-			if( mymod.IsFastTimeDebugMode() ) {
-				mymod.Config.Data.DaysUntil /= 5;
+			if( mymod.Config.DebugModeFastTime ) {
+				mymod.ConfigJson.Data.DaysUntil /= 5;
 			}
-			if( mymod.IsResetDebugMode() ) {
-				DebugHelpers.Log( "DEBUG Game Logic reset!" );
+			if( mymod.Config.DebugModeReset ) {
+				LogHelpers.Log( "DEBUG Game Logic reset!" );
 				this.HasLoonyArrived = false;
 				this.HasGameEnded = false;
 				this.HasLoonyQuit = false;
@@ -91,9 +91,9 @@ namespace TheLunatic.Logic {
 				this.IsSafe = false;
 				this.HalfDaysElapsed = 0;
 			}
-			if( mymod.IsSkipToSignsDebugMode() ) {
-				if( this.HalfDaysElapsed < mymod.Config.Data.DaysUntil ) {
-					this.HalfDaysElapsed = mymod.Config.Data.DaysUntil;
+			if( mymod.Config.DebugModeSkipToSigns ) {
+				if( this.HalfDaysElapsed < mymod.ConfigJson.Data.DaysUntil ) {
+					this.HalfDaysElapsed = mymod.ConfigJson.Data.DaysUntil;
 				}
 			}
 		}
@@ -125,23 +125,23 @@ namespace TheLunatic.Logic {
 				this.IsDay = Main.dayTime;
 				return;
 			}
-			
-			if( mymod.IsDisplayInfoDebugMode() ) {
-				var modworld = mymod.GetModWorld<MyWorld>();
+
+			if( mymod.Config.DebugModeInfo ) {
+				var modworld = mymod.GetModWorld<TheLunaticWorld>();
 				DebugHelpers.Display["WorldID"] = "" + modworld.ID;
 				DebugHelpers.Display["IsApocalypse"] = "" + this.IsApocalypse;
 				DebugHelpers.Display["IsSafe"] = "" + this.IsSafe;
 				DebugHelpers.Display["HasLoonyArrived"] = "" + this.HasLoonyArrived;
 				DebugHelpers.Display["HasLoonyQuit"] = "" + this.HasLoonyQuit;
 				DebugHelpers.Display["HasGameEnded"] = "" + this.HasGameEnded;
-				DebugHelpers.Display["HalfDaysElapsed"] = "" + this.HalfDaysElapsed + " (" + (mymod.Config.Data.DaysUntil * 2) + ")";
+				DebugHelpers.Display["HalfDaysElapsed"] = "" + this.HalfDaysElapsed + " (" + (mymod.ConfigJson.Data.DaysUntil * 2) + ")";
 				DebugHelpers.Display["HaveWeEndSigns"] = "" + this.HaveWeEndSigns( mymod );
 				DebugHelpers.Display["HaveHope"] = "" + this.HaveWeHopeToWin( mymod );
 				DebugHelpers.Display["TintScale"] = "" + mymod.Sky.TintScale;
 				DebugHelpers.Display["RemainingMasks"] = String.Join( ",", modworld.MaskLogic.GetRemainingVanillaMasks() );
 				DebugHelpers.Display["GivenMasks"] = String.Join( ",", modworld.MaskLogic.GivenVanillaMasksByType );
 			}
-			if( mymod.IsFastTimeDebugMode() ) {
+			if( mymod.Config.DebugModeFastTime ) {
 				Main.time += 24;
 			}
 
@@ -184,12 +184,12 @@ namespace TheLunatic.Logic {
 			// Indicate final day
 			if( !this.HasGameEnded ) {
 				if( !this.IsLastDay ) {
-					if( this.HalfDaysElapsed >= (mymod.Config.Data.DaysUntil - 1) * 2 ) {
+					if( this.HalfDaysElapsed >= (mymod.ConfigJson.Data.DaysUntil - 1) * 2 ) {
 						SimpleMessage.PostMessage( "Final Day", "", 60 * 5 );
 						this.IsLastDay = true;
 					}
 				} else {
-					if( this.HalfDaysElapsed < (mymod.Config.Data.DaysUntil - 1) * 2 ) {
+					if( this.HalfDaysElapsed < (mymod.ConfigJson.Data.DaysUntil - 1) * 2 ) {
 						this.IsLastDay = false;
 					}
 				}
@@ -199,7 +199,7 @@ namespace TheLunatic.Logic {
 
 		public void UpdateMyMusic( TheLunaticMod mymod, ref int music ) {
 			Player player = Main.player[Main.myPlayer];
-			var modplayer = player.GetModPlayer<MyPlayer>( mymod );
+			var modplayer = player.GetModPlayer<TheLunaticPlayer>( mymod );
 
 			if( this.IsApocalypse ) {
 				if( modplayer.IsInDangerZone ) {
@@ -210,7 +210,7 @@ namespace TheLunatic.Logic {
 
 		public void UpdateBiomes( TheLunaticMod mymod, Player player ) {
 			if( this.IsApocalypse ) {
-				var modplayer = player.GetModPlayer<MyPlayer>( mymod );
+				var modplayer = player.GetModPlayer<TheLunaticPlayer>( mymod );
 
 				if( modplayer.IsInDangerZone ) {
 					player.ZoneTowerSolar = true;
@@ -223,7 +223,7 @@ namespace TheLunatic.Logic {
 
 		public void UpdateBiomeVisuals( TheLunaticMod mymod, Player player ) {
 			if( this.IsApocalypse ) {
-				var modplayer = player.GetModPlayer<MyPlayer>( mymod );
+				var modplayer = player.GetModPlayer<TheLunaticPlayer>( mymod );
 				
 				if( modplayer.IsInDangerZone ) {
 					Filters.Scene.Activate( "HeatDistortion", player.Center, new object[0] );
@@ -236,7 +236,7 @@ namespace TheLunatic.Logic {
 
 		private void UpdateEndSigns( TheLunaticMod mymod ) {
 			if( this.HaveWeEndSigns(mymod) ) {
-				int half_days_left = (mymod.Config.Data.DaysUntil * 2) - this.HalfDaysElapsed;
+				int half_days_left = (mymod.ConfigJson.Data.DaysUntil * 2) - this.HalfDaysElapsed;
 				int rand = Main.rand.Next( half_days_left * 60 * 54 );
 				
 				if( Main.netMode != 1 && rand == 0 ) {	// Not client
@@ -252,8 +252,8 @@ namespace TheLunatic.Logic {
 				if( Main.netMode != 2 ) {   // Not server
 					if( half_days_left != 0 ) {
 						double days = (double)this.HalfDaysElapsed + WorldHelpers.GetDayOrNightPercentDone();
-						days -= mymod.Config.Data.DaysUntil;
-						mymod.Sky.TintScale = (float)days / (float)mymod.Config.Data.DaysUntil;
+						days -= mymod.ConfigJson.Data.DaysUntil;
+						mymod.Sky.TintScale = (float)days / (float)mymod.ConfigJson.Data.DaysUntil;
 					} else {
 						mymod.Sky.TintScale = 0;
 					}
@@ -272,7 +272,7 @@ namespace TheLunatic.Logic {
 			if( this.IsApocalypse ) {
 				if( Main.netMode != 2 ) { // Not server
 					Player player = Main.player[Main.myPlayer];
-					var modplayer = player.GetModPlayer<MyPlayer>( mymod );
+					var modplayer = player.GetModPlayer<TheLunaticPlayer>( mymod );
 
 					modplayer.QuakeMeFor( -1, 0.1f );	// Perpetual rumble
 				}
@@ -288,7 +288,7 @@ namespace TheLunatic.Logic {
 				&& !this.IsApocalypse
 				//&& !this.HasLoonyQuit
 				&& !this.IsSafe
-				&& (this.HalfDaysElapsed >= mymod.Config.Data.DaysUntil);
+				&& (this.HalfDaysElapsed >= mymod.ConfigJson.Data.DaysUntil);
 		}
 
 		public bool HaveWeHopeToWin( TheLunaticMod mymod ) {
@@ -298,7 +298,7 @@ namespace TheLunatic.Logic {
 		}
 
 		private bool HaveWeApocalypse( TheLunaticMod mymod ) {
-			int half_days_left = (mymod.Config.Data.DaysUntil * 2) - this.HalfDaysElapsed;
+			int half_days_left = (mymod.ConfigJson.Data.DaysUntil * 2) - this.HalfDaysElapsed;
 
 			return this.IsApocalypse || ( half_days_left == 0
 				&& !this.IsSafe
@@ -306,7 +306,7 @@ namespace TheLunatic.Logic {
 		}
 
 		private bool HaveWeWon( TheLunaticMod mymod ) {
-			var modworld = mymod.GetModWorld<MyWorld>();
+			var modworld = mymod.GetModWorld<TheLunaticWorld>();
 
 			return this.HasWon || ( this.HasLoonyArrived
 				//&& this.IsSafe
@@ -325,7 +325,7 @@ namespace TheLunatic.Logic {
 			if( Main.netMode == 2 ) { return; }	// Not server
 
 			Player player = Main.player[Main.myPlayer];
-			var modplayer = player.GetModPlayer<MyPlayer>( mymod );
+			var modplayer = player.GetModPlayer<TheLunaticPlayer>( mymod );
 
 			// Quake
 			modplayer.QuakeMeFor( duration, 0.35f );

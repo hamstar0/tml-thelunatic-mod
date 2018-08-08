@@ -4,7 +4,7 @@ using Terraria;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using TheLunatic.Logic;
-using HamstarHelpers.NPCHelpers;
+using HamstarHelpers.Helpers.NPCHelpers;
 using System.IO;
 
 

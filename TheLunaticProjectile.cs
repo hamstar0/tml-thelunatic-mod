@@ -4,10 +4,10 @@ using TheLunatic.Buffs;
 
 
 namespace TheLunatic {
-	class MyProjectile : GlobalProjectile {
+	class TheLunaticProjectile : GlobalProjectile {
 		public override bool? CanUseGrapple( int type, Player player ) {
 			var mymod = (TheLunaticMod)this.mod;
-			if( !mymod.Config.Data.Enabled ) { base.CanUseGrapple( type, player ); }
+			if( !mymod.ConfigJson.Data.Enabled ) { base.CanUseGrapple( type, player ); }
 
 			var buff = (ShadowWalkerBuff)mymod.GetBuff( "ShadowWalkerBuff" );
 			bool? can_we = buff.ProjectileCanUseGrapple( type, player );
