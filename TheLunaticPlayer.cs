@@ -49,6 +49,7 @@ namespace TheLunatic {
 			myclone.MaskTex = this.MaskTex;
 		}
 
+
 		////////////////
 
 		public override void SyncPlayer( int to_who, int from_who, bool new_player ) {
@@ -62,7 +63,8 @@ namespace TheLunatic {
 		}
 
 		public override void OnEnterWorld( Player player ) {
-			if( player.whoAmI != this.player.whoAmI ) { return; }
+			if( player.whoAmI != Main.myPlayer ) { return; }
+			if( this.player.whoAmI != Main.myPlayer ) { return; }
 
 			var mymod = (TheLunaticMod)this.mod;
 
