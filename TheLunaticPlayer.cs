@@ -71,7 +71,7 @@ namespace TheLunatic {
 			if( Main.netMode == 0 ) {
 				if( !mymod.ConfigJson.LoadFile() ) {
 					mymod.ConfigJson.SaveFile();
-					ErrorLogger.Log( "Lunatic config " + LunaticConfigData.ConfigVersion.ToString() + " created (ModPlayer.OnEnterWorld())." );
+					ErrorLogger.Log( "Lunatic config " + mymod.Version.ToString() + " created (ModPlayer.OnEnterWorld())." );
 				}
 			}
 

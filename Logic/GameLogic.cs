@@ -128,18 +128,18 @@ namespace TheLunatic.Logic {
 
 			if( mymod.Config.DebugModeInfo ) {
 				var modworld = mymod.GetModWorld<TheLunaticWorld>();
-				DebugHelpers.Display["WorldID"] = "" + modworld.ID;
-				DebugHelpers.Display["IsApocalypse"] = "" + this.IsApocalypse;
-				DebugHelpers.Display["IsSafe"] = "" + this.IsSafe;
-				DebugHelpers.Display["HasLoonyArrived"] = "" + this.HasLoonyArrived;
-				DebugHelpers.Display["HasLoonyQuit"] = "" + this.HasLoonyQuit;
-				DebugHelpers.Display["HasGameEnded"] = "" + this.HasGameEnded;
-				DebugHelpers.Display["HalfDaysElapsed"] = "" + this.HalfDaysElapsed + " (" + (mymod.ConfigJson.Data.DaysUntil * 2) + ")";
-				DebugHelpers.Display["HaveWeEndSigns"] = "" + this.HaveWeEndSigns( mymod );
-				DebugHelpers.Display["HaveHope"] = "" + this.HaveWeHopeToWin( mymod );
-				DebugHelpers.Display["TintScale"] = "" + mymod.Sky.TintScale;
-				DebugHelpers.Display["RemainingMasks"] = String.Join( ",", modworld.MaskLogic.GetRemainingVanillaMasks() );
-				DebugHelpers.Display["GivenMasks"] = String.Join( ",", modworld.MaskLogic.GivenVanillaMasksByType );
+				DebugHelpers.Print( "WorldID", "" + modworld.ID, 20 );
+				DebugHelpers.Print( "IsApocalypse", "" + this.IsApocalypse, 20 );
+				DebugHelpers.Print( "IsSafe", "" + this.IsSafe, 20 );
+				DebugHelpers.Print( "HasLoonyArrived", "" + this.HasLoonyArrived, 20 );
+				DebugHelpers.Print( "HasLoonyQuit", "" + this.HasLoonyQuit, 20 );
+				DebugHelpers.Print( "HasGameEnded", "" + this.HasGameEnded, 20 );
+				DebugHelpers.Print( "HalfDaysElapsed", "" + this.HalfDaysElapsed + " (" + (mymod.ConfigJson.Data.DaysUntil * 2) + ")", 20 );
+				DebugHelpers.Print( "HaveWeEndSigns", "" + this.HaveWeEndSigns( mymod ), 20 );
+				DebugHelpers.Print( "HaveHope", "" + this.HaveWeHopeToWin( mymod ), 20 );
+				DebugHelpers.Print( "TintScale", "" + mymod.Sky.TintScale, 20 );
+				DebugHelpers.Print( "RemainingMasks", String.Join( ",", modworld.MaskLogic.GetRemainingVanillaMasks() ), 20 );
+				DebugHelpers.Print( "GivenMasks", String.Join( ",", modworld.MaskLogic.GivenVanillaMasksByType ), 20 );
 			}
 			if( mymod.Config.DebugModeFastTime ) {
 				Main.time += 24;

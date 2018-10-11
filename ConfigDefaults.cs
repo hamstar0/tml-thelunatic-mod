@@ -4,7 +4,6 @@ using System;
 
 namespace TheLunatic {
 	public class LunaticConfigData : ConfigurationDataBase {
-		public readonly static Version ConfigVersion = new Version( 1, 3, 1 );
 		public readonly static string ConfigFileName = "The Lunatic Config.json";
 		
 		
@@ -46,11 +45,11 @@ namespace TheLunatic {
 				new Version( this.VersionSinceUpdate ) :
 				new Version();
 
-			if( vers_since >= LunaticConfigData.ConfigVersion ) {
+			if( vers_since >= TheLunaticMod.Instance.Version ) {
 				return false;
 			}
 
-			this.VersionSinceUpdate = LunaticConfigData.ConfigVersion.ToString();
+			this.VersionSinceUpdate = TheLunaticMod.Instance.Version.ToString();
 
 			return true;
 		}

@@ -61,7 +61,7 @@ namespace TheLunatic {
 			}
 
 			if( this.ConfigJson.Data.UpdateToLatestVersion() ) {
-				ErrorLogger.Log( "The Lunatic updated to " + LunaticConfigData.ConfigVersion.ToString() );
+				ErrorLogger.Log( "The Lunatic updated to " + this.Version.ToString() );
 				this.ConfigJson.SaveFile();
 			}
 		}

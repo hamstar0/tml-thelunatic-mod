@@ -85,7 +85,7 @@ namespace TheLunatic.Tiles {
 			color.A = (byte)(255f * tint_scale);
 
 			if( mymod.Config.DebugModeInfo ) {
-				DebugHelpers.Display["Sky"] = color.ToString();
+				DebugHelpers.Print( "Sky", color.ToString(), 20 );
 			}
 			return color;
 		}
