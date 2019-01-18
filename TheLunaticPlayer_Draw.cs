@@ -16,45 +16,45 @@ namespace TheLunatic {
 			if( !mymod.ConfigJson.Data.Enabled ) { return; }
 
 			if( this.QuakeDuration != 0 ) {
-				float quake_scale = this.QuakeScale;
-				float duration_range = this.QuakeStartDuration > 0f ? this.QuakeStartDuration : this.QuakeStartDuration * 2f;
+				float quakeScale = this.QuakeScale;
+				float durationRange = this.QuakeStartDuration > 0f ? this.QuakeStartDuration : this.QuakeStartDuration * 2f;
 
 				if( this.player.velocity.Y != 0 ) {
-					quake_scale /= 8;
+					quakeScale /= 8;
 				} else {
 					this.player.AddBuff( 32, 2 );
 				}
 
-				float progress = (float)this.QuakeDuration / duration_range;
+				float progress = (float)this.QuakeDuration / durationRange;
 				float spike = 1f - (Math.Abs(progress - 0.5f) * 2f);
-				float full_spike = spike * 32f;
-				float shake_range = full_spike * quake_scale;
+				float fullSpike = spike * 32f;
+				float shakeRange = fullSpike * quakeScale;
 
 //Debug.Display["quake"] = "progress: "+progress+" spike: "+spike+" full_spike: "+full_spike+" quake_scale: "+quake_scale;
-				Main.screenPosition.X += (shake_range/2) - (Main.rand.NextFloat() * shake_range);
-				Main.screenPosition.Y += (shake_range/2) - (Main.rand.NextFloat() * shake_range);
+				Main.screenPosition.X += (shakeRange/2) - (Main.rand.NextFloat() * shakeRange);
+				Main.screenPosition.Y += (shakeRange/2) - (Main.rand.NextFloat() * shakeRange);
 			}
 		}
 
 		public override void UpdateBiomes() {
 			var mymod = (TheLunaticMod)this.mod;
-			var modworld = this.mod.GetModWorld<TheLunaticWorld>();
+			var myworld = this.mod.GetModWorld<TheLunaticWorld>();
 
 			if( !mymod.ConfigJson.Data.Enabled ) { return; }
-			if( modworld.GameLogic == null ) { throw new Exception( "Game logic not initialized." ); }
+			if( myworld.GameLogic == null ) { throw new Exception( "Game logic not initialized." ); }
 
-			modworld.GameLogic.UpdateBiomes( mymod, this.player );
+			myworld.GameLogic.UpdateBiomes( this.player );
 		}
 
 		public override void UpdateBiomeVisuals() {
 			var mymod = (TheLunaticMod)this.mod;
-			var modworld = this.mod.GetModWorld<TheLunaticWorld>();
+			var myworld = this.mod.GetModWorld<TheLunaticWorld>();
 
 			if( !mymod.ConfigJson.Data.Enabled ) { return; }
-			if( modworld.GameLogic == null ) { throw new Exception( "Game logic not initialized." ); }
+			if( myworld.GameLogic == null ) { throw new Exception( "Game logic not initialized." ); }
 
 			mymod.Sky.UpdateSky( this.player );
-			modworld.GameLogic.UpdateBiomeVisuals( mymod, this.player );
+			myworld.GameLogic.UpdateBiomeVisuals( this.player );
 		}
 
 
@@ -64,17 +64,17 @@ namespace TheLunatic {
 				Player player = draw_info.drawPlayer;
 
 				var mod = ModLoader.GetMod( "TheLunatic" );
-				var modplayer = player.GetModPlayer<TheLunaticPlayer>( mod );
-				var tex = modplayer.MaskTex;
+				var myplayer = player.GetModPlayer<TheLunaticPlayer>( mod );
+				var tex = myplayer.MaskTex;
 
 				var se = player.direction != 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 				var pos = player.position;
-				var rel_pos = pos - Main.screenPosition;
-				rel_pos.Y -= 8;
+				var relPos = pos - Main.screenPosition;
+				relPos.Y -= 8;
 				int x = (int)((pos.X + (player.width / 2f)) / 16f);
 				int y = (int)((pos.Y + (player.headFrame.Height / 2f)) / 16f);
-				Color light_color = Lighting.GetColor( x, y );
-				DrawData data = new DrawData( tex, rel_pos, new Rectangle(0, 0, tex.Width, tex.Height), light_color, 0f, new Vector2(), 1f, se, 0 );
+				Color lightColor = Lighting.GetColor( x, y );
+				DrawData data = new DrawData( tex, relPos, new Rectangle(0, 0, tex.Width, tex.Height), lightColor, 0f, new Vector2(), 1f, se, 0 );
 				
 				Main.playerDrawData.Add( data );
 			}
@@ -84,7 +84,7 @@ namespace TheLunatic {
 			var mymod = (TheLunaticMod)this.mod;
 			if( !mymod.ConfigJson.Data.Enabled ) { return; }
 
-			this.MaskTex = CustomBossMaskItem.GetMaskTextureOfPlayer( this.player, mymod );
+			this.MaskTex = CustomBossMaskItem.GetMaskTextureOfPlayer( this.player );
 			if( this.MaskTex != null ) {
 				TheLunaticPlayer.CustomBossMask.visible = !this.player.dead;
 				layers.Add( TheLunaticPlayer.CustomBossMask );
@@ -106,8 +106,8 @@ namespace TheLunatic {
 			this.QuakeStartDuration = duration;
 			
 			float vol = scale / 2;
-			int sound_slot = this.mod.GetSoundSlot( SoundType.Custom, "Sounds/Custom/EarthQuake" );
-			Main.PlaySound( (int)SoundType.Custom, -1, -1, sound_slot, vol );
+			int soundSlot = this.mod.GetSoundSlot( SoundType.Custom, "Sounds/Custom/EarthQuake" );
+			Main.PlaySound( (int)SoundType.Custom, -1, -1, soundSlot, vol );
 		}
 	}
 }

@@ -11,13 +11,13 @@ using System.IO;
 namespace TheLunatic.Items {
 	[AutoloadEquip( EquipType.Head )]
 	class CustomBossMaskItem : ModItem {
-		public static Texture2D GetMaskTextureOfPlayer( Player player, Mod mod ) {
-			int item_type = mod.ItemType<CustomBossMaskItem>();
+		public static Texture2D GetMaskTextureOfPlayer( Player player ) {
+			int itemType = TheLunaticMod.Instance.ItemType<CustomBossMaskItem>();
 			CustomBossMaskItem moditem = null;
 
-			if( player.armor[0] != null && !player.armor[0].IsAir && player.armor[0].type == item_type ) {
+			if( player.armor[0] != null && !player.armor[0].IsAir && player.armor[0].type == itemType ) {
 				moditem = (CustomBossMaskItem)player.armor[0].modItem;
-			} else if( player.armor[10] != null && !player.armor[10].IsAir && player.armor[10].type == item_type ) {
+			} else if( player.armor[10] != null && !player.armor[10].IsAir && player.armor[10].type == itemType ) {
 				moditem = (CustomBossMaskItem)player.armor[10].modItem;
 			}
 			if( moditem == null ) { return null; }
@@ -42,13 +42,13 @@ namespace TheLunatic.Items {
 		////////////////
 
 		public override void Load( TagCompound tag ) {
-			var item_info = this.item.GetGlobalItem<CustomBossMaskItemInfo>( this.mod );
-			int npc_type = tag.GetInt( "boss_npc_type" );
-			int boss_head_idx = tag.GetInt( "boss_head_index" );
-			string boss_uid = tag.GetString( "boss_uid" );
-			string boss_name = tag.GetString( "boss_display_name" );
+			var itemInfo = this.item.GetGlobalItem<CustomBossMaskItemInfo>( this.mod );
+			int npcType = tag.GetInt( "boss_npc_type" );
+			int bossHeadIdx = tag.GetInt( "boss_head_index" );
+			string bossUid = tag.GetString( "boss_uid" );
+			string bossName = tag.GetString( "boss_display_name" );
 
-			item_info.Load( npc_type, boss_head_idx, boss_uid, boss_name );
+			itemInfo.Load( npcType, bossHeadIdx, bossUid, bossName );
 			
 			string name = MaskLogic.GetMaskDisplayName( this.item );
 			if( name != null ) {
@@ -57,19 +57,19 @@ namespace TheLunatic.Items {
 		}
 
 		public override TagCompound Save() {
-			var item_info = this.item.GetGlobalItem<CustomBossMaskItemInfo>( this.mod );
+			var itemInfo = this.item.GetGlobalItem<CustomBossMaskItemInfo>( this.mod );
 			var tag = new TagCompound {
-				{ "boss_npc_type", item_info.BossNpcType },
-				{ "boss_head_index", item_info.BossHeadIndex },
-				{ "boss_uid", item_info.BossUid },
-				{ "boss_display_name", item_info.BossDisplayName }
+				{ "boss_npc_type", itemInfo.BossNpcType },
+				{ "boss_head_index", itemInfo.BossHeadIndex },
+				{ "boss_uid", itemInfo.BossUid },
+				{ "boss_display_name", itemInfo.BossDisplayName }
 			};
 			return tag;
 		}
 
 		////////////////
 		
-		public override bool PreDrawInInventory( SpriteBatch sb, Vector2 position, Rectangle frame, Color draw_color, Color item_color, Vector2 origin, float scale ) {
+		public override bool PreDrawInInventory( SpriteBatch sb, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale ) {
 			this.DrawItem( sb, position, Color.White, origin, scale );
 			return false;
 		}
@@ -91,22 +91,22 @@ namespace TheLunatic.Items {
 		////////////////
 
 		public Texture2D GetTexture() {
-			var item_info = this.item.GetGlobalItem<CustomBossMaskItemInfo>( this.mod );
-			if( item_info.BossHeadIndex == -1 || item_info.BossHeadIndex >= Main.npcHeadBossTexture.Length ) {
+			var itemInfo = this.item.GetGlobalItem<CustomBossMaskItemInfo>( this.mod );
+			if( itemInfo.BossHeadIndex == -1 || itemInfo.BossHeadIndex >= Main.npcHeadBossTexture.Length ) {
 				return null;
 			}
-			return Main.npcHeadBossTexture[item_info.BossHeadIndex];
+			return Main.npcHeadBossTexture[itemInfo.BossHeadIndex];
 		}
 
 
-		public bool SetBoss( int npc_type ) {
-			var item_info = this.item.GetGlobalItem<CustomBossMaskItemInfo>( this.mod );
+		public bool SetBoss( int npcType ) {
+			var itemInfo = this.item.GetGlobalItem<CustomBossMaskItemInfo>( this.mod );
 			NPC npc = new NPC();
-			npc.SetDefaults( npc_type );
+			npc.SetDefaults( npcType );
 			int idx = npc.GetBossHeadTextureIndex();
 			if( idx == -1 || idx >= Main.npcHeadBossTexture.Length || Main.npcHeadBossTexture[idx] == null ) { return false; }
 
-			item_info.Load( npc_type, idx, NPCIdentityHelpers.GetUniqueId(npc), npc.GivenName );
+			itemInfo.Load( npcType, idx, NPCIdentityHelpers.GetUniqueId(npc), npc.GivenName );
 			this.item.SetNameOverride( npc.GivenName + " Mask" );
 			
 
@@ -119,25 +119,25 @@ namespace TheLunatic.Items {
 				Main.itemTexture[this.item.type] = tex;
 
 				try {
-					var gra_dev = Main.graphics.GraphicsDevice;
-					var new_tex = new RenderTarget2D( gra_dev, old_tex.Width, old_tex.Height, false, gra_dev.PresentationParameters.BackBufferFormat, DepthFormat.Depth24 );
-					var old_ren_tar = gra_dev.GetRenderTargets();
+					var graDev = Main.graphics.GraphicsDevice;
+					var newTex = new RenderTarget2D( graDev, oldTex.Width, oldTex.Height, false, graDev.PresentationParameters.BackBufferFormat, DepthFormat.Depth24 );
+					var old_ren_tar = graDev.GetRenderTargets();
 
-					gra_dev.SetRenderTarget( new_tex );
-					gra_dev.DepthStencilState = new DepthStencilState() { DepthBufferEnable = true };
+					graDev.SetRenderTarget( newTex );
+					graDev.DepthStencilState = new DepthStencilState() { DepthBufferEnable = true };
 					
-					gra_dev.Clear( Color.Transparent );
-					var sb = new SpriteBatch( gra_dev );
+					graDev.Clear( Color.Transparent );
+					var sb = new SpriteBatch( graDev );
 					sb.Begin( SpriteSortMode.Deferred, BlendState.AlphaBlend );
 					for( int i = 0; i <= 20; i++ ) {
-						var rect = new Rectangle( 0, 4 + (i * old_tex.Height), old_tex.Width, old_tex.Height / 20 );
+						var rect = new Rectangle( 0, 4 + (i * oldTex.Height), oldTex.Width, oldTex.Height / 20 );
 						sb.Draw( tex, rect, Color.White );
 					}
 					sb.End();
 					
-					gra_dev.SetRenderTargets( old_ren_tar );
+					graDev.SetRenderTargets( old_ren_tar );
 
-					Main.armorHeadTexture[this.item.headSlot] = new_tex;
+					Main.armorHeadTexture[this.item.headSlot] = newTex;
 				} catch( Exception e ) {
 					ErrorLogger.Log( e.ToString() );
 				}
@@ -159,8 +159,8 @@ namespace TheLunatic.Items {
 		public string BossDisplayName = "";
 
 		
-		public override GlobalItem Clone( Item item, Item item_clone ) {
-			var clone = (CustomBossMaskItemInfo)base.Clone( item, item_clone );
+		public override GlobalItem Clone( Item item, Item itemClone ) {
+			var clone = (CustomBossMaskItemInfo)base.Clone( item, itemClone );
 			clone.BossNpcType = this.BossNpcType;
 			clone.BossHeadIndex = this.BossHeadIndex;
 			clone.BossUid = this.BossUid;
@@ -168,24 +168,24 @@ namespace TheLunatic.Items {
 			return clone;
 		}
 
-		public void Load( int npc_type, int boss_head_index, string uid, string display_name ) {
+		public void Load( int npcType, int bossHeadIndex, string uid, string displayName ) {
 			var npc = new NPC();
-			npc.SetDefaults( npc_type );
+			npc.SetDefaults( npcType );
 			if( NPCIdentityHelpers.GetUniqueId(npc) != uid ) {
-				npc_type = NPCFinderHelpers.FindNpcTypeByUniqueId( uid );
-				if( npc_type != -1 ) {
-					npc.SetDefaults( npc_type );
-					this.Load( npc_type, npc.GetBossHeadTextureIndex(), uid, npc.GivenName );
+				npcType = NPCFinderHelpers.FindNpcTypeByUniqueId( uid );
+				if( npcType != -1 ) {
+					npc.SetDefaults( npcType );
+					this.Load( npcType, npc.GetBossHeadTextureIndex(), uid, npc.GivenName );
 				} else {
 					ErrorLogger.Log( "Could not find boss head of custom boss mask for npc " + uid );
 				}
 				return;
 			}
 
-			this.BossNpcType = npc_type;
-			this.BossHeadIndex = boss_head_index;
+			this.BossNpcType = npcType;
+			this.BossHeadIndex = bossHeadIndex;
 			this.BossUid = uid;
-			this.BossDisplayName = display_name;
+			this.BossDisplayName = displayName;
 		}
 
 		

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.ID;
 
 
 namespace PlayerExtend {
@@ -108,7 +109,7 @@ namespace PlayerExtend {
 
 			if( Main.netMode == 1 ) {
 				if( Main.time % 60 == 0 ) {
-					NetMessage.SendData( 65, -1, -1, null, 0, (float)player.whoAmI, this.CurrentPos.X, this.CurrentPos.Y, -1, 0, 0 );
+					NetMessage.SendData( MessageID.Teleport, -1, -1, null, 0, (float)player.whoAmI, this.CurrentPos.X, this.CurrentPos.Y, -1, 0, 0 );
 				}
 			}
 		}

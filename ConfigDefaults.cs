@@ -39,14 +39,23 @@ namespace TheLunatic {
 
 		////////////////
 
+		public void SetDefaults() { }
+
+
+		////////////////
+
 		public bool UpdateToLatestVersion() {
-			var new_config = new LunaticConfigData();
-			var vers_since = this.VersionSinceUpdate != "" ?
+			var newConfig = new LunaticConfigData();
+			var versSince = this.VersionSinceUpdate != "" ?
 				new Version( this.VersionSinceUpdate ) :
 				new Version();
 
-			if( vers_since >= TheLunaticMod.Instance.Version ) {
+			if( versSince >= TheLunaticMod.Instance.Version ) {
 				return false;
+			}
+
+			if( this.VersionSinceUpdate == "" ) {
+				this.SetDefaults();
 			}
 
 			this.VersionSinceUpdate = TheLunaticMod.Instance.Version.ToString();

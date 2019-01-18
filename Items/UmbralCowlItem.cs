@@ -17,22 +17,25 @@ namespace TheLunatic.Items {
 
 		////////////////
 
-		public static void Give( TheLunaticMod mymod, Player player ) {
+		public static void Give( Player player ) {
+			var mymod = TheLunaticMod.Instance;
 			int who = ItemHelpers.CreateItem( player.Center, mymod.ItemType<UmbralCowlItem>(), 1, UmbralCowlItem.Width, UmbralCowlItem.Height );
 			Item item = Main.item[who];
 			item.noGrabDelay = 15;
 
-			var item_info = item.GetGlobalItem<UmbralCowlItemInfo>( mymod );
-			item_info.IsAllowed = true;
+			var itemInfo = item.GetGlobalItem<UmbralCowlItemInfo>( mymod );
+			itemInfo.IsAllowed = true;
 		}
 
 		////////////////
 
-		public static void CheckEquipState( Mod mod, Player player ) {
-			int cowl_type = mod.ItemType<UmbralCowlItem>();
+		public static void CheckEquipState( Player player ) {
+			var mymod = TheLunaticMod.Instance;
+			int cowl_type = mymod.ItemType<UmbralCowlItem>();
 			bool found = false;
 
 			for( int i=0; i<player.armor.Length; i++ ) {
+				if( player.armor[i] == null || !player.armor[i].active ) { continue; }
 				if( player.armor[i].type == cowl_type ) {
 					found = true;
 					break;
@@ -40,7 +43,7 @@ namespace TheLunatic.Items {
 			}
 
 			if( !found ) {
-				var buff = (ShadowWalkerBuff)mod.GetBuff( "ShadowWalkerBuff" );
+				var buff = (ShadowWalkerBuff)mymod.GetBuff( "ShadowWalkerBuff" );
 				buff.End( player, false );
 			}
 		}
@@ -64,8 +67,8 @@ namespace TheLunatic.Items {
 		}
 
 		public override void ModifyTooltips( List<TooltipLine> tooltips ) {
-			var item_info = item.GetGlobalItem<UmbralCowlItemInfo>( mod );
-			if( item_info.IsAllowed ) {
+			var itemInfo = item.GetGlobalItem<UmbralCowlItemInfo>();
+			if( itemInfo.IsAllowed ) {
 				TooltipLine tip = new TooltipLine( this.mod, "how_to", "Enter complete darkness to use" );
 				TooltipLine tip2 = new TooltipLine( this.mod, "how_to2", "Press Shift to reenter light" );
 				TooltipLine tip3 = new TooltipLine( this.mod, "warn", "Beware the grue!" );
@@ -84,13 +87,13 @@ namespace TheLunatic.Items {
 		////////////////
 
 		public override void Load( TagCompound tag ) {
-			var item_info = item.GetGlobalItem<UmbralCowlItemInfo>( mod );
-			item_info.IsAllowed = tag.GetBool( "is_allowed_use" );
+			var itemInfo = item.GetGlobalItem<UmbralCowlItemInfo>();
+			itemInfo.IsAllowed = tag.GetBool( "is_allowed_use" );
 		}
 
 		public override TagCompound Save() {
-			var item_info = item.GetGlobalItem<UmbralCowlItemInfo>( mod );
-			return new TagCompound { { "is_allowed_use", (bool)item_info.IsAllowed } };
+			var itemInfo = item.GetGlobalItem<UmbralCowlItemInfo>();
+			return new TagCompound { { "is_allowed_use", (bool)itemInfo.IsAllowed } };
 		}
 
 
@@ -99,17 +102,17 @@ namespace TheLunatic.Items {
 		public override void UpdateAccessory( Player player, bool hideVisual ) {
 			if( player.whoAmI != Main.myPlayer ) { return; }    // Current player only
 
-			var item_info = item.GetGlobalItem<UmbralCowlItemInfo>( this.mod );
-			if( !item_info.IsAllowed ) { return; }	// Allowed to use
+			var itemInfo = item.GetGlobalItem<UmbralCowlItemInfo>( this.mod );
+			if( !itemInfo.IsAllowed ) { return; }	// Allowed to use
 
 			if( ShadowWalkerBuff.CanShadowWalk( player ) ) {
 				if( ShadowWalkerBuff.FindBuffIndex( this.mod, player ) == -1 ) {
 					ShadowWalkerBuff.AddBuffFor( this.mod, player );
 				}
 
-				var modplayer = player.GetModPlayer<TheLunaticPlayer>( this.mod );
-				if( modplayer.Noclip != null ) {
-					modplayer.Noclip.UpdateMode( player );   // Redundant?
+				var myplayer = player.GetModPlayer<TheLunaticPlayer>( this.mod );
+				if( myplayer.Noclip != null ) {
+					myplayer.Noclip.UpdateMode( player );   // Redundant?
 				}
 			}
 		}
@@ -123,8 +126,8 @@ namespace TheLunatic.Items {
 
 		public bool IsAllowed = false;
 
-		public override GlobalItem Clone( Item item, Item item_clone ) {
-			var clone = (UmbralCowlItemInfo)base.Clone( item, item_clone );
+		public override GlobalItem Clone( Item item, Item itemClone ) {
+			var clone = (UmbralCowlItemInfo)base.Clone( item, itemClone );
 			clone.IsAllowed = this.IsAllowed;
 			return clone;
 		}

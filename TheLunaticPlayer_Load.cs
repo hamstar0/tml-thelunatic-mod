@@ -7,28 +7,28 @@ using TheLunatic.NetProtocol;
 namespace TheLunatic {
 	partial class TheLunaticPlayer : ModPlayer {
 		private void OnSingleConnect() {
-			if( player.whoAmI == this.player.whoAmI ) {    // Current player
+			var mymod = (TheLunaticMod)this.mod;
+			var myworld = mymod.GetModWorld<TheLunaticWorld>();
+
+			myworld.GameLogic.ApplyDebugOverrides( mymod );
+
+			this.PostEnterWorld();
+		}
+
+		private void OnClientConnect( Player clientPlr ) {
+			if( clientPlr.whoAmI == this.player.whoAmI ) {    // Current player
 				var mymod = (TheLunaticMod)this.mod;
 				var myworld = mymod.GetModWorld<TheLunaticWorld>();
 
 				myworld.GameLogic.ApplyDebugOverrides( mymod );
 
-				this.PostEnterWorld();
+				ClientPacketHandlers.SendRequestModSettingsFromClient();
+				ClientPacketHandlers.SendRequestModDataFromClient();
 			}
 		}
-		private void OnClientConnect() {
-			if( player.whoAmI == this.player.whoAmI ) {    // Current player
-				var mymod = (TheLunaticMod)this.mod;
-				var myworld = mymod.GetModWorld<TheLunaticWorld>();
 
-				myworld.GameLogic.ApplyDebugOverrides( mymod );
-
-				ClientPacketHandlers.SendRequestModSettingsFromClient( mymod );
-				ClientPacketHandlers.SendRequestModDataFromClient( mymod );
-			}
-		}
-		private void OnServerConnect() {
-			if( player.whoAmI == this.player.whoAmI ) {    // Current player
+		private void OnServerConnect( Player clientPlr ) {
+			if( clientPlr.whoAmI == this.player.whoAmI ) {    // Current player
 				var mymod = (TheLunaticMod)this.mod;
 				var myworld = mymod.GetModWorld<TheLunaticWorld>();
 
@@ -39,9 +39,9 @@ namespace TheLunatic {
 
 		public void PostEnterWorld() {
 			var mymod = (TheLunaticMod)this.mod;
-			var modworld = mymod.GetModWorld<TheLunaticWorld>();
+			var myworld = mymod.GetModWorld<TheLunaticWorld>();
 
-			if( modworld.GameLogic.HasGameEnded && !modworld.GameLogic.HasWon ) {
+			if( myworld.GameLogic.HasGameEnded && !myworld.GameLogic.HasWon ) {
 				Main.NewText( "You inexplicably feel like this will now be a boring adventure.", 64, 64, 96, false );
 			}
 

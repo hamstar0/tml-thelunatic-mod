@@ -82,12 +82,12 @@ namespace TheLunatic.Buffs {
 		////////////////
 
 		private void Run( Player player ) {
-			var modplayer = player.GetModPlayer<TheLunaticPlayer>( this.mod );
-			if( modplayer.Noclip == null ) { return; }
+			var myplayer = player.GetModPlayer<TheLunaticPlayer>( this.mod );
+			if( myplayer.Noclip == null ) { return; }
 
 			player.AddBuff( mod.BuffType("ShadowWalkerBuff"), 4 );
 
-			modplayer.Noclip.On( player, ShadowWalkerBuff.Speed );
+			myplayer.Noclip.On( player, ShadowWalkerBuff.Speed );
 
 			if( !ShadowWalkerBuff.CanShadowWalk( player ) ) {
 				// If holding shift, allow escape from darkness
@@ -99,13 +99,13 @@ namespace TheLunatic.Buffs {
 					}
 				}
 				// Otherwise, obey collision rules
-				if( modplayer.Noclip.Collide() ) {
+				if( myplayer.Noclip.Collide() ) {
 					this.End( player );
 					return;
 				}
 			}
 
-			modplayer.Noclip.UpdateMode( player );  // Redundant?
+			myplayer.Noclip.UpdateMode( player );  // Redundant?
 
 			var grue = ShadowWalkerBuff.Grue;
 			if( (!grue.Keys.Contains(player.whoAmI) || grue[player.whoAmI] == 0) && Main.rand.Next(ShadowWalkerBuff.GrueOdds) == 0 ) {
@@ -122,9 +122,9 @@ namespace TheLunatic.Buffs {
 				return;
 			}
 
-			var modplayer = player.GetModPlayer<TheLunaticPlayer>( this.mod );
-			if( modplayer.Noclip != null ) {
-				modplayer.Noclip.Off();
+			var myplayer = player.GetModPlayer<TheLunaticPlayer>( this.mod );
+			if( myplayer.Noclip != null ) {
+				myplayer.Noclip.Off();
 			}
 
 			player.ClearBuff( mod.BuffType( "ShadowWalkerBuff" ) );
@@ -155,7 +155,7 @@ namespace TheLunatic.Buffs {
 		private void GrueEatsYou( Player player ) {
 			player.immune = false;
 			player.Hurt( PlayerDeathReason.ByCustomReason( " was eaten by a grue." ), 999, 0 );
-			ShadowWalkerBuff.Grue[player.whoAmI] = 0;
+			ShadowWalkerBuff.Grue[ player.whoAmI ] = 0;
 
 			this.End( player );
 		}

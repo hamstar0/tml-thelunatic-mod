@@ -14,11 +14,11 @@ namespace TheLunatic {
 
 			if( Main.rand == null ) { return; }
 
-			var modworld = this.mod.GetModWorld<TheLunaticWorld>();
-			if( modworld == null ) { return; }
+			var myworld = this.mod.GetModWorld<TheLunaticWorld>();
+			if( myworld == null ) { return; }
 
 			// Kill town NPCs above ground every minute when set to do so
-			if( modworld.GameLogic.KillSurfaceTownNPCs ) {
+			if( myworld.GameLogic.KillSurfaceTownNPCs ) {
 				if( npc.townNPC && npc.position.Y < (Main.worldSurface*16.0) && Main.rand.Next(60*60) == 0 ) {
 					NPCHelpers.Kill( npc );
 					return;
@@ -32,31 +32,31 @@ namespace TheLunatic {
 			if( !mymod.ConfigJson.Data.Enabled ) { return; }
 
 			if( !npc.boss && npc.type != 551 && npc.type != 398 ) { return; }	// Betsy isn't a boss?
-			var modworld = this.mod.GetModWorld<TheLunaticWorld>();
-			if( !modworld.GameLogic.HaveWeHopeToWin(mymod) ) { return; }
+			var myworld = this.mod.GetModWorld<TheLunaticWorld>();
+			if( !myworld.GameLogic.HaveWeHopeToWin() ) { return; }
 
 			Item item = null;
-			int mask_type = MaskLogic.GetMaskTypeOfNpc( npc.type );
-			if( mask_type == -1 ) { return; }
+			int maskType = MaskLogic.GetMaskTypeOfNpc( npc.type );
+			if( maskType == -1 ) { return; }
 
 			// Already given this mask?
-			bool is_vanilla = MaskLogic.AllVanillaMasks.Contains( mask_type );
-			if( !modworld.MaskLogic.GivenVanillaMasksByType.Contains( mask_type ) ) {
-				if( !is_vanilla && modworld.MaskLogic.GivenCustomMasksByBossUid.Contains( NPCIdentityHelpers.GetUniqueId( npc ) ) ) {
+			bool isVanilla = MaskLogic.AllVanillaMasks.Contains( maskType );
+			if( !myworld.MaskLogic.GivenVanillaMasksByType.Contains( maskType ) ) {
+				if( !isVanilla && myworld.MaskLogic.GivenCustomMasksByBossUid.Contains( NPCIdentityHelpers.GetUniqueId(npc) ) ) {
 					return;
 				}
 			}
 
 			// No modded masks allowed?
-			if( !is_vanilla && mymod.ConfigJson.Data.OnlyVanillaBossesDropMasks ) {
+			if( !isVanilla && mymod.ConfigJson.Data.OnlyVanillaBossesDropMasks ) {
 				return;
 			}
 			
-			int which = ItemHelpers.CreateItem( npc.position, mask_type, 1, 15, 15 );
+			int which = ItemHelpers.CreateItem( npc.position, maskType, 1, 15, 15 );
 			item = Main.item[which];
 
 			if( item != null && !item.IsAir ) {
-				if( mask_type == this.mod.ItemType<CustomBossMaskItem>() ) {
+				if( maskType == mymod.ItemType<CustomBossMaskItem>() ) {
 					var moditem = (CustomBossMaskItem)item.modItem;
 					if( !moditem.SetBoss(npc.type) ) {
 						ItemHelpers.DestroyWorldItem( which );
@@ -73,7 +73,7 @@ namespace TheLunatic {
 					}*/
 				}
 			} else {
-				ErrorLogger.Log( "Could not spawn a mask of type " + mask_type );
+				ErrorLogger.Log( "Could not spawn a mask of type " + maskType );
 			}
 		}
 

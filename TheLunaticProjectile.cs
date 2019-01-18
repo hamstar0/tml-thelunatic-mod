@@ -10,9 +10,9 @@ namespace TheLunatic {
 			if( !mymod.ConfigJson.Data.Enabled ) { base.CanUseGrapple( type, player ); }
 
 			var buff = (ShadowWalkerBuff)mymod.GetBuff( "ShadowWalkerBuff" );
-			bool? can_we = buff.ProjectileCanUseGrapple( type, player );
-			if( can_we != null ) {
-				return (bool)can_we;
+			bool? canWe = buff.ProjectileCanUseGrapple( type, player );
+			if( canWe != null ) {
+				return (bool)canWe;
 			}
 			return base.CanUseGrapple( type, player );
 		}

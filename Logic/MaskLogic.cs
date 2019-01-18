@@ -66,15 +66,17 @@ namespace TheLunatic.Logic {
 			MaskLogic.AvailableMaskCount = MaskLogic.AllVanillaMasks.Count - 1;	// Either corruption or crimson; not both
 		}
 
-		public static int GetMaskTypeOfNpc( int npc_type ) {
-			if( MaskLogic.VanillaBossOfMask.Keys.Contains(npc_type) ) {
-				return MaskLogic.VanillaBossOfMask[ npc_type ];
+		public static int GetMaskTypeOfNpc( int npcType ) {
+			if( MaskLogic.VanillaBossOfMask.Keys.Contains(npcType) ) {
+				return MaskLogic.VanillaBossOfMask[ npcType ];
 			}
 
+			var mymod = TheLunaticMod.Instance;
 			NPC npc = new NPC();
-			npc.SetDefaults( npc_type );
+			npc.SetDefaults( npcType );
+
 			if( npc.boss ) {
-				return ModLoader.GetMod( "TheLunatic" ).ItemType<CustomBossMaskItem>();
+				return mymod.ItemType<CustomBossMaskItem>();
 			}
 			return -1;
 		}
@@ -84,12 +86,12 @@ namespace TheLunatic.Logic {
 				return mask.Name;
 			}
 
-			Mod mod = ModLoader.GetMod( "TheLunatic" );
-			int custom_type = mod.ItemType<CustomBossMaskItem>();
-			if( mask.type == custom_type ) {
-				var mask_item_info = mask.GetGlobalItem<CustomBossMaskItemInfo>( mod );
-				if( mask_item_info != null ) {
-					return mask_item_info.BossDisplayName + " Mask";
+			var mymod = TheLunaticMod.Instance;
+			int customType = mymod.ItemType<CustomBossMaskItem>();
+			if( mask.type == customType ) {
+				var maskItemInfo = mask.GetGlobalItem<CustomBossMaskItemInfo>();
+				if( maskItemInfo != null ) {
+					return maskItemInfo.BossDisplayName + " Mask";
 				}
 			}
 
@@ -104,14 +106,16 @@ namespace TheLunatic.Logic {
 		}
 		
 
-		public void LoadOnce( TheLunaticMod mymod, int[] masks, string[] custom_masks ) {
+		public void LoadOnce( int[] masks, string[] customMasks ) {
+			var mymod = TheLunaticMod.Instance;
+
 			if( this.IsLoaded ) {
 				LogHelpers.Log( "Redundant Mask Logic load. " + String.Join( ",", masks ) + " (" + String.Join( ",", this.GivenVanillaMasksByType ) + ")" );
 				return;
 			}
 
 			this.GivenVanillaMasksByType = new HashSet<int>( masks );
-			this.GivenCustomMasksByBossUid = new HashSet<string>( custom_masks );
+			this.GivenCustomMasksByBossUid = new HashSet<string>( customMasks );
 
 			if( mymod.Config.DebugModeReset ) {
 				this.GivenVanillaMasksByType.Clear();
@@ -127,17 +131,20 @@ namespace TheLunatic.Logic {
 
 		////////////////
 
-		public void RegisterReceiptOfMask( TheLunaticMod mymod, Player giving_player, int mask_type, int boss_type ) {
-			if( mask_type == mymod.ItemType<CustomBossMaskItem>() ) {
+		public void RegisterReceiptOfMask( Player givingPlayer, int maskType, int bossType ) {
+			var mymod = TheLunaticMod.Instance;
+
+			if( maskType == mymod.ItemType<CustomBossMaskItem>() ) {
 				NPC npc = new NPC();
-				npc.SetDefaults( boss_type );
+				npc.SetDefaults( bossType );
+
 				this.GivenCustomMasksByBossUid.Add( NPCIdentityHelpers.GetUniqueId(npc) );
 			} else {
-				this.GivenVanillaMasksByType.Add( mask_type );
+				this.GivenVanillaMasksByType.Add( maskType );
 			}
 
 			if( mymod.Config.DebugModeInfo ) {
-				LogHelpers.Log( "DEBUG Registering mask. " + giving_player.name + ", " + mask_type );
+				LogHelpers.Log( "DEBUG Registering mask. " + givingPlayer.name + ", " + maskType );
 			}
 
 			// Buy time before the end comes
@@ -145,7 +152,7 @@ namespace TheLunatic.Logic {
 				var modworld = mymod.GetModWorld<TheLunaticWorld>();
 				int recovered = mymod.ConfigJson.Data.HalfDaysRecoveredPerMask;
 				
-				switch( mask_type ) {
+				switch( maskType ) {
 				case ItemID.FleshMask:
 					recovered = (int)((float)recovered * mymod.ConfigJson.Data.WallOfFleshMultiplier);
 					break;
@@ -158,14 +165,14 @@ namespace TheLunatic.Logic {
 				case ItemID.BossMaskBetsy:
 				case ItemID.BossMaskCultist:
 				case ItemID.BossMaskMoonlord:
-					if( mask_type == ItemID.BossMaskMoonlord && mymod.ConfigJson.Data.MoonLordMaskWins ) {
+					if( maskType == ItemID.BossMaskMoonlord && mymod.ConfigJson.Data.MoonLordMaskWins ) {
 						this.GiveAllVanillaMasks();
 					}
 					recovered = (int)((float)recovered * mymod.ConfigJson.Data.HardModeMultiplier);
 					break;
 				}
 
-				if( WorldHelpers.GetDayOrNightPercentDone() > 0.5f ) {
+				if( WorldStateHelpers.GetDayOrNightPercentDone() > 0.5f ) {
 					recovered += 1;
 				}
 				
@@ -174,8 +181,8 @@ namespace TheLunatic.Logic {
 
 			// Sky flash for all
 			if( Main.netMode != 2 ) {  // Not server
-				Player current_player = Main.player[Main.myPlayer];
-				var modplayer = current_player.GetModPlayer<TheLunaticPlayer>( mymod );
+				Player currentPlayer = Main.player[Main.myPlayer];
+				var modplayer = currentPlayer.GetModPlayer<TheLunaticPlayer>();
 				modplayer.FlashMe();
 			}
 		}
@@ -192,10 +199,10 @@ namespace TheLunatic.Logic {
 			return masks;
 		}
 
-		public bool DoesLoonyHaveThisMask( TheLunaticMod mymod, Item mask_item ) {
+		public bool DoesLoonyHaveThisMask( Item mask_item ) {
 			if( this.GetRemainingVanillaMasks().Contains(mask_item.type) ) { return false; }
 
-			var mask_item_info = mask_item.GetGlobalItem<CustomBossMaskItemInfo>( mymod );
+			var mask_item_info = mask_item.GetGlobalItem<CustomBossMaskItemInfo>();
 			return this.GivenCustomMasksByBossUid.Contains( mask_item_info.BossUid );
 		}
 
@@ -208,13 +215,14 @@ namespace TheLunatic.Logic {
 
 		////////////////
 
-		public bool IsValidMask( TheLunaticMod mymod, Item mask ) {
-			var modworld = mymod.GetModWorld<TheLunaticWorld>();
-			if( !modworld.GameLogic.HaveWeHopeToWin(mymod) ) { return false; }
+		public bool IsValidMask( Item mask ) {
+			var mymod = TheLunaticMod.Instance;
+			var myworld = mymod.GetModWorld<TheLunaticWorld>();
+			if( !myworld.GameLogic.HaveWeHopeToWin() ) { return false; }
 
 			if( !mymod.ConfigJson.Data.LoonyAcceptsMasksWithoutBossKill ) {
 				bool strict = mymod.ConfigJson.Data.LoonyEnforcesBossSequence;
-				bool downed_mech = NPC.downedMechBoss1 || NPC.downedMechBoss2 || NPC.downedMechBoss3;
+				bool downedMech = NPC.downedMechBoss1 || NPC.downedMechBoss2 || NPC.downedMechBoss3;
 				//bool downed_towers = NPC.downedTowerSolar && NPC.downedTowerVortex && NPC.downedTowerNebula && NPC.downedTowerStardust;
 
 				switch( mask.type ) {
@@ -252,20 +260,20 @@ namespace TheLunatic.Logic {
 					if( (strict && (!Main.hardMode)) || !NPC.downedFishron ) { return false; }
 					break;
 				case ItemID.PlanteraMask:
-					if( (strict && (!Main.hardMode || !downed_mech)) || !NPC.downedPlantBoss ) { return false; }
+					if( (strict && (!Main.hardMode || !downedMech)) || !NPC.downedPlantBoss ) { return false; }
 					break;
 				case ItemID.GolemMask:
-					if( (strict && (!Main.hardMode || !downed_mech || !NPC.downedPlantBoss)) || !NPC.downedGolemBoss ) { return false; }
+					if( (strict && (!Main.hardMode || !downedMech || !NPC.downedPlantBoss)) || !NPC.downedGolemBoss ) { return false; }
 					break;
 				case ItemID.BossMaskBetsy:
-					if( (strict && (!Main.hardMode || !downed_mech || !NPC.downedPlantBoss || !NPC.downedGolemBoss)) ) { return false; }
+					if( (strict && (!Main.hardMode || !downedMech || !NPC.downedPlantBoss || !NPC.downedGolemBoss)) ) { return false; }
 					break;
 				case ItemID.BossMaskCultist:
-					if( (strict && (!Main.hardMode || !downed_mech || !NPC.downedPlantBoss || !NPC.downedGolemBoss)) ||
+					if( (strict && (!Main.hardMode || !downedMech || !NPC.downedPlantBoss || !NPC.downedGolemBoss)) ||
 						!NPC.downedAncientCultist ) { return false; }
 					break;
 				case ItemID.BossMaskMoonlord:
-					if( (strict && (!Main.hardMode || !downed_mech || !NPC.downedPlantBoss || !NPC.downedGolemBoss || !NPC.downedAncientCultist)) ||
+					if( (strict && (!Main.hardMode || !downedMech || !NPC.downedPlantBoss || !NPC.downedGolemBoss || !NPC.downedAncientCultist)) ||
 						!NPC.downedMoonlord ) { return false; }  //|| !downed_towers
 					break;
 				}
@@ -278,21 +286,23 @@ namespace TheLunatic.Logic {
 			return true;
 		}
 
-		public void GiveMaskToLoony( TheLunaticMod mymod, Player player, Item mask ) {
+		public void GiveMaskToLoony( Player player, Item mask ) {
+			var mymod = TheLunaticMod.Instance;
+
 			if( Main.netMode == 1 ) {   // Client
-				ClientPacketHandlers.SendGivenMaskFromClient( mymod, mask );
+				ClientPacketHandlers.SendGivenMaskFromClient( mask );
 			} else if( Main.netMode == 2 ) {    // Server
 				throw new Exception( "Server should not be giving masks to loonys." );
 			}
 
-			int boss_type = -1;
+			int bossType = -1;
 			if( mask.type == mymod.ItemType<CustomBossMaskItem>() ) {
-				boss_type = mask.GetGlobalItem<CustomBossMaskItemInfo>( mymod ).BossNpcType;
+				bossType = mask.GetGlobalItem<CustomBossMaskItemInfo>().BossNpcType;
 			} else {
-				var boss_of_mask = MaskLogic.VanillaBossOfMask.Where( x => x.Value == mask.type ).First();
-				boss_type = boss_of_mask.Value > 0 ? boss_of_mask.Value : boss_type;
+				var bossOfMask = MaskLogic.VanillaBossOfMask.Where( x => x.Value == mask.type ).First();
+				bossType = bossOfMask.Value > 0 ? bossOfMask.Value : bossType;
 			}
-			this.RegisterReceiptOfMask( mymod, player, mask.type, boss_type );
+			this.RegisterReceiptOfMask( player, mask.type, bossType );
 
 			mask.TurnToAir();
 

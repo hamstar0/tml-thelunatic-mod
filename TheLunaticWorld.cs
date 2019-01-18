@@ -38,36 +38,36 @@ namespace TheLunatic {
 
 		public override void Load( TagCompound tag ) {
 			var mymod = (TheLunaticMod)this.mod;
-			bool has_arrived = false, has_quit = false, has_end = false, has_won = false, is_safe = false;
+			bool hasArrived = false, hasQuit = false, hasEnd = false, hasWon = false, isSafe = false;
 			int time = 0;
 			int[] masks = new int[0];
-			int custom_mask_count = 0;
-			string[] custom_masks = new string[0];
+			int customMaskCount = 0;
+			string[] customMasks = new string[0];
 
 			if( tag.ContainsKey("world_id") ) {
 				this.ID = tag.GetString( "world_id" );
 
-				has_arrived = tag.GetBool( "has_loony_arrived" );
-				has_quit = tag.GetBool( "has_loony_quit" );
-				has_end = tag.GetBool( "has_game_ended" );
-				has_won = tag.GetBool( "has_won" );
-				is_safe = tag.GetBool( "is_safe" );
+				hasArrived = tag.GetBool( "has_loony_arrived" );
+				hasQuit = tag.GetBool( "has_loony_quit" );
+				hasEnd = tag.GetBool( "has_game_ended" );
+				hasWon = tag.GetBool( "has_won" );
+				isSafe = tag.GetBool( "is_safe" );
 
 				time = tag.GetInt( "half_days_elapsed_" + this.ID );
 
 				masks = tag.GetIntArray( "masks_given_" + this.ID );
 
-				custom_mask_count = tag.GetInt( "custom_masks_given_" + this.ID );
-				custom_masks = new string[custom_mask_count];
-				for( int i = 0; i < custom_mask_count; i++ ) {
-					custom_masks[i] = tag.GetString( "custom_mask_" + this.ID + "_" + i );
+				customMaskCount = tag.GetInt( "custom_masks_given_" + this.ID );
+				customMasks = new string[customMaskCount];
+				for( int i = 0; i < customMaskCount; i++ ) {
+					customMasks[i] = tag.GetString( "custom_mask_" + this.ID + "_" + i );
 				}
 			}
 
 			this.HasCorrectID = true;
 
-			this.GameLogic.LoadOnce( mymod, has_arrived, has_quit, has_end, has_won, is_safe, time );
-			this.MaskLogic.LoadOnce( mymod, masks, custom_masks );
+			this.GameLogic.LoadOnce( hasArrived, hasQuit, hasEnd, hasWon, isSafe, time );
+			this.MaskLogic.LoadOnce( masks, customMasks );
 		}
 
 		public override TagCompound Save() {
@@ -112,10 +112,10 @@ namespace TheLunatic {
 		}
 
 		public override void NetReceive( BinaryReader reader ) {
-			bool has_correct_id = reader.ReadBoolean();
+			bool hasCorrectId = reader.ReadBoolean();
 			string id = reader.ReadString();
 
-			if( has_correct_id ) {
+			if( hasCorrectId ) {
 				this.ID = id;
 				this.HasCorrectID = true;
 			}
@@ -129,7 +129,7 @@ namespace TheLunatic {
 
 			if( Main.netMode == 2 ) { // Server only
 				if( this.HasCorrectID && this.GameLogic != null ) {
-					this.GameLogic.Update( mymod );
+					this.GameLogic.Update();
 				}
 			}
 		}

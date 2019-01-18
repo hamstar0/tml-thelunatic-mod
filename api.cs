@@ -8,8 +8,8 @@ namespace TheLunatic {
 		}
 
 		public static bool HasCurrentGameEnded() {
-			var modworld = TheLunaticMod.Instance.GetModWorld<TheLunaticWorld>();
-			return modworld.GameLogic.HasGameEnded;
+			var myworld = TheLunaticMod.Instance.GetModWorld<TheLunaticWorld>();
+			return myworld.GameLogic.HasGameEnded;
 		}
 	}
 }

@@ -29,10 +29,10 @@ namespace TheLunatic {
 				throw new Exception( "Cannot reset to default configs outside of single player." );
 			}
 
-			var new_config = new LunaticConfigData();
+			var newConfig = new LunaticConfigData();
 			//new_config.SetDefaults();
 
-			TheLunaticMod.Instance.ConfigJson.SetData( new_config );
+			TheLunaticMod.Instance.ConfigJson.SetData( newConfig );
 			TheLunaticMod.Instance.ConfigJson.SaveFile();
 		}
 	}

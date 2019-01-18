@@ -9,7 +9,8 @@ using System;
 using HamstarHelpers.Helpers.DebugHelpers;
 using TheLunatic.NetProtocol;
 using HamstarHelpers.Components.Config;
-
+using HamstarHelpers.Components.Errors;
+using HamstarHelpers.Helpers.DotNetHelpers;
 
 namespace TheLunatic {
 	partial class TheLunaticMod : Mod {
@@ -76,9 +77,9 @@ namespace TheLunatic {
 		public override void HandlePacket( BinaryReader reader, int player_who ) {
 			try {
 				if( Main.netMode == 1 ) {
-					ClientPacketHandlers.HandlePacket( this, reader );
+					ClientPacketHandlers.HandlePacket( reader );
 				} else if( Main.netMode == 2 ) {
-					ServerPacketHandlers.HandlePacket( this, reader, player_who );
+					ServerPacketHandlers.HandlePacket( reader, player_who );
 				}
 			} catch( Exception e ) {
 				LogHelpers.Log( "HandlePacket "+e.ToString() );
@@ -86,10 +87,10 @@ namespace TheLunatic {
 		}
 
 		public override bool HijackGetData( ref byte message_type, ref BinaryReader reader, int player_number ) {
-			var modworld = this.GetModWorld<TheLunaticWorld>();
-			if( modworld != null && modworld.GameLogic != null ) {
+			var myworld = this.GetModWorld<TheLunaticWorld>();
+			if( myworld != null && myworld.GameLogic != null ) {
 				// Let not a peep of town NPC suffering be heard when set to do so
-				if( modworld.GameLogic.KillSurfaceTownNPCs ) {
+				if( myworld.GameLogic.KillSurfaceTownNPCs ) {
 					if( (int)message_type == MessageID.SyncNPCName ) {
 						//reader.ReadInt16();
 						//reader.ReadString();
@@ -105,19 +106,41 @@ namespace TheLunatic {
 		public override void PostDrawInterface( SpriteBatch sb ) {
 			if( !this.ConfigJson.Data.Enabled ) { return; }
 
-			var modworld = this.GetModWorld<TheLunaticWorld>();
-			if( modworld.GameLogic != null ) {
-				modworld.GameLogic.ReadyClient = true;  // Ugh!
+			var myworld = this.GetModWorld<TheLunaticWorld>();
+			if( myworld.GameLogic != null ) {
+				myworld.GameLogic.ReadyClient = true;  // Ugh!
 			}
 		}
 
 		public override void UpdateMusic( ref int music, ref MusicPriority priority ) {
 			if( !this.ConfigJson.Data.Enabled ) { return; }
 
-			var modworld = this.GetModWorld<TheLunaticWorld>();
+			var myworld = this.GetModWorld<TheLunaticWorld>();
 
-			if( modworld != null && modworld.GameLogic != null ) {
-				modworld.GameLogic.UpdateMyMusic( this, ref music );
+			if( myworld != null && myworld.GameLogic != null ) {
+				myworld.GameLogic.UpdateMyMusic( ref music );
+			}
+		}
+
+
+		////////////////
+
+		public override object Call( params object[] args ) {
+			if( args == null || args.Length == 0 ) { throw new HamstarException( "Undefined call type." ); }
+
+			string callType = args[0] as string;
+			if( callType == null ) { throw new HamstarException( "Invalid call type." ); }
+
+			var methodInfo = typeof( TheLunaticAPI ).GetMethod( callType );
+			if( methodInfo == null ) { throw new HamstarException( "Invalid call type " + callType ); }
+
+			var newArgs = new object[args.Length - 1];
+			Array.Copy( args, 1, newArgs, 0, args.Length - 1 );
+
+			try {
+				return ReflectionHelpers.SafeCall( methodInfo, null, newArgs );
+			} catch( Exception e ) {
+				throw new HamstarException( "Bad API call.", e );
 			}
 		}
 	}

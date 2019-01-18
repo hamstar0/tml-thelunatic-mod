@@ -69,20 +69,21 @@ namespace TheLunatic.Tiles {
 			return color;
 		}
 
-		public Color GetTintColor( TheLunaticMod mymod ) {
+		public Color GetTintColor() {
+			var mymod = TheLunaticMod.Instance;
 			Color color = Color.Black;
-			float tint_scale = MathHelper.Clamp( this.TintScale, 0f, 1f );
-			float day_spike = (float)Math.Abs( WorldHelpers.GetDayOrNightPercentDone() - 0.5d );
+			float tintScale = MathHelper.Clamp( this.TintScale, 0f, 1f );
+			float daySpike = (float)Math.Abs( WorldStateHelpers.GetDayOrNightPercentDone() - 0.5d );
 
 			if( Main.dayTime ) {
-				tint_scale *= 1f - day_spike;
+				tintScale *= 1f - daySpike;
 			} else {
-				tint_scale *= (day_spike * 0.6f) + 0.2f;
+				tintScale *= (daySpike * 0.6f) + 0.2f;
 			}
 
-			color.R = (byte)(255f * tint_scale);
-			color.G = (byte)(128f * tint_scale);
-			color.A = (byte)(255f * tint_scale);
+			color.R = (byte)(255f * tintScale);
+			color.G = (byte)(128f * tintScale);
+			color.A = (byte)(255f * tintScale);
 
 			if( mymod.Config.DebugModeInfo ) {
 				DebugHelpers.Print( "Sky", color.ToString(), 20 );
@@ -96,7 +97,7 @@ namespace TheLunatic.Tiles {
 		public override void OnLoad() { }
 
 
-		public override void Update( GameTime game_time ) {
+		public override void Update( GameTime gameTime ) {
 			int len = this.SkyFlashMaxDuration / 2;
 
 			if( this.SkyFlash != 0 ) {
@@ -119,12 +120,11 @@ namespace TheLunatic.Tiles {
 		//	return color;
 		//}
 		
-		public override void Draw( SpriteBatch sb, float min_depth, float max_depth ) {
+		public override void Draw( SpriteBatch sb, float minDepth, float maxDepth ) {
 			if( this.TintScale > 0f ) {
-				var mymod = (TheLunaticMod)ModLoader.GetMod( "TheLunatic" );
-				Color color = this.GetTintColor( mymod );
+				Color color = this.GetTintColor();
 
-				if( min_depth >= 6f ) {
+				if( minDepth >= 6f ) {
 					sb.Draw( Main.blackTileTexture, new Rectangle( 0, 0, Main.screenWidth, Main.screenHeight ), color );
 				}
 			}

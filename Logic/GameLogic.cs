@@ -45,26 +45,27 @@ namespace TheLunatic.Logic {
 		}
 
 
-		public void LoadOnce( TheLunaticMod mymod, bool has_loony_arrived, bool has_loony_quit, bool has_game_ended, bool has_won, bool is_safe, int time ) {
-			var modworld = mymod.GetModWorld<TheLunaticWorld>();
+		public void LoadOnce( bool hasLoonyArrived, bool hasLoonyQuit, bool hasGameEnded, bool hasWon, bool isSafe, int time ) {
+			var mymod = TheLunaticMod.Instance;
+			var myworld = mymod.GetModWorld<TheLunaticWorld>();
 
 			if( this.IsLoaded ) {
-				LogHelpers.Log( "Redundant Game Logic load. " + has_loony_arrived + "," + has_loony_quit + "," + has_game_ended + "," + has_won + "," + is_safe + "," + time +
+				LogHelpers.Log( "Redundant Game Logic load. " + hasLoonyArrived + "," + hasLoonyQuit + "," + hasGameEnded + "," + hasWon + "," + isSafe + "," + time +
 					"   (" + this.HasLoonyArrived + "," + this.HasLoonyQuit + "," + this.HasGameEnded + "," + this.HasWon + "," + this.IsSafe + "," + this.HalfDaysElapsed + ") " +
-					modworld.ID );
+					myworld.ID );
 				return;
 			}
 			if( mymod.Config.DebugModeInfo ) {
-				LogHelpers.Log( "DEBUG Game Logic loading. " + has_loony_arrived + "," + has_loony_quit + "," + has_game_ended + "," + has_won + "," + is_safe + "," + time +
+				LogHelpers.Log( "DEBUG Game Logic loading. " + hasLoonyArrived + "," + hasLoonyQuit + "," + hasGameEnded + "," + hasWon + "," + isSafe + "," + time +
 					"   (" + this.HasLoonyArrived + "," + this.HasLoonyQuit + "," + this.HasGameEnded + "," + this.HasWon + "," + this.IsSafe + "," + this.HalfDaysElapsed + ") " +
-					modworld.ID );
+					myworld.ID );
 			}
 
-			this.HasLoonyArrived = has_loony_arrived;
-			this.HasLoonyQuit = has_loony_quit;
-			this.HasGameEnded = has_game_ended;
-			this.HasWon = has_won;
-			this.IsSafe = is_safe;
+			this.HasLoonyArrived = hasLoonyArrived;
+			this.HasLoonyQuit = hasLoonyQuit;
+			this.HasGameEnded = hasGameEnded;
+			this.HasWon = hasWon;
+			this.IsSafe = isSafe;
 			this.HalfDaysElapsed = time;
 
 			this.ApplyDebugOverrides( mymod );
@@ -119,7 +120,9 @@ namespace TheLunatic.Logic {
 		private int StartupDelay = 0;
 
 		
-		public void Update( TheLunaticMod mymod ) {
+		public void Update() {
+			var mymod = TheLunaticMod.Instance;
+
 			// Simply idle (and keep track of day) until ready
 			if( !this.IsReady() ) {
 				this.IsDay = Main.dayTime;
@@ -135,8 +138,8 @@ namespace TheLunatic.Logic {
 				DebugHelpers.Print( "HasLoonyQuit", "" + this.HasLoonyQuit, 20 );
 				DebugHelpers.Print( "HasGameEnded", "" + this.HasGameEnded, 20 );
 				DebugHelpers.Print( "HalfDaysElapsed", "" + this.HalfDaysElapsed + " (" + (mymod.ConfigJson.Data.DaysUntil * 2) + ")", 20 );
-				DebugHelpers.Print( "HaveWeEndSigns", "" + this.HaveWeEndSigns( mymod ), 20 );
-				DebugHelpers.Print( "HaveHope", "" + this.HaveWeHopeToWin( mymod ), 20 );
+				DebugHelpers.Print( "HaveWeEndSigns", "" + this.HaveWeEndSigns(), 20 );
+				DebugHelpers.Print( "HaveHope", "" + this.HaveWeHopeToWin(), 20 );
 				DebugHelpers.Print( "TintScale", "" + mymod.Sky.TintScale, 20 );
 				DebugHelpers.Print( "RemainingMasks", String.Join( ",", modworld.MaskLogic.GetRemainingVanillaMasks() ), 20 );
 				DebugHelpers.Print( "GivenMasks", String.Join( ",", modworld.MaskLogic.GivenVanillaMasksByType ), 20 );
@@ -157,10 +160,10 @@ namespace TheLunatic.Logic {
 						this.HalfDaysElapsed++;
 					}
 
-					this.UpdateEndSigns( mymod );
+					this.UpdateEndSigns();
 				}
 				
-				this.UpdateStateOfApocalypse( mymod );
+				this.UpdateStateOfApocalypse();
 			}
 			
 			this.IsDay = Main.dayTime;
@@ -168,16 +171,16 @@ namespace TheLunatic.Logic {
 			// Is loony gone for good?
 			if( !this.HasLoonyQuit ) {
 				if( !this.HasLoonyArrived ) {
-					if( !TheLunaticTownNPC.WantsToSpawnAnew(mymod) ) {
+					if( !TheLunaticTownNPC.WantsToSpawnAnew() ) {
 						this.Quit();
 					}
-				} else if( !TheLunaticTownNPC.WantsToSpawn(mymod) ) {
+				} else if( !TheLunaticTownNPC.WantsToSpawn() ) {
 					this.Quit();
 				}
 			}
 
 			// Have we won?
-			if( !this.HasWon && this.HaveWeWon(mymod) ) {
+			if( !this.HasWon && this.HaveWeWon() ) {
 				this.WinTheGame();
 			}
 
@@ -197,22 +200,23 @@ namespace TheLunatic.Logic {
 		}
 
 
-		public void UpdateMyMusic( TheLunaticMod mymod, ref int music ) {
+		public void UpdateMyMusic( ref int music ) {
+			var mymod = TheLunaticMod.Instance;
 			Player player = Main.player[Main.myPlayer];
-			var modplayer = player.GetModPlayer<TheLunaticPlayer>( mymod );
+			var myplayer = player.GetModPlayer<TheLunaticPlayer>( mymod );
 
 			if( this.IsApocalypse ) {
-				if( modplayer.IsInDangerZone ) {
+				if( myplayer.IsInDangerZone ) {
 					music = 17;
 				}
 			}
 		}
 
-		public void UpdateBiomes( TheLunaticMod mymod, Player player ) {
+		public void UpdateBiomes( Player player ) {
 			if( this.IsApocalypse ) {
-				var modplayer = player.GetModPlayer<TheLunaticPlayer>( mymod );
+				var myplayer = player.GetModPlayer<TheLunaticPlayer>();
 
-				if( modplayer.IsInDangerZone ) {
+				if( myplayer.IsInDangerZone ) {
 					player.ZoneTowerSolar = true;
 					player.ManageSpecialBiomeVisuals( "Solar", true, default( Vector2 ) );
 				} else {
@@ -221,11 +225,11 @@ namespace TheLunatic.Logic {
 			}
 		}
 
-		public void UpdateBiomeVisuals( TheLunaticMod mymod, Player player ) {
+		public void UpdateBiomeVisuals( Player player ) {
 			if( this.IsApocalypse ) {
-				var modplayer = player.GetModPlayer<TheLunaticPlayer>( mymod );
+				var myplayer = player.GetModPlayer<TheLunaticPlayer>();
 				
-				if( modplayer.IsInDangerZone ) {
+				if( myplayer.IsInDangerZone ) {
 					Filters.Scene.Activate( "HeatDistortion", player.Center, new object[0] );
 					Filters.Scene["HeatDistortion"].GetShader().UseIntensity( 2f );
 					Filters.Scene["HeatDistortion"].IsHidden = false;
@@ -234,24 +238,26 @@ namespace TheLunatic.Logic {
 			}
 		}
 
-		private void UpdateEndSigns( TheLunaticMod mymod ) {
-			if( this.HaveWeEndSigns(mymod) ) {
-				int half_days_left = (mymod.ConfigJson.Data.DaysUntil * 2) - this.HalfDaysElapsed;
-				int rand = Main.rand.Next( half_days_left * 60 * 54 );
+		private void UpdateEndSigns() {
+			var mymod = TheLunaticMod.Instance;
+
+			if( this.HaveWeEndSigns() ) {
+				int halfDaysLeft = (mymod.ConfigJson.Data.DaysUntil * 2) - this.HalfDaysElapsed;
+				int rand = Main.rand.Next( halfDaysLeft * 60 * 54 );
 				
 				if( Main.netMode != 1 && rand == 0 ) {	// Not client
 					int duration = (int)(120 + (60 * 4 * Main.rand.NextFloat()));
 
 					if( Main.netMode == 2 ) {	// Server
-						ServerPacketHandlers.BroadcastEndSignFromServer( mymod, duration );
+						ServerPacketHandlers.BroadcastEndSignFromServer( duration );
 					} else if( Main.netMode == 0 ) {	// Single-player
-						this.ApplyEndSignForMe( mymod, duration );
+						this.ApplyEndSignForMe( duration );
 					}
 				}
 
 				if( Main.netMode != 2 ) {   // Not server
-					if( half_days_left != 0 ) {
-						double days = (double)this.HalfDaysElapsed + WorldHelpers.GetDayOrNightPercentDone();
+					if( halfDaysLeft != 0 ) {
+						double days = (double)this.HalfDaysElapsed + WorldStateHelpers.GetDayOrNightPercentDone();
 						days -= mymod.ConfigJson.Data.DaysUntil;
 						mymod.Sky.TintScale = (float)days / (float)mymod.ConfigJson.Data.DaysUntil;
 					} else {
@@ -263,18 +269,18 @@ namespace TheLunatic.Logic {
 			}
 		}
 
-		private void UpdateStateOfApocalypse( TheLunaticMod mymod ) {
+		private void UpdateStateOfApocalypse() {
 			// Time's up?
-			if( !this.IsApocalypse && this.HaveWeApocalypse(mymod) ) {
+			if( !this.IsApocalypse && this.HaveWeApocalypse() ) {
 				this.BeginApocalypse();
 			}
 
 			if( this.IsApocalypse ) {
 				if( Main.netMode != 2 ) { // Not server
 					Player player = Main.player[Main.myPlayer];
-					var modplayer = player.GetModPlayer<TheLunaticPlayer>( mymod );
+					var myplayer = player.GetModPlayer<TheLunaticPlayer>();
 
-					modplayer.QuakeMeFor( -1, 0.1f );	// Perpetual rumble
+					myplayer.QuakeMeFor( -1, 0.1f );	// Perpetual rumble
 				}
 			}
 		}
@@ -282,8 +288,10 @@ namespace TheLunatic.Logic {
 
 		////////////////
 
-		public bool HaveWeEndSigns( TheLunaticMod mymod ) {
-			return !this.HaveWeWon(mymod)
+		public bool HaveWeEndSigns() {
+			var mymod = TheLunaticMod.Instance;
+
+			return !this.HaveWeWon()
 				//&& this.HasLoonyBegun
 				&& !this.IsApocalypse
 				//&& !this.HasLoonyQuit
@@ -291,27 +299,31 @@ namespace TheLunatic.Logic {
 				&& (this.HalfDaysElapsed >= mymod.ConfigJson.Data.DaysUntil);
 		}
 
-		public bool HaveWeHopeToWin( TheLunaticMod mymod ) {
+		public bool HaveWeHopeToWin() {
+			var mymod = TheLunaticMod.Instance;
+
 			return !this.HasLoonyQuit
 				&& !this.IsApocalypse
-				&& !this.HaveWeWon(mymod);
+				&& !this.HaveWeWon();
 		}
 
-		private bool HaveWeApocalypse( TheLunaticMod mymod ) {
-			int half_days_left = (mymod.ConfigJson.Data.DaysUntil * 2) - this.HalfDaysElapsed;
+		private bool HaveWeApocalypse() {
+			var mymod = TheLunaticMod.Instance;
+			int halfDaysLeft = (mymod.ConfigJson.Data.DaysUntil * 2) - this.HalfDaysElapsed;
 
-			return this.IsApocalypse || ( half_days_left == 0
+			return this.IsApocalypse || ( halfDaysLeft == 0
 				&& !this.IsSafe
-				&& !this.HaveWeWon(mymod) );
+				&& !this.HaveWeWon() );
 		}
 
-		private bool HaveWeWon( TheLunaticMod mymod ) {
-			var modworld = mymod.GetModWorld<TheLunaticWorld>();
+		private bool HaveWeWon() {
+			var mymod = TheLunaticMod.Instance;
+			var myworld = mymod.GetModWorld<TheLunaticWorld>();
 
 			return this.HasWon || ( this.HasLoonyArrived
 				//&& this.IsSafe
 				&& !this.IsApocalypse
-				&& modworld.MaskLogic.GivenVanillaMasksByType.Count >= MaskLogic.AvailableMaskCount );
+				&& myworld.MaskLogic.GivenVanillaMasksByType.Count >= MaskLogic.AvailableMaskCount );
 		}
 
 
@@ -321,14 +333,14 @@ namespace TheLunatic.Logic {
 			this.HalfDaysElapsed = half_days;
 		}
 
-		public void ApplyEndSignForMe( TheLunaticMod mymod, int duration ) {
+		public void ApplyEndSignForMe( int duration ) {
 			if( Main.netMode == 2 ) { return; }	// Not server
 
 			Player player = Main.player[Main.myPlayer];
-			var modplayer = player.GetModPlayer<TheLunaticPlayer>( mymod );
+			var myplayer = player.GetModPlayer<TheLunaticPlayer>();
 
 			// Quake
-			modplayer.QuakeMeFor( duration, 0.35f );
+			myplayer.QuakeMeFor( duration, 0.35f );
 		}
 
 		public void BeginApocalypse() {

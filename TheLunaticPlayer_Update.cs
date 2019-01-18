@@ -1,4 +1,5 @@
-﻿using HamstarHelpers.Helpers.DebugHelpers;
+﻿using HamstarHelpers.Components.Errors;
+using HamstarHelpers.Helpers.DebugHelpers;
 using System;
 using Terraria;
 using Terraria.ModLoader;
@@ -9,7 +10,7 @@ namespace TheLunatic {
 		public override void PreUpdate() {
 			var mymod = (TheLunaticMod)this.mod;
 			if( !mymod.ConfigJson.Data.Enabled ) { return; }
-			var modworld = this.mod.GetModWorld<TheLunaticWorld>();
+			var myworld = this.mod.GetModWorld<TheLunaticWorld>();
 
 			if( this.player.position.Y < Main.worldSurface * 16.0 ) {
 				this.IsInDangerZone = true;
@@ -21,6 +22,7 @@ namespace TheLunatic {
 				this.QuakeDuration--;
 			}
 
+try {
 			if( Main.netMode == 2 || this.player.whoAmI == Main.myPlayer ) {   // Server or current player only
 				if( this.Noclip != null ) {
 					this.Noclip.UpdateMode( this.player );
@@ -29,14 +31,17 @@ namespace TheLunatic {
 
 
 			if( Main.netMode != 2 ) {   // Not server
-				if( modworld.HasCorrectID && this.HasVerifiedGameData ) {
+				if( myworld.HasCorrectID && this.HasVerifiedGameData ) {
 					if( this.player.whoAmI == Main.myPlayer ) { // Current player only
-						modworld.GameLogic.Update( mymod );
+						myworld.GameLogic.Update();
 					}
 				}
-			} else {	// Server
-				modworld.GameLogic.ReadyServer = true;	// Needed?
+			} else {    // Server
+				myworld.GameLogic.ReadyServer = true;  // Needed?
 			}
+} catch( Exception e ) {
+	throw new HamstarException( "!TheLunatic.TheLunaticPlayer.PreUpdate", e );
+}
 		}
 
 
@@ -46,7 +51,11 @@ namespace TheLunatic {
 
 			if( Main.netMode == 2 || this.player.whoAmI == Main.myPlayer ) {   // Server or current player only
 				if( this.Noclip != null ) {
+try {
 					this.Noclip.UpdateMovement( this.player );
+} catch( Exception e ) {
+	throw new HamstarException( "!TheLunatic.TheLunaticPlayer.PostUpdate", e );
+}
 				}
 			}
 		}

@@ -1,4 +1,5 @@
-﻿using HamstarHelpers.Helpers.DebugHelpers;
+﻿using HamstarHelpers.Components.Errors;
+using HamstarHelpers.Helpers.DebugHelpers;
 using HamstarHelpers.Helpers.PlayerHelpers;
 using Microsoft.Xna.Framework.Graphics;
 using PlayerExtend;
@@ -29,7 +30,7 @@ namespace TheLunatic {
 
 		////////////////
 
-		public override bool CloneNewInstances { get { return false; } }
+		public override bool CloneNewInstances => false;
 
 		public override void Initialize() {
 			this.Noclip = new PlayerNoclip();
@@ -52,18 +53,18 @@ namespace TheLunatic {
 
 		////////////////
 
-		public override void SyncPlayer( int to_who, int from_who, bool new_player ) {
+		public override void SyncPlayer( int toWho, int fromWho, bool newPlayer ) {
 			var mymod = (TheLunaticMod)this.mod;
 
 			if( Main.netMode == 2 ) {
-				if( to_who == -1 && from_who == this.player.whoAmI ) {
-					this.OnServerConnect();
+				if( toWho == -1 && fromWho == this.player.whoAmI ) {
+					this.OnServerConnect( this.player );
 				}
 			}
 		}
 
-		public override void OnEnterWorld( Player player ) {
-			if( player.whoAmI != Main.myPlayer ) { return; }
+		public override void OnEnterWorld( Player enteringPlayer ) {
+			if( enteringPlayer.whoAmI != Main.myPlayer ) { return; }
 			if( this.player.whoAmI != Main.myPlayer ) { return; }
 
 			var mymod = (TheLunaticMod)this.mod;
@@ -76,15 +77,14 @@ namespace TheLunatic {
 			}
 
 			if( mymod.Config.DebugModeInfo ) {
-				bool _;
-				ErrorLogger.Log( "TheLunatic.TheLunaticPlayer.OnEnterWorld - " + player.name + " joined (" + PlayerIdentityHelpers.GetUniqueId( player, out _ ) + ")" );
+				ErrorLogger.Log( "TheLunatic.TheLunaticPlayer.OnEnterWorld - " + enteringPlayer.name + " joined (" + PlayerIdentityHelpers.GetProperUniqueId( enteringPlayer ) + ")" );
 			}
 
 			if( Main.netMode == 0 ) {
 				this.OnSingleConnect();
 			}
 			if( Main.netMode == 1 ) {
-				this.OnClientConnect();
+				this.OnClientConnect( enteringPlayer );
 			}
 		}
 
@@ -98,8 +98,8 @@ namespace TheLunatic {
 				this.Bye = new Dictionary<string, bool>();
 
 				for( int i = 0; i < worlds; i++ ) {
-					string world_id = tags.GetString( "world_id_" + i );
-					this.Bye[world_id] = tags.GetBool( "bye_" + i );
+					string worldId = tags.GetString( "world_id_" + i );
+					this.Bye[worldId] = tags.GetBool( "bye_" + i );
 				}
 
 				if( mymod.Config.DebugModeInfo ) {
@@ -117,9 +117,9 @@ namespace TheLunatic {
 			int i = 0;
 
 			foreach( var kv in this.Bye ) {
-				string world_id = kv.Key;
-				tags.Set( "world_id_" + i, world_id );
-				tags.Set( "bye_" + i, this.Bye[world_id] );
+				string worldId = kv.Key;
+				tags.Set( "world_id_" + i, worldId );
+				tags.Set( "bye_" + i, this.Bye[worldId] );
 				i++;
 			}
 
@@ -138,13 +138,17 @@ namespace TheLunatic {
 			var mymod = (TheLunaticMod)this.mod;
 			if( !mymod.ConfigJson.Data.Enabled ) { base.PreItemCheck(); }
 
+try {
 			// Force de-select of items while shadow walking
 			if( this.player.HeldItem != null && this.player.HeldItem.type > 0 ) {
-				var buff = (ShadowWalkerBuff)this.mod.GetBuff( "ShadowWalkerBuff" );
+				var buff = (ShadowWalkerBuff)mymod.GetBuff( "ShadowWalkerBuff" );
 				buff.PlayerPreItemCheck( this.player );
 			}
 
-			UmbralCowlItem.CheckEquipState( this.mod, this.player );
+			UmbralCowlItem.CheckEquipState( this.player );
+} catch( Exception e ) {
+	throw new HamstarException( "!TheLunaticMod.TheLunaticPlayer.PreItemCheck", e );
+}
 
 			return base.PreItemCheck();
 		}
@@ -153,16 +157,16 @@ namespace TheLunatic {
 		////////////////
 
 		public bool IsCheater() {
-			var modworld = this.mod.GetModWorld<TheLunaticWorld>();
-			if( !this.Bye.Keys.Contains( modworld.ID ) ) { return false; }
-			return this.Bye[modworld.ID];
+			var myworld = this.mod.GetModWorld<TheLunaticWorld>();
+			if( !this.Bye.Keys.Contains( myworld.ID ) ) { return false; }
+			return this.Bye[myworld.ID];
 		}
 
 		////////////////
 
 		public void SetCheater() {
-			var modworld = this.mod.GetModWorld<TheLunaticWorld>();
-			this.Bye[modworld.ID] = true;
+			var myworld = this.mod.GetModWorld<TheLunaticWorld>();
+			this.Bye[myworld.ID] = true;
 		}
 	}
 }

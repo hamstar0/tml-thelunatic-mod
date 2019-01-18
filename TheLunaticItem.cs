@@ -13,8 +13,8 @@ namespace TheLunatic {
 
 		public string AddedTooltip = "";
 
-		public override GlobalItem Clone( Item item, Item item_clone ) {
-			var clone = (TheLunaticItem)base.Clone( item, item_clone );
+		public override GlobalItem Clone( Item item, Item itemClone ) {
+			var clone = (TheLunaticItem)base.Clone( item, itemClone );
 			clone.AddedTooltip = this.AddedTooltip;
 			return clone;
 		}
@@ -41,11 +41,11 @@ namespace TheLunatic {
 
 		public override void UpdateEquip( Item item, Player player ) {
 			var mymod = (TheLunaticMod)this.mod;
-			var modplayer = player.GetModPlayer<TheLunaticPlayer>( mymod );
+			var myplayer = player.GetModPlayer<TheLunaticPlayer>( mymod );
 
 			if( !mymod.ConfigJson.Data.Enabled ) { return; }
 
-			if( modplayer.Noclip.IsOn ) {
+			if( myplayer.Noclip.IsOn ) {
 				for( int i = 0; i < 50; i++ ) {
 					if( player.inventory[i] == null || player.inventory[i].IsAir || player.inventory[i].holdStyle == 0 ) {
 						player.selectedItem = i;
