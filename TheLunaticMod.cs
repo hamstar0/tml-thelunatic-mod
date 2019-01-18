@@ -12,6 +12,7 @@ using HamstarHelpers.Components.Config;
 using HamstarHelpers.Components.Errors;
 using HamstarHelpers.Helpers.DotNetHelpers;
 
+
 namespace TheLunatic {
 	partial class TheLunaticMod : Mod {
 		public static TheLunaticMod Instance { get; private set; }
@@ -19,8 +20,8 @@ namespace TheLunatic {
 
 		////////////////
 		
-		public JsonConfig<LunaticConfigData> ConfigJson { get; private set; }
-		public LunaticConfigData Config { get { return this.ConfigJson.Data; } }
+		internal JsonConfig<LunaticConfigData> ConfigJson { get; private set; }
+		public LunaticConfigData Config => this.ConfigJson.Data;
 
 		internal AnimatedSky Sky { get; private set; }
 
@@ -74,31 +75,31 @@ namespace TheLunatic {
 
 		////////////////
 
-		public override void HandlePacket( BinaryReader reader, int player_who ) {
+		public override void HandlePacket( BinaryReader reader, int playerWho ) {
 			try {
 				if( Main.netMode == 1 ) {
 					ClientPacketHandlers.HandlePacket( reader );
 				} else if( Main.netMode == 2 ) {
-					ServerPacketHandlers.HandlePacket( reader, player_who );
+					ServerPacketHandlers.HandlePacket( reader, playerWho );
 				}
 			} catch( Exception e ) {
 				LogHelpers.Log( "HandlePacket "+e.ToString() );
 			}
 		}
 
-		public override bool HijackGetData( ref byte message_type, ref BinaryReader reader, int player_number ) {
+		public override bool HijackGetData( ref byte messageType, ref BinaryReader reader, int playerNumber ) {
 			var myworld = this.GetModWorld<TheLunaticWorld>();
 			if( myworld != null && myworld.GameLogic != null ) {
 				// Let not a peep of town NPC suffering be heard when set to do so
 				if( myworld.GameLogic.KillSurfaceTownNPCs ) {
-					if( (int)message_type == MessageID.SyncNPCName ) {
+					if( (int)messageType == MessageID.SyncNPCName ) {
 						//reader.ReadInt16();
 						//reader.ReadString();
 						return true;
 					}
 				}
 			}
-			return base.HijackGetData( ref message_type, ref reader, player_number );
+			return base.HijackGetData( ref messageType, ref reader, playerNumber );
 		}
 
 		////////////////

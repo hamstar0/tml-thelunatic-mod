@@ -329,8 +329,8 @@ namespace TheLunatic.Logic {
 
 		////////////////
 
-		public void SetTime( int half_days ) {
-			this.HalfDaysElapsed = half_days;
+		public void SetTime( int halfDays ) {
+			this.HalfDaysElapsed = halfDays;
 		}
 
 		public void ApplyEndSignForMe( int duration ) {

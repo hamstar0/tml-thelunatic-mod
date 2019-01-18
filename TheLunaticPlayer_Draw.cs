@@ -60,8 +60,8 @@ namespace TheLunatic {
 
 		public static readonly PlayerLayer CustomBossMask = new PlayerLayer(
 			"TheLunatic", "CustomBossMask", PlayerLayer.MiscEffectsFront,
-			delegate ( PlayerDrawInfo draw_info ) {
-				Player player = draw_info.drawPlayer;
+			delegate ( PlayerDrawInfo drawInfo ) {
+				Player player = drawInfo.drawPlayer;
 
 				var mod = ModLoader.GetMod( "TheLunatic" );
 				var myplayer = player.GetModPlayer<TheLunaticPlayer>( mod );

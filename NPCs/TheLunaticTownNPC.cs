@@ -430,8 +430,8 @@ namespace TheLunatic.NPCs {
 		}
 
 
-		public override void OnChatButtonClicked( bool first_button, ref bool shop ) {
-			if( first_button ) {
+		public override void OnChatButtonClicked( bool firstButton, ref bool shop ) {
+			if( firstButton ) {
 				if( this.FirstButtonIsShop ) {
 					shop = true;
 				} else {
@@ -450,15 +450,15 @@ namespace TheLunatic.NPCs {
 			if( myworld.MaskLogic == null ) { throw new Exception( "Mask logic not initialized." ); }
 
 			Player player = Main.player[Main.myPlayer];
-			var remaining_masks = myworld.MaskLogic.GetRemainingVanillaMasks();
-			if( remaining_masks.Count == 0 ) {
+			var remainingMasks = myworld.MaskLogic.GetRemainingVanillaMasks();
+			if( remainingMasks.Count == 0 ) {
 				return "I need no more masks.";
 			}
 
 			bool isCustom = false;
 			bool isGiven = false;
 			
-			Item mask = PlayerItemFinderHelpers.FindFirstOfItemFor( player, remaining_masks );
+			Item mask = PlayerItemFinderHelpers.FindFirstOfItemFor( player, remainingMasks );
 			if( mask == null ) {
 				mask = PlayerItemFinderHelpers.FindFirstOfItemFor( player, new HashSet<int> { mymod.ItemType<CustomBossMaskItem>() } );
 				isCustom = mask != null;
@@ -485,7 +485,7 @@ namespace TheLunatic.NPCs {
 			}
 
 			if( myworld.MaskLogic.IsValidMask( mask ) ) {
-				int remaining = remaining_masks.Count() - (isCustom?0:1);
+				int remaining = remainingMasks.Count() - (isCustom?0:1);
 				string status, msg;
 
 				if( mymod.Config.MoonLordMaskWins ) {
@@ -558,8 +558,8 @@ namespace TheLunatic.NPCs {
 					msg = "PRAISE BE TO YOG-er, thank you very much!";
 					break;
 				default:
-					string mask_name = MaskLogic.GetMaskDisplayName( mask );
-					msg = "A genuine "+mask_name+ ". Much thanks!\nA bit non-standard, but it should work...";
+					string maskName = MaskLogic.GetMaskDisplayName( mask );
+					msg = "A genuine "+maskName+ ". Much thanks!\nA bit non-standard, but it should work...";
 					break;
 				}
 

@@ -85,8 +85,8 @@ namespace TheLunatic {
 			};
 
 			int i = 0;
-			foreach( string mask_id in this.MaskLogic.GivenCustomMasksByBossUid ) {
-				tag.Set( "custom_mask_" + this.ID + "_" + i, (string)mask_id );
+			foreach( string maskId in this.MaskLogic.GivenCustomMasksByBossUid ) {
+				tag.Set( "custom_mask_" + this.ID + "_" + i, (string)maskId );
 				i++;
 			}
 

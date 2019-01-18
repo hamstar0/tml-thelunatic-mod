@@ -199,16 +199,16 @@ namespace TheLunatic.Logic {
 			return masks;
 		}
 
-		public bool DoesLoonyHaveThisMask( Item mask_item ) {
-			if( this.GetRemainingVanillaMasks().Contains(mask_item.type) ) { return false; }
+		public bool DoesLoonyHaveThisMask( Item maskItem ) {
+			if( this.GetRemainingVanillaMasks().Contains(maskItem.type) ) { return false; }
 
-			var mask_item_info = mask_item.GetGlobalItem<CustomBossMaskItemInfo>();
-			return this.GivenCustomMasksByBossUid.Contains( mask_item_info.BossUid );
+			var maskItemInfo = maskItem.GetGlobalItem<CustomBossMaskItemInfo>();
+			return this.GivenCustomMasksByBossUid.Contains( maskItemInfo.BossUid );
 		}
 
 		public void GiveAllVanillaMasks() {
-			foreach( int mask_type in this.GetRemainingVanillaMasks() ) {
-				this.GivenVanillaMasksByType.Add( mask_type );
+			foreach( int maskType in this.GetRemainingVanillaMasks() ) {
+				this.GivenVanillaMasksByType.Add( maskType );
 			}
 		}
 

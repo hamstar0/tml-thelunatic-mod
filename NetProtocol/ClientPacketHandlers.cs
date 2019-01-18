@@ -71,14 +71,14 @@ namespace TheLunatic.NetProtocol {
 			if( Main.netMode != 1 ) { return; }
 
 			ModPacket packet = mymod.GetPacket();
-			int boss_type = -1;
+			int bossType = -1;
 			if( mask.type == mymod.ItemType<CustomBossMaskItem>() ) {
-				boss_type = mask.GetGlobalItem<CustomBossMaskItemInfo>().BossNpcType;
+				bossType = mask.GetGlobalItem<CustomBossMaskItemInfo>().BossNpcType;
 			}
 
 			packet.Write( (byte)NetProtocolTypes.GiveMaskToServer );
 			packet.Write( (int)mask.type );
-			packet.Write( boss_type );
+			packet.Write( bossType );
 
 			packet.Send();
 		}

@@ -49,12 +49,12 @@ namespace TheLunatic.Buffs {
 			this.canBeCleared = false;
 		}
 
-		public override void Update( Player player, ref int buff_idx ) {
+		public override void Update( Player player, ref int buffIdx ) {
 			if( player.dead ) {
 				this.End( player );
 				return;
 			}
-			if( player.buffTime[buff_idx] > 1 ) {
+			if( player.buffTime[buffIdx] > 1 ) {
 				this.Run( player );
 			} else {
 				this.End( player );

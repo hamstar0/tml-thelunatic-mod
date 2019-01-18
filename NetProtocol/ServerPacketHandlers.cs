@@ -9,22 +9,22 @@ using TheLunatic.Items;
 
 namespace TheLunatic.NetProtocol {
 	static class ServerPacketHandlers {
-		public static void HandlePacket( BinaryReader reader, int player_who ) {
+		public static void HandlePacket( BinaryReader reader, int playerWho ) {
 			var mymod = TheLunaticMod.Instance;
 			NetProtocolTypes protocol = (NetProtocolTypes)reader.ReadByte();
 
 			switch( protocol ) {
 			case NetProtocolTypes.RequestModSettings:
 				if( mymod.Config.DebugModeNetInfo ) { LogHelpers.Log( "Server RequestModSettings" ); }
-				ServerPacketHandlers.ReceiveRequestModSettingsOnServer( reader, player_who );
+				ServerPacketHandlers.ReceiveRequestModSettingsOnServer( reader, playerWho );
 				break;
 			case NetProtocolTypes.RequestModData:
 				if( mymod.Config.DebugModeNetInfo ) { LogHelpers.Log( "Server RequestModData" ); }
-				ServerPacketHandlers.ReceiveRequestModDataOnServer( reader, player_who );
+				ServerPacketHandlers.ReceiveRequestModDataOnServer( reader, playerWho );
 				break;
 			case NetProtocolTypes.GiveMaskToServer:
 				if( mymod.Config.DebugModeNetInfo ) { LogHelpers.Log( "Server GiveMaskToServer" ); }
-				ServerPacketHandlers.ReceiveGivenMaskOnServer( reader, player_who );
+				ServerPacketHandlers.ReceiveGivenMaskOnServer( reader, playerWho );
 				break;
 			default:
 				LogHelpers.Log( "Invalid packet protocol: " + protocol );

@@ -31,12 +31,12 @@ namespace TheLunatic.Items {
 
 		public static void CheckEquipState( Player player ) {
 			var mymod = TheLunaticMod.Instance;
-			int cowl_type = mymod.ItemType<UmbralCowlItem>();
+			int cowlType = mymod.ItemType<UmbralCowlItem>();
 			bool found = false;
 
 			for( int i=0; i<player.armor.Length; i++ ) {
 				if( player.armor[i] == null || !player.armor[i].active ) { continue; }
-				if( player.armor[i].type == cowl_type ) {
+				if( player.armor[i].type == cowlType ) {
 					found = true;
 					break;
 				}
