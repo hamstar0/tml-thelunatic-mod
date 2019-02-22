@@ -1,4 +1,5 @@
-﻿using HamstarHelpers.Helpers.DebugHelpers;
+﻿using HamstarHelpers.Components.Errors;
+using HamstarHelpers.Helpers.DebugHelpers;
 using System;
 using System.IO;
 using System.Linq;
@@ -57,7 +58,7 @@ namespace TheLunatic.NetProtocol {
 
 			var mymod = TheLunaticMod.Instance;
 			var myworld = mymod.GetModWorld<TheLunaticWorld>();
-			if( myworld.GameLogic == null ) { throw new Exception( "Game logic not initialized." ); }
+			if( myworld.GameLogic == null ) { throw new HamstarException( "Game logic not initialized." ); }
 
 			ModPacket packet = mymod.GetPacket();
 
@@ -177,7 +178,7 @@ namespace TheLunatic.NetProtocol {
 
 			var mymod = TheLunaticMod.Instance;
 			var myworld = mymod.GetModWorld<TheLunaticWorld>();
-			if( myworld.MaskLogic == null ) { throw new Exception( "Mask logic not initialized." ); }
+			if( myworld.MaskLogic == null ) { throw new HamstarException( "Mask logic not initialized." ); }
 			
 			int maskType = reader.ReadInt32();
 			int bossType = reader.ReadInt32();

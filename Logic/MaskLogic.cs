@@ -1,4 +1,5 @@
-﻿using HamstarHelpers.Helpers.DebugHelpers;
+﻿using HamstarHelpers.Components.Errors;
+using HamstarHelpers.Helpers.DebugHelpers;
 using HamstarHelpers.Helpers.NPCHelpers;
 using HamstarHelpers.Helpers.WorldHelpers;
 using System;
@@ -292,7 +293,7 @@ namespace TheLunatic.Logic {
 			if( Main.netMode == 1 ) {   // Client
 				ClientPacketHandlers.SendGivenMaskFromClient( mask );
 			} else if( Main.netMode == 2 ) {    // Server
-				throw new Exception( "Server should not be giving masks to loonys." );
+				throw new HamstarException( "Server should not be giving masks to loonys." );
 			}
 
 			int bossType = -1;

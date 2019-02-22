@@ -35,9 +35,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Helpers\HamstarHelpers\bin\Release\HamstarHelpers.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\..\Reference\tModLoader Patcher\references\Newtonsoft.Json.dll</HintPath>
-    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -67,6 +65,10 @@
     <Compile Include="Logic\MaskLogic.cs" />
     <Compile Include="NetProtocol\ClientPacketHandlers.cs" />
     <Compile Include="NetProtocol\NetProtocolTypes.cs" />
+    <Compile Include="NPCs\TheLunaticTownNPC_Interact.cs" />
+    <Compile Include="NPCs\TheLunaticTownNPC_InteractChat.cs" />
+    <Compile Include="NPCs\TheLunaticTownNPC_Shop.cs" />
+    <Compile Include="NPCs\TheLunaticTownNPC_Spawn.cs" />
     <Compile Include="PlayerExtend\PlayerNoclip.cs" />
     <Compile Include="Sounds\Custom\EarthQuake.cs" />
     <Compile Include="TheLunaticItem.cs" />

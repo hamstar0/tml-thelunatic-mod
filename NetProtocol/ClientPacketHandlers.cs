@@ -1,4 +1,5 @@
-﻿using HamstarHelpers.Helpers.DebugHelpers;
+﻿using HamstarHelpers.Components.Errors;
+using HamstarHelpers.Helpers.DebugHelpers;
 using System;
 using System.IO;
 using Terraria;
@@ -111,8 +112,8 @@ namespace TheLunatic.NetProtocol {
 			if( Main.netMode != 1 ) { return; }
 			
 			var myworld = mymod.GetModWorld<TheLunaticWorld>();
-			if( myworld.GameLogic == null ) { throw new Exception( "Game logic not initialized." ); }
-			if( myworld.MaskLogic == null ) { throw new Exception( "Mask logic not initialized." ); }
+			if( myworld.GameLogic == null ) { throw new HamstarException( "Game logic not initialized." ); }
+			if( myworld.MaskLogic == null ) { throw new HamstarException( "Mask logic not initialized." ); }
 
 			bool hasLoonyArrived = reader.ReadBoolean();
 			bool hasLoonyQuit = reader.ReadBoolean();
@@ -153,7 +154,7 @@ namespace TheLunatic.NetProtocol {
 			if( Main.netMode != 1 ) { return; }
 
 			var myworld = mymod.GetModWorld<TheLunaticWorld>();
-			if( myworld.GameLogic == null ) { throw new Exception( "Game logic not initialized." ); }
+			if( myworld.GameLogic == null ) { throw new HamstarException( "Game logic not initialized." ); }
 
 			int duration = reader.ReadInt32();
 
@@ -172,7 +173,7 @@ namespace TheLunatic.NetProtocol {
 			if( Main.netMode != 1 ) { return; }
 
 			var myworld = mymod.GetModWorld<TheLunaticWorld>();
-			if( myworld.MaskLogic == null ) { throw new Exception( "Mask logic not initialized." ); }
+			if( myworld.MaskLogic == null ) { throw new HamstarException( "Mask logic not initialized." ); }
 
 			// Mask is given discreetly
 			int fromWho = reader.ReadInt32();

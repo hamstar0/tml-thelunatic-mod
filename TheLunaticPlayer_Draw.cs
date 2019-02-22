@@ -1,4 +1,5 @@
-﻿using HamstarHelpers.Helpers.DebugHelpers;
+﻿using HamstarHelpers.Components.Errors;
+using HamstarHelpers.Helpers.DebugHelpers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -41,7 +42,7 @@ namespace TheLunatic {
 			var myworld = this.mod.GetModWorld<TheLunaticWorld>();
 
 			if( !mymod.ConfigJson.Data.Enabled ) { return; }
-			if( myworld.GameLogic == null ) { throw new Exception( "Game logic not initialized." ); }
+			if( myworld.GameLogic == null ) { throw new HamstarException( "Game logic not initialized." ); }
 
 			myworld.GameLogic.UpdateBiomes( this.player );
 		}
@@ -51,7 +52,7 @@ namespace TheLunatic {
 			var myworld = this.mod.GetModWorld<TheLunaticWorld>();
 
 			if( !mymod.ConfigJson.Data.Enabled ) { return; }
-			if( myworld.GameLogic == null ) { throw new Exception( "Game logic not initialized." ); }
+			if( myworld.GameLogic == null ) { throw new HamstarException( "Game logic not initialized." ); }
 
 			mymod.Sky.UpdateSky( this.player );
 			myworld.GameLogic.UpdateBiomeVisuals( this.player );
