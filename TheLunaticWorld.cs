@@ -1,4 +1,4 @@
-﻿using HamstarHelpers.Helpers.DebugHelpers;
+﻿using HamstarHelpers.Helpers.Debug;
 using System;
 using System.IO;
 using System.Linq;
@@ -125,7 +125,7 @@ namespace TheLunatic {
 
 		public override void PreUpdate() {
 			var mymod = (TheLunaticMod)this.mod;
-			if( !mymod.ConfigJson.Data.Enabled ) { return; }
+			if( !mymod.Config.Enabled ) { return; }
 
 			if( Main.netMode == 2 ) { // Server only
 				if( this.HasCorrectID && this.GameLogic != null ) {

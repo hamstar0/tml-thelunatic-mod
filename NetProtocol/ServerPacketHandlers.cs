@@ -1,5 +1,5 @@
 ﻿using HamstarHelpers.Components.Errors;
-using HamstarHelpers.Helpers.DebugHelpers;
+using HamstarHelpers.Helpers.Debug;
 using System;
 using System.IO;
 using System.Linq;
@@ -15,10 +15,6 @@ namespace TheLunatic.NetProtocol {
 			NetProtocolTypes protocol = (NetProtocolTypes)reader.ReadByte();
 
 			switch( protocol ) {
-			case NetProtocolTypes.RequestModSettings:
-				if( mymod.Config.DebugModeNetInfo ) { LogHelpers.Log( "Server RequestModSettings" ); }
-				ServerPacketHandlers.ReceiveRequestModSettingsOnServer( reader, playerWho );
-				break;
 			case NetProtocolTypes.RequestModData:
 				if( mymod.Config.DebugModeNetInfo ) { LogHelpers.Log( "Server RequestModData" ); }
 				ServerPacketHandlers.ReceiveRequestModDataOnServer( reader, playerWho );
@@ -39,26 +35,13 @@ namespace TheLunatic.NetProtocol {
 		// Server Senders
 		////////////////
 
-		public static void SendModSettingsFromServer( Player player ) {
-			// Server only
-			if( Main.netMode != 2 ) { return; }
-
-			var mymod = TheLunaticMod.Instance;
-			ModPacket packet = mymod.GetPacket();
-
-			packet.Write( (byte)NetProtocolTypes.ModSettings );
-			packet.Write( (string)mymod.ConfigJson.SerializeMe() );
-			
-			packet.Send( (int)player.whoAmI );
-		}
-
 		public static void SendModDataFromServer( Player player ) {
 			// Server only
 			if( Main.netMode != 2 ) { return; }
 
 			var mymod = TheLunaticMod.Instance;
 			var myworld = mymod.GetModWorld<TheLunaticWorld>();
-			if( myworld.GameLogic == null ) { throw new HamstarException( "Game logic not initialized." ); }
+			if( myworld.GameLogic == null ) { throw new ModHelpersException( "Game logic not initialized." ); }
 
 			ModPacket packet = mymod.GetPacket();
 
@@ -138,23 +121,6 @@ namespace TheLunatic.NetProtocol {
 		// Server Receivers
 		////////////////
 
-		private static void ReceiveRequestModSettingsOnServer( BinaryReader reader, int playerWho ) {
-			// Server only
-			if( Main.netMode != 2 ) { return; }
-			
-			if( playerWho < 0 || playerWho >= Main.player.Length || Main.player[ playerWho ] == null ) {
-				LogHelpers.Log( "TheLunaticNetProtocol.ReceiveRequestModSettingsOnServer - Invalid player id " + playerWho );
-				return;
-			}
-			//if( !Main.player[player_who].active ) {
-			//	DebugHelpers.Log( "TheLunaticNetProtocol.ReceiveRequestModSettingsOnServer - Inactive player " + Main.player[player_who].name );
-			//	return;
-			//}
-
-			ServerPacketHandlers.SendModSettingsFromServer( Main.player[playerWho] );
-		}
-
-
 		private static void ReceiveRequestModDataOnServer( BinaryReader reader, int playerWho ) {
 			// Server only
 			if( Main.netMode != 2 ) { return; }
@@ -178,7 +144,7 @@ namespace TheLunatic.NetProtocol {
 
 			var mymod = TheLunaticMod.Instance;
 			var myworld = mymod.GetModWorld<TheLunaticWorld>();
-			if( myworld.MaskLogic == null ) { throw new HamstarException( "Mask logic not initialized." ); }
+			if( myworld.MaskLogic == null ) { throw new ModHelpersException( "Mask logic not initialized." ); }
 			
 			int maskType = reader.ReadInt32();
 			int bossType = reader.ReadInt32();

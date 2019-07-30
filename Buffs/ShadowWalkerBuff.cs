@@ -1,5 +1,5 @@
-﻿using HamstarHelpers.Helpers.PlayerHelpers;
-using HamstarHelpers.Helpers.TileHelpers;
+﻿using HamstarHelpers.Helpers.Players;
+using HamstarHelpers.Helpers.Tiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;

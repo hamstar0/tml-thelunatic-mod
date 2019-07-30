@@ -1,123 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="C:\Users\Spinach\Documents\My Games\Terraria\ModLoader\references\tModLoader.targets" />
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D82A681E-F529-4365-B0B5-71AF8FA1A673}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TheLunatic</RootNamespace>
     <AssemblyName>TheLunatic</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <TargetFramework>net452</TargetFramework>
+    <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="HamstarHelpers, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Helpers\HamstarHelpers\bin\Release\HamstarHelpers.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed" />
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.Xna.Framework" />
-    <Reference Include="Microsoft.Xna.Framework.Game" />
-    <Reference Include="Microsoft.Xna.Framework.Graphics" />
-    <Reference Include="Terraria">
-      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Terraria\Terraria.exe</HintPath>
-    </Reference>
-    <Reference Include="Terraria.Libraries.ReLogic.ReLogic, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Reference\Terraria.Libraries.ReLogic.ReLogic.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="API.cs" />
-    <Compile Include="Buffs\ShadowWalkerBuff.cs" />
-    <Compile Include="ConfigDefaults.cs" />
-    <Compile Include="Items\CustomBossMaskItem.cs" />
-    <Compile Include="Items\UmbralCowlItem.cs" />
-    <Compile Include="Logic\GameLogic.cs" />
-    <Compile Include="Logic\MaskLogic.cs" />
-    <Compile Include="NetProtocol\ClientPacketHandlers.cs" />
-    <Compile Include="NetProtocol\NetProtocolTypes.cs" />
-    <Compile Include="NPCs\TheLunaticTownNPC_Interact.cs" />
-    <Compile Include="NPCs\TheLunaticTownNPC_InteractChat.cs" />
-    <Compile Include="NPCs\TheLunaticTownNPC_Shop.cs" />
-    <Compile Include="NPCs\TheLunaticTownNPC_Spawn.cs" />
-    <Compile Include="PlayerExtend\PlayerNoclip.cs" />
-    <Compile Include="Sounds\Custom\EarthQuake.cs" />
-    <Compile Include="TheLunaticItem.cs" />
-    <Compile Include="TheLunaticMod_Meta.cs" />
-    <Compile Include="TheLunaticNPC.cs" />
-    <Compile Include="TheLunaticPlayer_Load.cs" />
-    <Compile Include="TheLunaticPlayer_Draw.cs" />
-    <Compile Include="TheLunaticPlayer_Update.cs" />
-    <Compile Include="TheLunaticProjectile.cs" />
-    <Compile Include="TheLunaticMod.cs" />
-    <Compile Include="NetProtocol\ServerPacketHandlers.cs" />
-    <Compile Include="TheLunaticPlayer.cs" />
-    <Compile Include="NPCs\TheLunaticTownNPC.cs" />
-    <Compile Include="TheLunaticWorld.cs" />
-    <Compile Include="Tiles\AnimatedSky.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Buffs\ShadowWalkerBuff.png" />
-    <Content Include="build.txt" />
-    <Content Include="description.txt" />
-    <Content Include="icon.png" />
-    <Content Include="Items\CustomBossMaskItem.png" />
-    <Content Include="Items\CustomBossMaskItem_Head.png" />
-    <Content Include="Items\UmbralCowlItem.png" />
-    <Content Include="Items\UmbralCowlItem_Arms.png" />
-    <Content Include="Items\UmbralCowlItem_Back.png" />
-    <Content Include="Items\UmbralCowlItem_Body.png" />
-    <Content Include="Items\UmbralCowlItem_FemaleBody.png" />
-    <Content Include="Items\UmbralCowlItem_Front.png" />
-    <Content Include="NPCs\TheLunaticTownNPC.png" />
-    <Content Include="NPCs\TheLunaticTownNPC_Head.png" />
-    <Content Include="Sounds\Custom\EarthQuake.wav" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="LICENSE" />
-    <None Include="README.md" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>"C:\Program Files (x86)\Steam\steamapps\common\terraria\tModLoaderServer.exe" -build "$(ProjectDir)\" -eac "$(TargetPath)"</PostBuildEvent>
-  </PropertyGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
+  <Target Name="BuildMod" AfterTargets="Build">
+    <Exec Command="&quot;$(tMLBuildServerPath)&quot; -build $(ProjectDir) -eac $(TargetPath) -define $(DefineConstants) -unsafe $(AllowUnsafeBlocks)" />
   </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

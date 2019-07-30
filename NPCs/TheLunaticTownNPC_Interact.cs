@@ -1,6 +1,6 @@
 using HamstarHelpers.Components.Errors;
-using HamstarHelpers.Helpers.DebugHelpers;
-using HamstarHelpers.Helpers.PlayerHelpers;
+using HamstarHelpers.Helpers.Debug;
+using HamstarHelpers.Helpers.Players;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +18,7 @@ namespace TheLunatic.NPCs {
 		public override void SetChatButtons( ref string button1, ref string button2 ) {
 			var mymod = (TheLunaticMod)this.mod;
 			var myworld = this.mod.GetModWorld<TheLunaticWorld>();
-			if( myworld.GameLogic == null ) { throw new HamstarException( "Game logic not initialized." ); }
+			if( myworld.GameLogic == null ) { throw new ModHelpersException( "Game logic not initialized." ); }
 
 			Player player = Main.player[Main.myPlayer];
 			var myplayer = player.GetModPlayer<TheLunaticPlayer>( this.mod );
@@ -51,7 +51,7 @@ namespace TheLunatic.NPCs {
 		private string onGiveMaskButtonClick() {
 			var mymod = (TheLunaticMod)this.mod;
 			var myworld = mymod.GetModWorld<TheLunaticWorld>();
-			if( myworld.MaskLogic == null ) { throw new HamstarException( "Mask logic not initialized." ); }
+			if( myworld.MaskLogic == null ) { throw new ModHelpersException( "Mask logic not initialized." ); }
 
 			Player player = Main.player[Main.myPlayer];
 			var remainingMasks = myworld.MaskLogic.GetRemainingVanillaMasks();
@@ -62,16 +62,16 @@ namespace TheLunatic.NPCs {
 			bool isCustom = false;
 			bool isGiven = false;
 			
-			Item mask = PlayerItemFinderHelpers.FindFirstOfItemFor( player, remainingMasks );
+			Item mask = PlayerItemFinderHelpers.FindFirstOfPossessedItemFor( player, remainingMasks, false );
 			if( mask == null ) {
-				mask = PlayerItemFinderHelpers.FindFirstOfItemFor( player, new HashSet<int> { mymod.ItemType<CustomBossMaskItem>() } );
+				mask = PlayerItemFinderHelpers.FindFirstOfPossessedItemFor( player, new HashSet<int> { mymod.ItemType<CustomBossMaskItem>() }, false );
 				isCustom = mask != null;
 				isGiven = isCustom && myworld.MaskLogic.DoesLoonyHaveThisMask( mask );
 			}
 
 			if( mask == null || isGiven ) {
 				if( mask == null ) {
-					mask = PlayerItemFinderHelpers.FindFirstOfItemFor( player, MaskLogic.AllVanillaMasks );
+					mask = PlayerItemFinderHelpers.FindFirstOfPossessedItemFor( player, MaskLogic.AllVanillaMasks, false );
 				}
 				string msg, hint = this.GetHint();
 
@@ -81,8 +81,8 @@ namespace TheLunatic.NPCs {
 					msg = "Very nice, but I've already got a " + MaskLogic.GetMaskDisplayName( mask ) + ".\n" + hint;
 				}
 
-				if( !myworld.GameLogic.HasGameEnded && mymod.ConfigJson.Data.LoonyIndicatesDaysRemaining ) {
-					int daysLeft = mymod.ConfigJson.Data.DaysUntil - (myworld.GameLogic.HalfDaysElapsed / 2);
+				if( !myworld.GameLogic.HasGameEnded && mymod.Config.LoonyIndicatesDaysRemaining ) {
+					int daysLeft = mymod.Config.DaysUntil - (myworld.GameLogic.HalfDaysElapsed / 2);
 					msg += "\n \nDays remaining: " + daysLeft;
 				}
 				return msg;
@@ -105,7 +105,7 @@ namespace TheLunatic.NPCs {
 					} else if( remaining == 1 ) {
 						status = "I require one final mask.";
 					} else {
-						if( mymod.ConfigJson.Data.LoonyGivesCompletionReward ) {
+						if( mymod.Config.LoonyGivesCompletionReward ) {
 							status = "At last! Seems this world gets to live a little bit longer. I won't need this anymore. Enjoy!";
 							UmbralCowlItem.Give( player );
 						} else {
@@ -126,7 +126,7 @@ namespace TheLunatic.NPCs {
 					LogHelpers.Log("DEBUG cheater detected. "+ mask.Name);
 				}
 
-				if( mymod.ConfigJson.Data.LoonyShunsCheaters ) {
+				if( mymod.Config.LoonyShunsCheaters ) {
 					player.GetModPlayer<TheLunaticPlayer>().SetCheater();
 					return "You... you aren't supposed to even have this. Bye.";
 				} else {
@@ -201,7 +201,7 @@ namespace TheLunatic.NPCs {
 
 		public string GetHint() {
 			var myworld = this.mod.GetModWorld<TheLunaticWorld>();
-			if( myworld.MaskLogic == null ) { throw new HamstarException( "Mask logic not initialized." ); }
+			if( myworld.MaskLogic == null ) { throw new ModHelpersException( "Mask logic not initialized." ); }
 			var masks = myworld.MaskLogic.GetRemainingVanillaMasks();
 			string msg;
 			

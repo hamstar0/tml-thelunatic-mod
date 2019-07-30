@@ -1,5 +1,5 @@
 ﻿using HamstarHelpers.Components.Errors;
-using HamstarHelpers.Helpers.DebugHelpers;
+using HamstarHelpers.Helpers.Debug;
 using System;
 using System.IO;
 using Terraria;
@@ -14,10 +14,6 @@ namespace TheLunatic.NetProtocol {
 			NetProtocolTypes protocol = (NetProtocolTypes)reader.ReadByte();
 
 			switch( protocol ) {
-			case NetProtocolTypes.ModSettings:
-				if( mymod.Config.DebugModeNetInfo ) { LogHelpers.Log( "Client ModSettings" ); }
-				ClientPacketHandlers.ReceiveModSettingsOnClient( reader );
-				break;
 			case NetProtocolTypes.ModData:
 				if( mymod.Config.DebugModeNetInfo ) { LogHelpers.Log( "Client ModData" ); }
 				ClientPacketHandlers.ReceiveModDataOnClient( reader );
@@ -42,18 +38,6 @@ namespace TheLunatic.NetProtocol {
 		// Client Senders
 		////////////////
 		
-		public static void SendRequestModSettingsFromClient() {
-			var mymod = TheLunaticMod.Instance;
-			// Clients only
-			if( Main.netMode != 1 ) { return; }
-
-			ModPacket packet = mymod.GetPacket();
-
-			packet.Write( (byte)NetProtocolTypes.RequestModSettings );
-
-			packet.Send();
-		}
-
 		public static void SendRequestModDataFromClient() {
 			var mymod = TheLunaticMod.Instance;
 			// Clients only
@@ -90,30 +74,14 @@ namespace TheLunatic.NetProtocol {
 		// Client Receivers
 		////////////////
 
-		private static void ReceiveModSettingsOnClient( BinaryReader reader ) {
-			var mymod = TheLunaticMod.Instance;
-			// Clients only
-			if( Main.netMode != 1 ) { return; }
-
-			bool success;
-
-			mymod.ConfigJson.DeserializeMe( reader.ReadString(), out success );
-
-			//if( mymod.Config.Data.DaysUntil < 0 ) {
-			//	DebugHelper.Log( "TheLunaticNetProtocol.ReceiveModSettingsOnClient - Invalid 'DaysUntil' quantity." );
-			//	return;
-			//}
-		}
-
-
 		private static void ReceiveModDataOnClient( BinaryReader reader ) {
 			var mymod = TheLunaticMod.Instance;
 			// Clients only
 			if( Main.netMode != 1 ) { return; }
 			
 			var myworld = mymod.GetModWorld<TheLunaticWorld>();
-			if( myworld.GameLogic == null ) { throw new HamstarException( "Game logic not initialized." ); }
-			if( myworld.MaskLogic == null ) { throw new HamstarException( "Mask logic not initialized." ); }
+			if( myworld.GameLogic == null ) { throw new ModHelpersException( "Game logic not initialized." ); }
+			if( myworld.MaskLogic == null ) { throw new ModHelpersException( "Mask logic not initialized." ); }
 
 			bool hasLoonyArrived = reader.ReadBoolean();
 			bool hasLoonyQuit = reader.ReadBoolean();
@@ -154,7 +122,7 @@ namespace TheLunatic.NetProtocol {
 			if( Main.netMode != 1 ) { return; }
 
 			var myworld = mymod.GetModWorld<TheLunaticWorld>();
-			if( myworld.GameLogic == null ) { throw new HamstarException( "Game logic not initialized." ); }
+			if( myworld.GameLogic == null ) { throw new ModHelpersException( "Game logic not initialized." ); }
 
 			int duration = reader.ReadInt32();
 
@@ -173,7 +141,7 @@ namespace TheLunatic.NetProtocol {
 			if( Main.netMode != 1 ) { return; }
 
 			var myworld = mymod.GetModWorld<TheLunaticWorld>();
-			if( myworld.MaskLogic == null ) { throw new HamstarException( "Mask logic not initialized." ); }
+			if( myworld.MaskLogic == null ) { throw new ModHelpersException( "Mask logic not initialized." ); }
 
 			// Mask is given discreetly
 			int fromWho = reader.ReadInt32();

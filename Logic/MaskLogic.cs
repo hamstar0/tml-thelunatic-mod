@@ -1,7 +1,7 @@
 ﻿using HamstarHelpers.Components.Errors;
-using HamstarHelpers.Helpers.DebugHelpers;
-using HamstarHelpers.Helpers.NPCHelpers;
-using HamstarHelpers.Helpers.WorldHelpers;
+using HamstarHelpers.Helpers.Debug;
+using HamstarHelpers.Helpers.NPCs;
+using HamstarHelpers.Helpers.World;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -139,7 +139,7 @@ namespace TheLunatic.Logic {
 				NPC npc = new NPC();
 				npc.SetDefaults( bossType );
 
-				this.GivenCustomMasksByBossUid.Add( NPCIdentityHelpers.GetUniqueId(npc) );
+				this.GivenCustomMasksByBossUid.Add( NPCIdentityHelpers.GetUniqueKey(npc) );
 			} else {
 				this.GivenVanillaMasksByType.Add( maskType );
 			}
@@ -151,11 +151,11 @@ namespace TheLunatic.Logic {
 			// Buy time before the end comes
 			if( this.GivenVanillaMasksByType.Count < (MaskLogic.AvailableMaskCount) ) {
 				var modworld = mymod.GetModWorld<TheLunaticWorld>();
-				int recovered = mymod.ConfigJson.Data.HalfDaysRecoveredPerMask;
+				int recovered = mymod.Config.HalfDaysRecoveredPerMask;
 				
 				switch( maskType ) {
 				case ItemID.FleshMask:
-					recovered = (int)((float)recovered * mymod.ConfigJson.Data.WallOfFleshMultiplier);
+					recovered = (int)((float)recovered * mymod.Config.WallOfFleshMultiplier);
 					break;
 				case ItemID.DestroyerMask:
 				case ItemID.TwinMask:
@@ -166,10 +166,10 @@ namespace TheLunatic.Logic {
 				case ItemID.BossMaskBetsy:
 				case ItemID.BossMaskCultist:
 				case ItemID.BossMaskMoonlord:
-					if( maskType == ItemID.BossMaskMoonlord && mymod.ConfigJson.Data.MoonLordMaskWins ) {
+					if( maskType == ItemID.BossMaskMoonlord && mymod.Config.MoonLordMaskWins ) {
 						this.GiveAllVanillaMasks();
 					}
-					recovered = (int)((float)recovered * mymod.ConfigJson.Data.HardModeMultiplier);
+					recovered = (int)((float)recovered * mymod.Config.HardModeMultiplier);
 					break;
 				}
 
@@ -221,8 +221,8 @@ namespace TheLunatic.Logic {
 			var myworld = mymod.GetModWorld<TheLunaticWorld>();
 			if( !myworld.GameLogic.HaveWeHopeToWin() ) { return false; }
 
-			if( !mymod.ConfigJson.Data.LoonyAcceptsMasksWithoutBossKill ) {
-				bool strict = mymod.ConfigJson.Data.LoonyEnforcesBossSequence;
+			if( !mymod.Config.LoonyAcceptsMasksWithoutBossKill ) {
+				bool strict = mymod.Config.LoonyEnforcesBossSequence;
 				bool downedMech = NPC.downedMechBoss1 || NPC.downedMechBoss2 || NPC.downedMechBoss3;
 				//bool downed_towers = NPC.downedTowerSolar && NPC.downedTowerVortex && NPC.downedTowerNebula && NPC.downedTowerStardust;
 
@@ -293,7 +293,7 @@ namespace TheLunatic.Logic {
 			if( Main.netMode == 1 ) {   // Client
 				ClientPacketHandlers.SendGivenMaskFromClient( mask );
 			} else if( Main.netMode == 2 ) {    // Server
-				throw new HamstarException( "Server should not be giving masks to loonys." );
+				throw new ModHelpersException( "Server should not be giving masks to loonys." );
 			}
 
 			int bossType = -1;

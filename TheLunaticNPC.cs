@@ -1,5 +1,6 @@
-﻿using HamstarHelpers.Helpers.ItemHelpers;
-using HamstarHelpers.Helpers.NPCHelpers;
+﻿using HamstarHelpers.Helpers.Debug;
+using HamstarHelpers.Helpers.Items;
+using HamstarHelpers.Helpers.NPCs;
 using Terraria;
 using Terraria.ModLoader;
 using TheLunatic.Items;
@@ -10,7 +11,7 @@ namespace TheLunatic {
 	class TheLunaticNPC : GlobalNPC {
 		public override void AI( NPC npc ) {
 			var mymod = (TheLunaticMod)this.mod;
-			if( !mymod.ConfigJson.Data.Enabled ) { return; }
+			if( !mymod.Config.Enabled ) { return; }
 
 			if( Main.rand == null ) { return; }
 
@@ -29,7 +30,7 @@ namespace TheLunatic {
 
 		public override void NPCLoot( NPC npc ) {
 			var mymod = (TheLunaticMod)this.mod;
-			if( !mymod.ConfigJson.Data.Enabled ) { return; }
+			if( !mymod.Config.Enabled ) { return; }
 
 			if( !npc.boss && npc.type != 551 && npc.type != 398 ) { return; }	// Betsy isn't a boss?
 			var myworld = this.mod.GetModWorld<TheLunaticWorld>();
@@ -42,13 +43,13 @@ namespace TheLunatic {
 			// Already given this mask?
 			bool isVanilla = MaskLogic.AllVanillaMasks.Contains( maskType );
 			if( !myworld.MaskLogic.GivenVanillaMasksByType.Contains( maskType ) ) {
-				if( !isVanilla && myworld.MaskLogic.GivenCustomMasksByBossUid.Contains( NPCIdentityHelpers.GetUniqueId(npc) ) ) {
+				if( !isVanilla && myworld.MaskLogic.GivenCustomMasksByBossUid.Contains( NPCIdentityHelpers.GetUniqueKey(npc) ) ) {
 					return;
 				}
 			}
 
 			// No modded masks allowed?
-			if( !isVanilla && mymod.ConfigJson.Data.OnlyVanillaBossesDropMasks ) {
+			if( !isVanilla && mymod.Config.OnlyVanillaBossesDropMasks ) {
 				return;
 			}
 			
@@ -73,7 +74,7 @@ namespace TheLunatic {
 					}*/
 				}
 			} else {
-				ErrorLogger.Log( "Could not spawn a mask of type " + maskType );
+				LogHelpers.Log( "Could not spawn a mask of type " + maskType );
 			}
 		}
 

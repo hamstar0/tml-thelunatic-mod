@@ -1,5 +1,5 @@
 using HamstarHelpers.Components.Errors;
-using HamstarHelpers.Helpers.DebugHelpers;
+using HamstarHelpers.Helpers.Debug;
 using System;
 using Terraria;
 using Terraria.ModLoader;
@@ -34,7 +34,7 @@ namespace TheLunatic.NPCs {
 			try {
 				var mymod = (TheLunaticMod)this.mod;
 				var myworld = mymod.GetModWorld<TheLunaticWorld>();
-				if( myworld.GameLogic == null ) { throw new HamstarException( "Game logic not initialized." ); }
+				if( myworld.GameLogic == null ) { throw new ModHelpersException( "Game logic not initialized." ); }
 
 				Player player = Main.player[Main.myPlayer];
 				var myplayer = player.GetModPlayer<TheLunaticPlayer>();
@@ -44,7 +44,7 @@ namespace TheLunatic.NPCs {
 				}
 				
 				string msg;
-				int daysLeft = mymod.ConfigJson.Data.DaysUntil - (myworld.GameLogic.HalfDaysElapsed / 2);
+				int daysLeft = mymod.Config.DaysUntil - (myworld.GameLogic.HalfDaysElapsed / 2);
 				int rand = Main.rand.Next( Math.Max((daysLeft / 2), 2) );	// Closer to apocalypose, less chit chat
 
 				if( myworld.GameLogic.HasWon || rand != 0 ) {

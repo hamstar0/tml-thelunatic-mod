@@ -1,5 +1,5 @@
 using HamstarHelpers.Components.Errors;
-using HamstarHelpers.Helpers.DebugHelpers;
+using HamstarHelpers.Helpers.Debug;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -110,7 +110,7 @@ namespace TheLunatic.NPCs {
 		
 		public override void AI() {
 			var myworld = this.mod.GetModWorld<TheLunaticWorld>();
-			if( myworld.GameLogic == null ) { throw new HamstarException( "Game logic not initialized." ); }
+			if( myworld.GameLogic == null ) { throw new ModHelpersException( "Game logic not initialized." ); }
 
 			TheLunaticTownNPC.AmHere = true;
 

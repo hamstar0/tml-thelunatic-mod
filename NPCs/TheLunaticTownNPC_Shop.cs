@@ -1,5 +1,5 @@
 using HamstarHelpers.Components.Errors;
-using HamstarHelpers.Helpers.DebugHelpers;
+using HamstarHelpers.Helpers.Debug;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -10,7 +10,7 @@ namespace TheLunatic.NPCs {
 		public override void SetupShop( Chest shop, ref int nextSlot ) {
 			var mymod = (TheLunaticMod)this.mod;
 			var myworld = mymod.GetModWorld<TheLunaticWorld>();
-			bool strict = mymod.ConfigJson.Data.LoonyEnforcesBossSequence;
+			bool strict = mymod.Config.LoonyEnforcesBossSequence;
 			bool downedMech = NPC.downedMechBoss1 || NPC.downedMechBoss2 || NPC.downedMechBoss3;
 			bool downedTowers = NPC.downedTowerSolar && NPC.downedTowerVortex && NPC.downedTowerNebula && NPC.downedTowerStardust;
 
@@ -50,7 +50,7 @@ namespace TheLunatic.NPCs {
 			}
 
 			// Boss summon items
-			if( mymod.ConfigJson.Data.LoonySellsSummonItems ) {
+			if( mymod.Config.LoonySellsSummonItems ) {
 				// Eye of Cthulhu
 				if( /*NPC.downedBoss1*/ myworld.MaskLogic.GivenVanillaMasksByType.Contains( ItemID.EyeMask ) ) {
 					Item summonItem = new Item();

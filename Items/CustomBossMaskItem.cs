@@ -4,7 +4,7 @@ using Terraria;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using TheLunatic.Logic;
-using HamstarHelpers.Helpers.NPCHelpers;
+using HamstarHelpers.Helpers.NPCs;
 using System.IO;
 
 
@@ -106,7 +106,7 @@ namespace TheLunatic.Items {
 			int idx = npc.GetBossHeadTextureIndex();
 			if( idx == -1 || idx >= Main.npcHeadBossTexture.Length || Main.npcHeadBossTexture[idx] == null ) { return false; }
 
-			itemInfo.Load( npcType, idx, NPCIdentityHelpers.GetUniqueId(npc), npc.GivenName );
+			itemInfo.Load( npcType, idx, NPCIdentityHelpers.GetUniqueKey(npc), npc.GivenName );
 			this.item.SetNameOverride( npc.GivenName + " Mask" );
 			
 
@@ -171,8 +171,8 @@ namespace TheLunatic.Items {
 		public void Load( int npcType, int bossHeadIndex, string uid, string displayName ) {
 			var npc = new NPC();
 			npc.SetDefaults( npcType );
-			if( NPCIdentityHelpers.GetUniqueId(npc) != uid ) {
-				npcType = NPCFinderHelpers.FindNpcTypeByUniqueId( uid );
+			if( NPCIdentityHelpers.GetUniqueKey(npc) != uid ) {
+				npcType = NPCIdentityHelpers.GetNpcTypeByUniqueId( uid );
 				if( npcType != -1 ) {
 					npc.SetDefaults( npcType );
 					this.Load( npcType, npc.GetBossHeadTextureIndex(), uid, npc.GivenName );

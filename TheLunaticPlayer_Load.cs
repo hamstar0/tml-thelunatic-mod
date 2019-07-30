@@ -1,4 +1,4 @@
-﻿using HamstarHelpers.Helpers.DebugHelpers;
+﻿using HamstarHelpers.Helpers.Debug;
 using Terraria;
 using Terraria.ModLoader;
 using TheLunatic.NetProtocol;
@@ -22,7 +22,6 @@ namespace TheLunatic {
 
 				myworld.GameLogic.ApplyDebugOverrides( mymod );
 
-				ClientPacketHandlers.SendRequestModSettingsFromClient();
 				ClientPacketHandlers.SendRequestModDataFromClient();
 			}
 		}

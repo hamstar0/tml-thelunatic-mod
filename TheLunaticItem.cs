@@ -8,10 +8,17 @@ using TheLunatic.Logic;
 
 namespace TheLunatic {
 	class TheLunaticItem : GlobalItem {
-		public override bool InstancePerEntity { get { return true; } }
+		public override bool InstancePerEntity => true;
 		//public override bool CloneNewInstances { get { return true; } }
 
+
+		////////////////
+
 		public string AddedTooltip = "";
+
+
+
+		////////////////
 
 		public override GlobalItem Clone( Item item, Item itemClone ) {
 			var clone = (TheLunaticItem)base.Clone( item, itemClone );
@@ -19,7 +26,7 @@ namespace TheLunatic {
 			return clone;
 		}
 
-
+		////////////////
 
 		public override void ModifyTooltips( Item item, List<TooltipLine> tooltips ) {
 			var mymod = (TheLunaticMod)this.mod;

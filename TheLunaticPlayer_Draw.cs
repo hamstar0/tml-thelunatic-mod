@@ -1,5 +1,5 @@
 ﻿using HamstarHelpers.Components.Errors;
-using HamstarHelpers.Helpers.DebugHelpers;
+using HamstarHelpers.Helpers.Debug;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -14,7 +14,7 @@ namespace TheLunatic {
 	partial class TheLunaticPlayer : ModPlayer {
 		public override void ModifyScreenPosition() {
 			var mymod = (TheLunaticMod)this.mod;
-			if( !mymod.ConfigJson.Data.Enabled ) { return; }
+			if( !mymod.Config.Enabled ) { return; }
 
 			if( this.QuakeDuration != 0 ) {
 				float quakeScale = this.QuakeScale;
@@ -41,8 +41,8 @@ namespace TheLunatic {
 			var mymod = (TheLunaticMod)this.mod;
 			var myworld = this.mod.GetModWorld<TheLunaticWorld>();
 
-			if( !mymod.ConfigJson.Data.Enabled ) { return; }
-			if( myworld.GameLogic == null ) { throw new HamstarException( "Game logic not initialized." ); }
+			if( !mymod.Config.Enabled ) { return; }
+			if( myworld.GameLogic == null ) { throw new ModHelpersException( "Game logic not initialized." ); }
 
 			myworld.GameLogic.UpdateBiomes( this.player );
 		}
@@ -51,8 +51,8 @@ namespace TheLunatic {
 			var mymod = (TheLunaticMod)this.mod;
 			var myworld = this.mod.GetModWorld<TheLunaticWorld>();
 
-			if( !mymod.ConfigJson.Data.Enabled ) { return; }
-			if( myworld.GameLogic == null ) { throw new HamstarException( "Game logic not initialized." ); }
+			if( !mymod.Config.Enabled ) { return; }
+			if( myworld.GameLogic == null ) { throw new ModHelpersException( "Game logic not initialized." ); }
 
 			mymod.Sky.UpdateSky( this.player );
 			myworld.GameLogic.UpdateBiomeVisuals( this.player );
@@ -83,7 +83,7 @@ namespace TheLunatic {
 
 		public override void ModifyDrawLayers( List<PlayerLayer> layers ) {
 			var mymod = (TheLunaticMod)this.mod;
-			if( !mymod.ConfigJson.Data.Enabled ) { return; }
+			if( !mymod.Config.Enabled ) { return; }
 
 			this.MaskTex = CustomBossMaskItem.GetMaskTextureOfPlayer( this.player );
 			if( this.MaskTex != null ) {

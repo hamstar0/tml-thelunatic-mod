@@ -1,5 +1,5 @@
 ﻿using HamstarHelpers.Components.Errors;
-using HamstarHelpers.Helpers.DebugHelpers;
+using HamstarHelpers.Helpers.Debug;
 using System;
 using Terraria;
 using Terraria.ModLoader;
@@ -9,7 +9,7 @@ namespace TheLunatic {
 	partial class TheLunaticPlayer : ModPlayer {
 		public override void PreUpdate() {
 			var mymod = (TheLunaticMod)this.mod;
-			if( !mymod.ConfigJson.Data.Enabled ) { return; }
+			if( !mymod.Config.Enabled ) { return; }
 			var myworld = this.mod.GetModWorld<TheLunaticWorld>();
 
 			if( this.player.position.Y < Main.worldSurface * 16.0 ) {
@@ -40,21 +40,21 @@ try {
 				myworld.GameLogic.ReadyServer = true;  // Needed?
 			}
 } catch( Exception e ) {
-	throw new HamstarException( "!TheLunatic.TheLunaticPlayer.PreUpdate", e );
+	throw new ModHelpersException( "", e );
 }
 		}
 
 
 		public override void PostUpdate() {
 			var mymod = (TheLunaticMod)this.mod;
-			if( !mymod.ConfigJson.Data.Enabled ) { return; }
+			if( !mymod.Config.Enabled ) { return; }
 
 			if( Main.netMode == 2 || this.player.whoAmI == Main.myPlayer ) {   // Server or current player only
 				if( this.Noclip != null ) {
 try {
 					this.Noclip.UpdateMovement( this.player );
 } catch( Exception e ) {
-	throw new HamstarException( "!TheLunatic.TheLunaticPlayer.PostUpdate", e );
+	throw new ModHelpersException( "", e );
 }
 				}
 			}

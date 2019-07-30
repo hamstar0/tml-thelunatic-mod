@@ -7,7 +7,7 @@ namespace TheLunatic {
 	class TheLunaticProjectile : GlobalProjectile {
 		public override bool? CanUseGrapple( int type, Player player ) {
 			var mymod = (TheLunaticMod)this.mod;
-			if( !mymod.ConfigJson.Data.Enabled ) { base.CanUseGrapple( type, player ); }
+			if( !mymod.Config.Enabled ) { base.CanUseGrapple( type, player ); }
 
 			var buff = (ShadowWalkerBuff)mymod.GetBuff( "ShadowWalkerBuff" );
 			bool? canWe = buff.ProjectileCanUseGrapple( type, player );

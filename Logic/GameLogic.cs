@@ -1,6 +1,5 @@
-﻿using HamstarHelpers.Helpers.DebugHelpers;
-using HamstarHelpers.Helpers.WorldHelpers;
-using HamstarHelpers.Services.Messages;
+﻿using HamstarHelpers.Helpers.Debug;
+using HamstarHelpers.Helpers.World;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
@@ -81,7 +80,7 @@ namespace TheLunatic.Logic {
 
 		public void ApplyDebugOverrides( TheLunaticMod mymod ) {
 			if( mymod.Config.DebugModeFastTime ) {
-				mymod.ConfigJson.Data.DaysUntil /= 5;
+				mymod.Config.DaysUntil /= 5;
 			}
 			if( mymod.Config.DebugModeReset ) {
 				LogHelpers.Log( "DEBUG Game Logic reset!" );
@@ -93,8 +92,8 @@ namespace TheLunatic.Logic {
 				this.HalfDaysElapsed = 0;
 			}
 			if( mymod.Config.DebugModeSkipToSigns ) {
-				if( this.HalfDaysElapsed < mymod.ConfigJson.Data.DaysUntil ) {
-					this.HalfDaysElapsed = mymod.ConfigJson.Data.DaysUntil;
+				if( this.HalfDaysElapsed < mymod.Config.DaysUntil ) {
+					this.HalfDaysElapsed = mymod.Config.DaysUntil;
 				}
 			}
 		}
@@ -137,7 +136,7 @@ namespace TheLunatic.Logic {
 				DebugHelpers.Print( "HasLoonyArrived", "" + this.HasLoonyArrived, 20 );
 				DebugHelpers.Print( "HasLoonyQuit", "" + this.HasLoonyQuit, 20 );
 				DebugHelpers.Print( "HasGameEnded", "" + this.HasGameEnded, 20 );
-				DebugHelpers.Print( "HalfDaysElapsed", "" + this.HalfDaysElapsed + " (" + (mymod.ConfigJson.Data.DaysUntil * 2) + ")", 20 );
+				DebugHelpers.Print( "HalfDaysElapsed", "" + this.HalfDaysElapsed + " (" + (mymod.Config.DaysUntil * 2) + ")", 20 );
 				DebugHelpers.Print( "HaveWeEndSigns", "" + this.HaveWeEndSigns(), 20 );
 				DebugHelpers.Print( "HaveHope", "" + this.HaveWeHopeToWin(), 20 );
 				DebugHelpers.Print( "TintScale", "" + mymod.Sky.TintScale, 20 );
@@ -187,12 +186,12 @@ namespace TheLunatic.Logic {
 			// Indicate final day
 			if( !this.HasGameEnded ) {
 				if( !this.IsLastDay ) {
-					if( this.HalfDaysElapsed >= (mymod.ConfigJson.Data.DaysUntil - 1) * 2 ) {
+					if( this.HalfDaysElapsed >= (mymod.Config.DaysUntil - 1) * 2 ) {
 						SimpleMessage.PostMessage( "Final Day", "", 60 * 5 );
 						this.IsLastDay = true;
 					}
 				} else {
-					if( this.HalfDaysElapsed < (mymod.ConfigJson.Data.DaysUntil - 1) * 2 ) {
+					if( this.HalfDaysElapsed < (mymod.Config.DaysUntil - 1) * 2 ) {
 						this.IsLastDay = false;
 					}
 				}
@@ -242,7 +241,7 @@ namespace TheLunatic.Logic {
 			var mymod = TheLunaticMod.Instance;
 
 			if( this.HaveWeEndSigns() ) {
-				int halfDaysLeft = (mymod.ConfigJson.Data.DaysUntil * 2) - this.HalfDaysElapsed;
+				int halfDaysLeft = (mymod.Config.DaysUntil * 2) - this.HalfDaysElapsed;
 				int rand = Main.rand.Next( halfDaysLeft * 60 * 54 );
 				
 				if( Main.netMode != 1 && rand == 0 ) {	// Not client
@@ -258,8 +257,8 @@ namespace TheLunatic.Logic {
 				if( Main.netMode != 2 ) {   // Not server
 					if( halfDaysLeft != 0 ) {
 						double days = (double)this.HalfDaysElapsed + WorldStateHelpers.GetDayOrNightPercentDone();
-						days -= mymod.ConfigJson.Data.DaysUntil;
-						mymod.Sky.TintScale = (float)days / (float)mymod.ConfigJson.Data.DaysUntil;
+						days -= mymod.Config.DaysUntil;
+						mymod.Sky.TintScale = (float)days / (float)mymod.Config.DaysUntil;
 					} else {
 						mymod.Sky.TintScale = 0;
 					}
@@ -296,7 +295,7 @@ namespace TheLunatic.Logic {
 				&& !this.IsApocalypse
 				//&& !this.HasLoonyQuit
 				&& !this.IsSafe
-				&& (this.HalfDaysElapsed >= mymod.ConfigJson.Data.DaysUntil);
+				&& (this.HalfDaysElapsed >= mymod.Config.DaysUntil);
 		}
 
 		public bool HaveWeHopeToWin() {
@@ -309,7 +308,7 @@ namespace TheLunatic.Logic {
 
 		private bool HaveWeApocalypse() {
 			var mymod = TheLunaticMod.Instance;
-			int halfDaysLeft = (mymod.ConfigJson.Data.DaysUntil * 2) - this.HalfDaysElapsed;
+			int halfDaysLeft = (mymod.Config.DaysUntil * 2) - this.HalfDaysElapsed;
 
 			return this.IsApocalypse || ( halfDaysLeft == 0
 				&& !this.IsSafe

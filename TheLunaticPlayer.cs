@@ -1,6 +1,6 @@
 ﻿using HamstarHelpers.Components.Errors;
-using HamstarHelpers.Helpers.DebugHelpers;
-using HamstarHelpers.Helpers.PlayerHelpers;
+using HamstarHelpers.Helpers.Debug;
+using HamstarHelpers.Helpers.Players;
 using Microsoft.Xna.Framework.Graphics;
 using PlayerExtend;
 using System;
@@ -69,15 +69,8 @@ namespace TheLunatic {
 
 			var mymod = (TheLunaticMod)this.mod;
 
-			if( Main.netMode == 0 ) {
-				if( !mymod.ConfigJson.LoadFile() ) {
-					mymod.ConfigJson.SaveFile();
-					ErrorLogger.Log( "Lunatic config " + mymod.Version.ToString() + " created (ModPlayer.OnEnterWorld())." );
-				}
-			}
-
 			if( mymod.Config.DebugModeInfo ) {
-				ErrorLogger.Log( "TheLunatic.TheLunaticPlayer.OnEnterWorld - " + enteringPlayer.name + " joined (" + PlayerIdentityHelpers.GetProperUniqueId( enteringPlayer ) + ")" );
+				LogHelpers.Alert( enteringPlayer.name + " joined (" + PlayerIdentityHelpers.GetUniqueId( enteringPlayer ) + ")" );
 			}
 
 			if( Main.netMode == 0 ) {
@@ -136,7 +129,7 @@ namespace TheLunatic {
 
 		public override bool PreItemCheck() {
 			var mymod = (TheLunaticMod)this.mod;
-			if( !mymod.ConfigJson.Data.Enabled ) { base.PreItemCheck(); }
+			if( !mymod.Config.Enabled ) { base.PreItemCheck(); }
 
 try {
 			// Force de-select of items while shadow walking
@@ -147,7 +140,7 @@ try {
 
 			UmbralCowlItem.CheckEquipState( this.player );
 } catch( Exception e ) {
-	throw new HamstarException( "!TheLunaticMod.TheLunaticPlayer.PreItemCheck", e );
+	throw new ModHelpersException( "", e );
 }
 
 			return base.PreItemCheck();

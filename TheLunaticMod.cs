@@ -6,12 +6,9 @@ using Terraria.ModLoader;
 using TheLunatic.Tiles;
 using Terraria.ID;
 using System;
-using HamstarHelpers.Helpers.DebugHelpers;
 using TheLunatic.NetProtocol;
-using HamstarHelpers.Components.Config;
-using HamstarHelpers.Components.Errors;
-using HamstarHelpers.Helpers.TmlHelpers.ModHelpers;
-using HamstarHelpers.Helpers.TmlHelpers;
+using HamstarHelpers.Helpers.Debug;
+using HamstarHelpers.Helpers.TModLoader.Mods;
 
 
 namespace TheLunatic {
@@ -22,8 +19,7 @@ namespace TheLunatic {
 
 		////////////////
 		
-		internal JsonConfig<LunaticConfigData> ConfigJson { get; private set; }
-		public LunaticConfigData Config => this.ConfigJson.Data;
+		public LunaticConfig Config => this.GetConfig<LunaticConfig>();
 
 		internal AnimatedSky Sky { get; private set; }
 
@@ -32,39 +28,15 @@ namespace TheLunatic {
 		////////////////
 
 		public TheLunaticMod() {
-			this.ConfigJson = new JsonConfig<LunaticConfigData>( LunaticConfigData.ConfigFileName,
-				ConfigurationDataBase.RelativePath, new LunaticConfigData() );
+			TheLunaticMod.Instance = this;
 		}
 
 		////////////////
 
 		public override void Load() {
-			string depErr = TmlHelpers.ReportBadDependencyMods( this );
-			if( depErr != null ) { throw new HamstarException( depErr ); }
-
-			TheLunaticMod.Instance = this;
-
-			this.LoadConfig();
-
 			if( !Main.dedServ ) {
 				this.Sky = new AnimatedSky();
 				SkyManager.Instance["TheLunaticMod:AnimatedColorize"] = this.Sky;
-			}
-		}
-
-		private void LoadConfig() {
-			try {
-				if( !this.ConfigJson.LoadFile() ) {
-					this.ConfigJson.SaveFile();
-				}
-			} catch( Exception e ) {
-				LogHelpers.Log( e.Message );
-				this.ConfigJson.SaveFile();
-			}
-
-			if( this.ConfigJson.Data.UpdateToLatestVersion() ) {
-				ErrorLogger.Log( "The Lunatic updated to " + this.Version.ToString() );
-				this.ConfigJson.SaveFile();
 			}
 		}
 
@@ -105,7 +77,7 @@ namespace TheLunatic {
 		////////////////
 
 		public override void PostDrawInterface( SpriteBatch sb ) {
-			if( !this.ConfigJson.Data.Enabled ) { return; }
+			if( !this.Config.Enabled ) { return; }
 
 			var myworld = this.GetModWorld<TheLunaticWorld>();
 			if( myworld.GameLogic != null ) {
@@ -114,7 +86,7 @@ namespace TheLunatic {
 		}
 
 		public override void UpdateMusic( ref int music, ref MusicPriority priority ) {
-			if( !this.ConfigJson.Data.Enabled ) { return; }
+			if( !this.Config.Enabled ) { return; }
 
 			var myworld = this.GetModWorld<TheLunaticWorld>();
 
