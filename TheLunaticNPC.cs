@@ -2,6 +2,7 @@
 using HamstarHelpers.Helpers.Items;
 using HamstarHelpers.Helpers.NPCs;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 using TheLunatic.Items;
 using TheLunatic.Logic;
@@ -43,7 +44,7 @@ namespace TheLunatic {
 			// Already given this mask?
 			bool isVanilla = MaskLogic.AllVanillaMasks.Contains( maskType );
 			if( !myworld.MaskLogic.GivenVanillaMasksByType.Contains( maskType ) ) {
-				if( !isVanilla && myworld.MaskLogic.GivenCustomMasksByBossUid.Contains( NPCIdentityHelpers.GetUniqueKey(npc) ) ) {
+				if( !isVanilla && myworld.MaskLogic.GivenCustomMasksByBossUid.Contains( NPCID.GetUniqueKey(npc) ) ) {
 					return;
 				}
 			}

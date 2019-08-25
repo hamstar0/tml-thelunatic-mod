@@ -1,6 +1,5 @@
-﻿using HamstarHelpers.Components.Errors;
+﻿using HamstarHelpers.Classes.Errors;
 using HamstarHelpers.Helpers.Debug;
-using HamstarHelpers.Helpers.NPCs;
 using HamstarHelpers.Helpers.World;
 using System;
 using System.Collections.Generic;
@@ -139,7 +138,7 @@ namespace TheLunatic.Logic {
 				NPC npc = new NPC();
 				npc.SetDefaults( bossType );
 
-				this.GivenCustomMasksByBossUid.Add( NPCIdentityHelpers.GetUniqueKey(npc) );
+				this.GivenCustomMasksByBossUid.Add( NPCID.GetUniqueKey(npc) );
 			} else {
 				this.GivenVanillaMasksByType.Add( maskType );
 			}

@@ -1,6 +1,6 @@
 ﻿using Terraria.ModLoader;
 using System;
-using HamstarHelpers.Components.Errors;
+using HamstarHelpers.Classes.Errors;
 
 
 namespace TheLunatic {

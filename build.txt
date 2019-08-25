@@ -3,5 +3,4 @@ version = 1.4.0
 displayName = The Lunatic
 modReferences = HamstarHelpers@5.0.0
 buildIgnore = *.csproj, *.user, *.bat, obj\*, bin\*, .vs\*, .git\*
-languageVersion = 6
 homepage = https://forums.terraria.org/index.php?threads/the-lunatic.53860/

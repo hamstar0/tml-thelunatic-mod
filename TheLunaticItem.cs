@@ -30,7 +30,7 @@ namespace TheLunatic {
 
 		public override void ModifyTooltips( Item item, List<TooltipLine> tooltips ) {
 			var mymod = (TheLunaticMod)this.mod;
-			if( !mymod.ConfigJson.Data.Enabled ) { return; }
+			if( !mymod.Config.Enabled ) { return; }
 
 			bool found = item.type == this.mod.ItemType<CustomBossMaskItem>();
 			if( !found ) { found = MaskLogic.AllVanillaMasks.Contains( item.type ); }
@@ -50,7 +50,7 @@ namespace TheLunatic {
 			var mymod = (TheLunaticMod)this.mod;
 			var myplayer = player.GetModPlayer<TheLunaticPlayer>( mymod );
 
-			if( !mymod.ConfigJson.Data.Enabled ) { return; }
+			if( !mymod.Config.Enabled ) { return; }
 
 			if( myplayer.Noclip.IsOn ) {
 				for( int i = 0; i < 50; i++ ) {

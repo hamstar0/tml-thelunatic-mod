@@ -4,8 +4,8 @@ using Terraria;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using TheLunatic.Logic;
-using HamstarHelpers.Helpers.NPCs;
 using System.IO;
+using Terraria.ID;
 
 
 namespace TheLunatic.Items {
@@ -106,7 +106,7 @@ namespace TheLunatic.Items {
 			int idx = npc.GetBossHeadTextureIndex();
 			if( idx == -1 || idx >= Main.npcHeadBossTexture.Length || Main.npcHeadBossTexture[idx] == null ) { return false; }
 
-			itemInfo.Load( npcType, idx, NPCIdentityHelpers.GetUniqueKey(npc), npc.GivenName );
+			itemInfo.Load( npcType, idx, NPCID.GetUniqueKey(npc), npc.GivenName );
 			this.item.SetNameOverride( npc.GivenName + " Mask" );
 			
 
@@ -171,13 +171,14 @@ namespace TheLunatic.Items {
 		public void Load( int npcType, int bossHeadIndex, string uid, string displayName ) {
 			var npc = new NPC();
 			npc.SetDefaults( npcType );
-			if( NPCIdentityHelpers.GetUniqueKey(npc) != uid ) {
-				npcType = NPCIdentityHelpers.GetNpcTypeByUniqueId( uid );
+
+			if( NPCID.GetUniqueKey(npc) != uid ) {
+				npcType = NPCID.TypeFromUniqueKey( uid );
 				if( npcType != -1 ) {
 					npc.SetDefaults( npcType );
 					this.Load( npcType, npc.GetBossHeadTextureIndex(), uid, npc.GivenName );
 				} else {
-					ErrorLogger.Log( "Could not find boss head of custom boss mask for npc " + uid );
+					this.mod.Logger.Info( "Could not find boss head of custom boss mask for npc " + uid );
 				}
 				return;
 			}
