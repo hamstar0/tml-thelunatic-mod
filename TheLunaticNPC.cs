@@ -30,6 +30,8 @@ namespace TheLunatic {
 
 
 		public override void NPCLoot( NPC npc ) {
+			if( npc == null ) { return; }
+
 			var mymod = (TheLunaticMod)this.mod;
 			if( !mymod.Config.Enabled ) { return; }
 

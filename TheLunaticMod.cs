@@ -77,7 +77,7 @@ namespace TheLunatic {
 		////////////////
 
 		public override void PostDrawInterface( SpriteBatch sb ) {
-			if( !this.Config.Enabled ) { return; }
+			if( this.Config == null || !this.Config.Enabled ) { return; }
 
 			var myworld = this.GetModWorld<TheLunaticWorld>();
 			if( myworld.GameLogic != null ) {
@@ -86,7 +86,7 @@ namespace TheLunatic {
 		}
 
 		public override void UpdateMusic( ref int music, ref MusicPriority priority ) {
-			if( !this.Config.Enabled ) { return; }
+			if( this.Config == null || !this.Config.Enabled ) { return; }
 
 			var myworld = this.GetModWorld<TheLunaticWorld>();
 
