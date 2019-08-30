@@ -42,13 +42,15 @@ namespace TheLunatic.Items {
 		////////////////
 
 		public override void Load( TagCompound tag ) {
-			var itemInfo = this.item.GetGlobalItem<CustomBossMaskItemInfo>( this.mod );
-			int npcType = tag.GetInt( "boss_npc_type" );
-			int bossHeadIdx = tag.GetInt( "boss_head_index" );
-			string bossUid = tag.GetString( "boss_uid" );
-			string bossName = tag.GetString( "boss_display_name" );
+			if( tag.ContainsKey( "boss_npc_type" ) ) {
+				var itemInfo = this.item.GetGlobalItem<CustomBossMaskItemInfo>( this.mod );
+				int npcType = tag.GetInt( "boss_npc_type" );
+				int bossHeadIdx = tag.GetInt( "boss_head_index" );
+				string bossUid = tag.GetString( "boss_uid" );
+				string bossName = tag.GetString( "boss_display_name" );
 
-			itemInfo.Load( npcType, bossHeadIdx, bossUid, bossName );
+				itemInfo.Load( npcType, bossHeadIdx, bossUid, bossName );
+			}
 			
 			string name = MaskLogic.GetMaskDisplayName( this.item );
 			if( name != null ) {
@@ -106,9 +108,10 @@ namespace TheLunatic.Items {
 			int idx = npc.GetBossHeadTextureIndex();
 			if( idx == -1 || idx >= Main.npcHeadBossTexture.Length || Main.npcHeadBossTexture[idx] == null ) { return false; }
 
-			itemInfo.Load( npcType, idx, NPCID.GetUniqueKey(npc), npc.GivenName );
-			this.item.SetNameOverride( npc.GivenName + " Mask" );
-			
+			if( itemInfo.Load( npcType, idx, NPCID.GetUniqueKey(npc), npc.GivenName ) ) {
+				this.item.SetNameOverride( npc.GivenName + " Mask" );
+			}
+
 
 			/*if( Main.netMode != 2 ) {
 				var tex = Main.npcHeadBossTexture[info.BossHeadIndex];
@@ -168,25 +171,26 @@ namespace TheLunatic.Items {
 			return clone;
 		}
 
-		public void Load( int npcType, int bossHeadIndex, string uid, string displayName ) {
+		public bool Load( int npcType, int bossHeadIndex, string uid, string displayName ) {
 			var npc = new NPC();
 			npc.SetDefaults( npcType );
 
 			if( NPCID.GetUniqueKey(npc) != uid ) {
 				npcType = NPCID.TypeFromUniqueKey( uid );
-				if( npcType != -1 ) {
+				if( npcType > 0 ) {
 					npc.SetDefaults( npcType );
-					this.Load( npcType, npc.GetBossHeadTextureIndex(), uid, npc.GivenName );
+					return this.Load( npcType, npc.GetBossHeadTextureIndex(), uid, npc.GivenName );
 				} else {
 					this.mod.Logger.Info( "Could not find boss head of custom boss mask for npc " + uid );
+					return false;
 				}
-				return;
 			}
 
 			this.BossNpcType = npcType;
 			this.BossHeadIndex = bossHeadIndex;
 			this.BossUid = uid;
 			this.BossDisplayName = displayName;
+			return true;
 		}
 
 		
