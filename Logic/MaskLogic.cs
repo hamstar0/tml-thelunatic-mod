@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 using Terraria.ID;
-using Terraria.ModLoader;
 using TheLunatic.Items;
 using TheLunatic.NetProtocol;
 
@@ -67,6 +66,9 @@ namespace TheLunatic.Logic {
 		}
 
 		public static int GetMaskTypeOfNpc( int npcType ) {
+			if( npcType == 0 || npcType == -1 ) {	// -1 for legacy support
+				return -1;
+			}
 			if( MaskLogic.VanillaBossOfMask.Keys.Contains(npcType) ) {
 				return MaskLogic.VanillaBossOfMask[ npcType ];
 			}
@@ -81,17 +83,17 @@ namespace TheLunatic.Logic {
 			return -1;
 		}
 
-		public static string GetMaskDisplayName( Item mask ) {
-			if( MaskLogic.AllVanillaMasks.Contains(mask.type) ) {
-				return mask.Name;
+		public static string GetMaskDisplayName( Item maskItem ) {
+			if( MaskLogic.AllVanillaMasks.Contains(maskItem.type) ) {
+				return maskItem.Name;
 			}
 
 			var mymod = TheLunaticMod.Instance;
 			int customType = mymod.ItemType<CustomBossMaskItem>();
-			if( mask.type == customType ) {
-				var maskItemInfo = mask.GetGlobalItem<CustomBossMaskItemInfo>();
-				if( maskItemInfo != null ) {
-					return maskItemInfo.BossDisplayName + " Mask";
+			if( maskItem.type == customType && maskItem.modItem != null ) {
+				var myMaskItem = (CustomBossMaskItem)maskItem.modItem;
+				if( myMaskItem != null ) {
+					return myMaskItem.BossDisplayName + " Mask";
 				}
 			}
 
@@ -131,12 +133,12 @@ namespace TheLunatic.Logic {
 
 		////////////////
 
-		public void RegisterReceiptOfMask( Player givingPlayer, int maskType, int bossType ) {
+		public void RegisterReceiptOfMask( Player givingPlayer, int maskType, int bossNpcType ) {
 			var mymod = TheLunaticMod.Instance;
 
-			if( maskType == mymod.ItemType<CustomBossMaskItem>() ) {
+			if( maskType == mymod.ItemType<CustomBossMaskItem>() && bossNpcType != 0 && bossNpcType != -1 ) {	// -1 for legacy support
 				NPC npc = new NPC();
-				npc.SetDefaults( bossType );
+				npc.SetDefaults( bossNpcType );
 
 				this.GivenCustomMasksByBossUid.Add( NPCID.GetUniqueKey(npc) );
 			} else {
@@ -180,7 +182,7 @@ namespace TheLunatic.Logic {
 			}
 
 			// Sky flash for all
-			if( Main.netMode != 2 ) {  // Not server
+			if( !Main.dedServ && Main.netMode != 2 ) {  // Not server
 				Player currentPlayer = Main.player[Main.myPlayer];
 				var modplayer = currentPlayer.GetModPlayer<TheLunaticPlayer>();
 				modplayer.FlashMe();
@@ -200,10 +202,16 @@ namespace TheLunatic.Logic {
 		}
 
 		public bool DoesLoonyHaveThisMask( Item maskItem ) {
-			if( this.GetRemainingVanillaMasks().Contains(maskItem.type) ) { return false; }
+			if( this.GetRemainingVanillaMasks().Contains(maskItem.type) ) {
+				return false;
+			}
 
-			var maskItemInfo = maskItem.GetGlobalItem<CustomBossMaskItemInfo>();
-			return this.GivenCustomMasksByBossUid.Contains( maskItemInfo.BossUid );
+			string bossUid = "";
+			if( maskItem.modItem != null && maskItem.modItem is CustomBossMaskItem ) {
+				bossUid = ((CustomBossMaskItem)maskItem.modItem).BossUid;
+			}
+
+			return this.GivenCustomMasksByBossUid?.Contains( bossUid ) ?? false;
 		}
 
 		public void GiveAllVanillaMasks() {
@@ -286,25 +294,27 @@ namespace TheLunatic.Logic {
 			return true;
 		}
 
-		public void GiveMaskToLoony( Player player, Item mask ) {
+		public void GiveMaskToLoony( Player player, Item maskItem ) {
 			var mymod = TheLunaticMod.Instance;
 
 			if( Main.netMode == 1 ) {   // Client
-				ClientPacketHandlers.SendGivenMaskFromClient( mask );
+				ClientPacketHandlers.SendGivenMaskFromClient( maskItem );
 			} else if( Main.netMode == 2 ) {    // Server
 				throw new ModHelpersException( "Server should not be giving masks to loonys." );
 			}
 
 			int bossType = -1;
-			if( mask.type == mymod.ItemType<CustomBossMaskItem>() ) {
-				bossType = mask.GetGlobalItem<CustomBossMaskItemInfo>().BossNpcType;
+			if( maskItem.type == mymod.ItemType<CustomBossMaskItem>() && maskItem.modItem != null ) {
+				bossType = ( (CustomBossMaskItem)maskItem.modItem ).BossNpcType;
 			} else {
-				var bossOfMask = MaskLogic.VanillaBossOfMask.Where( x => x.Value == mask.type ).First();
+				var bossOfMask = MaskLogic.VanillaBossOfMask
+					.Where( x => x.Value == maskItem.type )
+					.First();
 				bossType = bossOfMask.Value > 0 ? bossOfMask.Value : bossType;
 			}
-			this.RegisterReceiptOfMask( player, mask.type, bossType );
+			this.RegisterReceiptOfMask( player, maskItem.type, bossType );
 
-			mask.TurnToAir();
+			maskItem.TurnToAir();
 
 			Main.PlaySound( SoundID.Unlock, player.position );
 		}

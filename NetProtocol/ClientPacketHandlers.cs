@@ -50,20 +50,20 @@ namespace TheLunatic.NetProtocol {
 			packet.Send();
 		}
 
-		public static void SendGivenMaskFromClient( Item mask ) {
+		public static void SendGivenMaskFromClient( Item maskItem ) {
 			var mymod = TheLunaticMod.Instance;
 			// Clients only
 			if( Main.netMode != 1 ) { return; }
 
 			ModPacket packet = mymod.GetPacket();
-			int bossType = -1;
-			if( mask.type == mymod.ItemType<CustomBossMaskItem>() ) {
-				bossType = mask.GetGlobalItem<CustomBossMaskItemInfo>().BossNpcType;
+			int bossNpcType = 0;
+			if( maskItem.type == mymod.ItemType<CustomBossMaskItem>() && maskItem.modItem != null ) {
+				bossNpcType = ((CustomBossMaskItem)maskItem.modItem).BossNpcType;
 			}
 
 			packet.Write( (byte)NetProtocolTypes.GiveMaskToServer );
-			packet.Write( (int)mask.type );
-			packet.Write( bossType );
+			packet.Write( (int)maskItem.type );
+			packet.Write( bossNpcType );
 
 			packet.Send();
 		}
@@ -146,7 +146,7 @@ namespace TheLunatic.NetProtocol {
 			// Mask is given discreetly
 			int fromWho = reader.ReadInt32();
 			int maskType = reader.ReadInt32();
-			int bossType = reader.ReadInt32();
+			int bossNpcType = reader.ReadInt32();
 
 			if( fromWho < 0 || fromWho >= Main.player.Length || Main.player[fromWho] == null ) {
 				LogHelpers.Log( "TheLunaticNetProtocol.ReceiveGivenMaskOnClient - Invalid player id " + fromWho );
@@ -162,7 +162,7 @@ namespace TheLunatic.NetProtocol {
 				player = Main.player[fromWho];
 			}
 
-			myworld.MaskLogic.RegisterReceiptOfMask( player, maskType, bossType );
+			myworld.MaskLogic.RegisterReceiptOfMask( player, maskType, bossNpcType );
 		}
 	}
 }

@@ -12,23 +12,58 @@ namespace TheLunatic.Items {
 	[AutoloadEquip( EquipType.Head )]
 	class CustomBossMaskItem : ModItem {
 		public static Texture2D GetMaskTextureOfPlayer( Player player ) {
+			if( Main.dedServ || Main.netMode == 2 ) { return null; }
+
 			int itemType = TheLunaticMod.Instance.ItemType<CustomBossMaskItem>();
-			CustomBossMaskItem moditem = null;
+			ModItem myitem;
+			CustomBossMaskItem mymaskitem = null;
 
 			if( player.armor[0] != null && !player.armor[0].IsAir && player.armor[0].type == itemType ) {
-				moditem = (CustomBossMaskItem)player.armor[0].modItem;
+				myitem = player.armor[0].modItem;
+				if( myitem != null && myitem is CustomBossMaskItem ) {
+					mymaskitem = (CustomBossMaskItem)player.armor[0].modItem;
+				}
 			} else if( player.armor[10] != null && !player.armor[10].IsAir && player.armor[10].type == itemType ) {
-				moditem = (CustomBossMaskItem)player.armor[10].modItem;
+				myitem = player.armor[10].modItem;
+				if( myitem != null && myitem is CustomBossMaskItem ) {
+					mymaskitem = (CustomBossMaskItem)player.armor[10].modItem;
+				}
 			}
-			if( moditem == null ) { return null; }
 
-			return moditem.GetTexture();
+			return mymaskitem?.GetTexture();
 		}
 
 
-		
+
+		////////////////
+
+		public override bool CloneNewInstances => true;
+
+		////////////////
+
+		public int BossNpcType = 0;
+		public int BossHeadIndex = -1;
+		public string BossUid = "";
+		public string BossDisplayName = "Unknown Boss";
+
+
+
+		////////////////
+
+		public override ModItem Clone() {
+			var clone = (CustomBossMaskItem)base.Clone();
+			clone.BossNpcType = this.BossNpcType;
+			clone.BossHeadIndex = this.BossHeadIndex;
+			clone.BossUid = this.BossUid;
+			clone.BossDisplayName = this.BossDisplayName;
+			return clone;
+		}
+
+
+		////////////////
+
 		public override void SetStaticDefaults() {
-			this.DisplayName.SetDefault( "Boss Mask" );
+			this.DisplayName.SetDefault( "Unknown Boss Mask" );
 		}
 
 		public override void SetDefaults() {
@@ -39,38 +74,85 @@ namespace TheLunatic.Items {
 			this.item.vanity = true;
 		}
 
+
+		////
+
+		private bool CustomLoad( int npcType, int bossHeadIndex, string bossNpcUid, string displayName ) {
+			if( npcType == 0 || npcType == -1 ) {	// -1 for legacy support
+				return false;
+			}
+
+			var npc = new NPC();
+			npc.SetDefaults( npcType );
+
+			if( NPCID.GetUniqueKey( npc ) != bossNpcUid ) {
+				npcType = NPCID.TypeFromUniqueKey( bossNpcUid );
+				if( npcType > 0 ) {
+					npc.SetDefaults( npcType );
+					return this.CustomLoad( npcType, npc.GetBossHeadTextureIndex(), bossNpcUid, npc.GivenName );
+				}
+
+				this.mod.Logger.Info( "Could not find boss head of custom boss mask for npc " + bossNpcUid );
+				return false;
+			}
+
+			this.BossNpcType = npcType;
+			this.BossHeadIndex = bossHeadIndex;
+			this.BossUid = bossNpcUid;
+			this.BossDisplayName = displayName;
+
+			return true;
+		}
+
+
 		////////////////
 
 		public override void Load( TagCompound tag ) {
 			if( tag.ContainsKey( "boss_npc_type" ) ) {
-				var itemInfo = this.item.GetGlobalItem<CustomBossMaskItemInfo>( this.mod );
 				int npcType = tag.GetInt( "boss_npc_type" );
 				int bossHeadIdx = tag.GetInt( "boss_head_index" );
 				string bossUid = tag.GetString( "boss_uid" );
 				string bossName = tag.GetString( "boss_display_name" );
 
-				itemInfo.Load( npcType, bossHeadIdx, bossUid, bossName );
-			}
-			
-			string name = MaskLogic.GetMaskDisplayName( this.item );
-			if( name != null ) {
-				this.DisplayName.SetDefault( name );
+				if( this.CustomLoad( npcType, bossHeadIdx, bossUid, bossName ) ) {
+					string maskName = MaskLogic.GetMaskDisplayName( this.item );
+					if( maskName != null ) {
+						this.DisplayName.SetDefault( maskName );
+					}
+				}
 			}
 		}
 
 		public override TagCompound Save() {
-			var itemInfo = this.item.GetGlobalItem<CustomBossMaskItemInfo>( this.mod );
 			var tag = new TagCompound {
-				{ "boss_npc_type", itemInfo.BossNpcType },
-				{ "boss_head_index", itemInfo.BossHeadIndex },
-				{ "boss_uid", itemInfo.BossUid },
-				{ "boss_display_name", itemInfo.BossDisplayName }
+				{ "boss_npc_type", (int)this.BossNpcType },
+				{ "boss_head_index", (int)this.BossHeadIndex },
+				{ "boss_uid", (string)this.BossUid },
+				{ "boss_display_name", (string)this.BossDisplayName }
 			};
 			return tag;
 		}
 
+
 		////////////////
-		
+
+		public override void NetSend( BinaryWriter writer ) {
+			writer.Write( (int)this.BossNpcType );
+			writer.Write( (int)this.BossHeadIndex );
+			writer.Write( (string)this.BossUid );
+			writer.Write( (string)this.BossDisplayName );
+		}
+
+		public override void NetRecieve( BinaryReader reader ) {
+			this.BossNpcType = reader.ReadInt32();
+			this.BossHeadIndex = reader.ReadInt32();
+			this.BossUid = reader.ReadString();
+			this.BossDisplayName = reader.ReadString();
+		}
+
+
+		////////////////
+
 		public override bool PreDrawInInventory( SpriteBatch sb, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale ) {
 			this.DrawItem( sb, position, Color.White, origin, scale );
 			return false;
@@ -86,29 +168,33 @@ namespace TheLunatic.Items {
 		private void DrawItem( SpriteBatch sb, Vector2 pos, Color color, Vector2 origin, float scale ) {
 			var tex = this.GetTexture();
 			if( tex != null ) {
-				Main.spriteBatch.Draw( tex, pos, null, color, 0f, origin, scale, SpriteEffects.None, 0f );
+				sb.Draw( tex, pos, null, color, 0f, origin, scale, SpriteEffects.None, 0f );
 			}
 		}
+
 
 		////////////////
 
 		public Texture2D GetTexture() {
-			var itemInfo = this.item.GetGlobalItem<CustomBossMaskItemInfo>( this.mod );
-			if( itemInfo.BossHeadIndex == -1 || itemInfo.BossHeadIndex >= Main.npcHeadBossTexture.Length ) {
+			if( this.BossHeadIndex <= -1 || this.BossHeadIndex >= Main.npcHeadBossTexture.Length ) {
 				return null;
 			}
-			return Main.npcHeadBossTexture[itemInfo.BossHeadIndex];
+			return Main.npcHeadBossTexture[ this.BossHeadIndex ];
 		}
 
 
+		////////////////
+
 		public bool SetBoss( int npcType ) {
-			var itemInfo = this.item.GetGlobalItem<CustomBossMaskItemInfo>( this.mod );
 			NPC npc = new NPC();
 			npc.SetDefaults( npcType );
-			int idx = npc.GetBossHeadTextureIndex();
-			if( idx == -1 || idx >= Main.npcHeadBossTexture.Length || Main.npcHeadBossTexture[idx] == null ) { return false; }
 
-			if( itemInfo.Load( npcType, idx, NPCID.GetUniqueKey(npc), npc.GivenName ) ) {
+			int idx = npc.GetBossHeadTextureIndex();
+			if( idx < 0 || idx >= Main.npcHeadBossTexture.Length || Main.npcHeadBossTexture[idx] == null ) {
+				return false;
+			}
+
+			if( this.CustomLoad( npcType, idx, NPCID.GetUniqueKey(npc), npc.GivenName ) ) {
 				this.item.SetNameOverride( npc.GivenName + " Mask" );
 			}
 
@@ -147,65 +233,6 @@ namespace TheLunatic.Items {
 			}*/
 
 			return true;
-		}
-	}
-
-
-	
-	class CustomBossMaskItemInfo : GlobalItem {
-		public override bool InstancePerEntity { get { return true; } }
-		//public override bool CloneNewInstances { get { return true; } }
-
-		public int BossNpcType = -1;
-		public int BossHeadIndex = -1;
-		public string BossUid = "";
-		public string BossDisplayName = "";
-
-		
-		public override GlobalItem Clone( Item item, Item itemClone ) {
-			var clone = (CustomBossMaskItemInfo)base.Clone( item, itemClone );
-			clone.BossNpcType = this.BossNpcType;
-			clone.BossHeadIndex = this.BossHeadIndex;
-			clone.BossUid = this.BossUid;
-			clone.BossDisplayName = this.BossDisplayName;
-			return clone;
-		}
-
-		public bool Load( int npcType, int bossHeadIndex, string uid, string displayName ) {
-			var npc = new NPC();
-			npc.SetDefaults( npcType );
-
-			if( NPCID.GetUniqueKey(npc) != uid ) {
-				npcType = NPCID.TypeFromUniqueKey( uid );
-				if( npcType > 0 ) {
-					npc.SetDefaults( npcType );
-					return this.Load( npcType, npc.GetBossHeadTextureIndex(), uid, npc.GivenName );
-				} else {
-					this.mod.Logger.Info( "Could not find boss head of custom boss mask for npc " + uid );
-					return false;
-				}
-			}
-
-			this.BossNpcType = npcType;
-			this.BossHeadIndex = bossHeadIndex;
-			this.BossUid = uid;
-			this.BossDisplayName = displayName;
-			return true;
-		}
-
-		
-		public override void NetSend( Item item, BinaryWriter writer ) {
-			writer.Write( (int)this.BossNpcType );
-			writer.Write( (int)this.BossHeadIndex );
-			writer.Write( (string)this.BossUid );
-			writer.Write( (string)this.BossDisplayName );
-		}
-
-		public override void NetReceive( Item item, BinaryReader reader ) {
-			this.BossNpcType = reader.ReadInt32();
-			this.BossHeadIndex = reader.ReadInt32();
-			this.BossUid = reader.ReadString();
-			this.BossDisplayName = reader.ReadString();
 		}
 	}
 }
