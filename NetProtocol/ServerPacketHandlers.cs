@@ -40,7 +40,7 @@ namespace TheLunatic.NetProtocol {
 			if( Main.netMode != 2 ) { return; }
 
 			var mymod = TheLunaticMod.Instance;
-			var myworld = mymod.GetModWorld<TheLunaticWorld>();
+			var myworld = ModContent.GetInstance<TheLunaticWorld>();
 			if( myworld.GameLogic == null ) { throw new ModHelpersException( "Game logic not initialized." ); }
 
 			ModPacket packet = mymod.GetPacket();
@@ -143,7 +143,7 @@ namespace TheLunatic.NetProtocol {
 			if( Main.netMode != 2 ) { return; }
 
 			var mymod = TheLunaticMod.Instance;
-			var myworld = mymod.GetModWorld<TheLunaticWorld>();
+			var myworld = ModContent.GetInstance<TheLunaticWorld>();
 			if( myworld.MaskLogic == null ) { throw new ModHelpersException( "Mask logic not initialized." ); }
 			
 			int maskType = reader.ReadInt32();
@@ -151,7 +151,7 @@ namespace TheLunatic.NetProtocol {
 			Item fakeMask = new Item();
 
 			fakeMask.SetDefaults( maskType );
-			if( maskType == mymod.ItemType<CustomBossMaskItem>() ) {
+			if( maskType == ModContent.ItemType<CustomBossMaskItem>() ) {
 				var moditem = (CustomBossMaskItem)fakeMask.modItem;
 				moditem.SetBoss( bossType );
 			}

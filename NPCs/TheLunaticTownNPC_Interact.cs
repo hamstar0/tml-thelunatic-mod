@@ -17,11 +17,11 @@ namespace TheLunatic.NPCs {
 
 		public override void SetChatButtons( ref string button1, ref string button2 ) {
 			var mymod = (TheLunaticMod)this.mod;
-			var myworld = this.mod.GetModWorld<TheLunaticWorld>();
+			var myworld = ModContent.GetInstance<TheLunaticWorld>();
 			if( myworld.GameLogic == null ) { throw new ModHelpersException( "Game logic not initialized." ); }
 
 			Player player = Main.player[Main.myPlayer];
-			var myplayer = player.GetModPlayer<TheLunaticPlayer>( this.mod );
+			var myplayer = player.GetModPlayer<TheLunaticPlayer>( );
 			
 			if( !myplayer.IsCheater() && myworld.GameLogic.HaveWeHopeToWin() ) {
 				this.FirstButtonIsShop = false;
@@ -50,7 +50,7 @@ namespace TheLunatic.NPCs {
 		
 		private string onGiveMaskButtonClick() {
 			var mymod = (TheLunaticMod)this.mod;
-			var myworld = mymod.GetModWorld<TheLunaticWorld>();
+			var myworld = ModContent.GetInstance<TheLunaticWorld>();
 			if( myworld.MaskLogic == null ) { throw new ModHelpersException( "Mask logic not initialized." ); }
 
 			Player player = Main.player[Main.myPlayer];
@@ -64,7 +64,7 @@ namespace TheLunatic.NPCs {
 			
 			Item mask = PlayerItemFinderHelpers.FindFirstOfPossessedItemFor( player, remainingMasks, false );
 			if( mask == null ) {
-				mask = PlayerItemFinderHelpers.FindFirstOfPossessedItemFor( player, new HashSet<int> { mymod.ItemType<CustomBossMaskItem>() }, false );
+				mask = PlayerItemFinderHelpers.FindFirstOfPossessedItemFor( player, new HashSet<int> { ModContent.ItemType<CustomBossMaskItem>() }, false );
 				isCustom = mask != null;
 				isGiven = isCustom && myworld.MaskLogic.DoesLoonyHaveThisMask( mask );
 			}
@@ -200,7 +200,7 @@ namespace TheLunatic.NPCs {
 		////
 
 		public string GetHint() {
-			var myworld = this.mod.GetModWorld<TheLunaticWorld>();
+			var myworld = ModContent.GetInstance<TheLunaticWorld>();
 			if( myworld.MaskLogic == null ) { throw new ModHelpersException( "Mask logic not initialized." ); }
 			var masks = myworld.MaskLogic.GetRemainingVanillaMasks();
 			string msg;

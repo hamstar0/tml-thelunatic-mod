@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 using Terraria.ID;
+using Terraria.ModLoader;
 using TheLunatic.Items;
 using TheLunatic.NetProtocol;
 
@@ -78,7 +79,7 @@ namespace TheLunatic.Logic {
 			npc.SetDefaults( npcType );
 
 			if( npc.boss ) {
-				return mymod.ItemType<CustomBossMaskItem>();
+				return ModContent.ItemType<CustomBossMaskItem>();
 			}
 			return -1;
 		}
@@ -89,7 +90,7 @@ namespace TheLunatic.Logic {
 			}
 
 			var mymod = TheLunaticMod.Instance;
-			int customType = mymod.ItemType<CustomBossMaskItem>();
+			int customType = ModContent.ItemType<CustomBossMaskItem>();
 			if( maskItem.type == customType && maskItem.modItem != null ) {
 				var myMaskItem = (CustomBossMaskItem)maskItem.modItem;
 				if( myMaskItem != null ) {
@@ -136,7 +137,7 @@ namespace TheLunatic.Logic {
 		public void RegisterReceiptOfMask( Player givingPlayer, int maskType, int bossNpcType ) {
 			var mymod = TheLunaticMod.Instance;
 
-			if( maskType == mymod.ItemType<CustomBossMaskItem>() && bossNpcType != 0 && bossNpcType != -1 ) {	// -1 for legacy support
+			if( maskType == ModContent.ItemType<CustomBossMaskItem>() && bossNpcType != 0 && bossNpcType != -1 ) {	// -1 for legacy support
 				NPC npc = new NPC();
 				npc.SetDefaults( bossNpcType );
 
@@ -151,7 +152,7 @@ namespace TheLunatic.Logic {
 
 			// Buy time before the end comes
 			if( this.GivenVanillaMasksByType.Count < (MaskLogic.AvailableMaskCount) ) {
-				var modworld = mymod.GetModWorld<TheLunaticWorld>();
+				var modworld = ModContent.GetInstance<TheLunaticWorld>();
 				int recovered = mymod.Config.HalfDaysRecoveredPerMask;
 				
 				switch( maskType ) {
@@ -225,7 +226,7 @@ namespace TheLunatic.Logic {
 
 		public bool IsValidMask( Item mask ) {
 			var mymod = TheLunaticMod.Instance;
-			var myworld = mymod.GetModWorld<TheLunaticWorld>();
+			var myworld = ModContent.GetInstance<TheLunaticWorld>();
 			if( !myworld.GameLogic.HaveWeHopeToWin() ) { return false; }
 
 			if( !mymod.Config.LoonyAcceptsMasksWithoutBossKill ) {
@@ -304,7 +305,7 @@ namespace TheLunatic.Logic {
 			}
 
 			int bossType = -1;
-			if( maskItem.type == mymod.ItemType<CustomBossMaskItem>() && maskItem.modItem != null ) {
+			if( maskItem.type == ModContent.ItemType<CustomBossMaskItem>() && maskItem.modItem != null ) {
 				bossType = ( (CustomBossMaskItem)maskItem.modItem ).BossNpcType;
 			} else {
 				var bossOfMask = MaskLogic.VanillaBossOfMask

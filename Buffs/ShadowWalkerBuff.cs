@@ -82,7 +82,7 @@ namespace TheLunatic.Buffs {
 		////////////////
 
 		private void Run( Player player ) {
-			var myplayer = player.GetModPlayer<TheLunaticPlayer>( this.mod );
+			var myplayer = player.GetModPlayer<TheLunaticPlayer>();
 			if( myplayer.Noclip == null ) { return; }
 
 			player.AddBuff( mod.BuffType("ShadowWalkerBuff"), 4 );
@@ -122,7 +122,7 @@ namespace TheLunatic.Buffs {
 				return;
 			}
 
-			var myplayer = player.GetModPlayer<TheLunaticPlayer>( this.mod );
+			var myplayer = player.GetModPlayer<TheLunaticPlayer>();
 			if( myplayer.Noclip != null ) {
 				myplayer.Noclip.Off();
 			}

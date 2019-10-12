@@ -33,7 +33,7 @@ namespace TheLunatic.NPCs {
 		public override string GetChat() {
 			try {
 				var mymod = (TheLunaticMod)this.mod;
-				var myworld = mymod.GetModWorld<TheLunaticWorld>();
+				var myworld = ModContent.GetInstance<TheLunaticWorld>();
 				if( myworld.GameLogic == null ) { throw new ModHelpersException( "Game logic not initialized." ); }
 
 				Player player = Main.player[Main.myPlayer];

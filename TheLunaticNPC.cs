@@ -16,7 +16,7 @@ namespace TheLunatic {
 
 			if( Main.rand == null ) { return; }
 
-			var myworld = this.mod.GetModWorld<TheLunaticWorld>();
+			var myworld = ModContent.GetInstance<TheLunaticWorld>();
 			if( myworld == null ) { return; }
 
 			// Kill town NPCs above ground every minute when set to do so
@@ -36,7 +36,7 @@ namespace TheLunatic {
 			if( !mymod.Config.Enabled ) { return; }
 
 			if( !npc.boss && npc.type != 551 && npc.type != 398 ) { return; }	// Betsy isn't a boss?
-			var myworld = this.mod.GetModWorld<TheLunaticWorld>();
+			var myworld = ModContent.GetInstance<TheLunaticWorld>();
 			if( !myworld.GameLogic.HaveWeHopeToWin() ) { return; }
 
 			Item item = null;
@@ -60,7 +60,7 @@ namespace TheLunatic {
 			item = Main.item[which];
 
 			if( item != null && !item.IsAir ) {
-				if( maskType == mymod.ItemType<CustomBossMaskItem>() ) {
+				if( maskType == ModContent.ItemType<CustomBossMaskItem>() ) {
 					var moditem = (CustomBossMaskItem)item.modItem;
 					if( !moditem.SetBoss(npc.type) ) {
 						ItemHelpers.DestroyWorldItem( which );

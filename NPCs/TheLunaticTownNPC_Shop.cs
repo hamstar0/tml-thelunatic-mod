@@ -9,7 +9,7 @@ namespace TheLunatic.NPCs {
 	partial class TheLunaticTownNPC : ModNPC {
 		public override void SetupShop( Chest shop, ref int nextSlot ) {
 			var mymod = (TheLunaticMod)this.mod;
-			var myworld = mymod.GetModWorld<TheLunaticWorld>();
+			var myworld = ModContent.GetInstance<TheLunaticWorld>();
 			bool strict = mymod.Config.LoonyEnforcesBossSequence;
 			bool downedMech = NPC.downedMechBoss1 || NPC.downedMechBoss2 || NPC.downedMechBoss3;
 			bool downedTowers = NPC.downedTowerSolar && NPC.downedTowerVortex && NPC.downedTowerNebula && NPC.downedTowerStardust;

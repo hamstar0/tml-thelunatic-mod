@@ -150,7 +150,7 @@ try {
 		////////////////
 
 		public bool IsCheater() {
-			var myworld = this.mod.GetModWorld<TheLunaticWorld>();
+			var myworld = ModContent.GetInstance<TheLunaticWorld>();
 			if( !this.Bye.Keys.Contains( myworld.ID ) ) { return false; }
 			return this.Bye[myworld.ID];
 		}
@@ -158,7 +158,7 @@ try {
 		////////////////
 
 		public void SetCheater() {
-			var myworld = this.mod.GetModWorld<TheLunaticWorld>();
+			var myworld = ModContent.GetInstance<TheLunaticWorld>();
 			this.Bye[myworld.ID] = true;
 		}
 	}

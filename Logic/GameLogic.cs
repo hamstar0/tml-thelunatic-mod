@@ -6,6 +6,7 @@ using System;
 using Terraria;
 using Terraria.Graphics.Effects;
 using Terraria.Localization;
+using Terraria.ModLoader;
 using TheLunatic.NetProtocol;
 using TheLunatic.NPCs;
 
@@ -47,7 +48,7 @@ namespace TheLunatic.Logic {
 
 		public void LoadOnce( bool hasLoonyArrived, bool hasLoonyQuit, bool hasGameEnded, bool hasWon, bool isSafe, int time ) {
 			var mymod = TheLunaticMod.Instance;
-			var myworld = mymod.GetModWorld<TheLunaticWorld>();
+			var myworld = ModContent.GetInstance<TheLunaticWorld>();
 
 			if( this.IsLoaded ) {
 				LogHelpers.Log( "Redundant Game Logic load. " + hasLoonyArrived + "," + hasLoonyQuit + "," + hasGameEnded + "," + hasWon + "," + isSafe + "," + time +
@@ -130,7 +131,7 @@ namespace TheLunatic.Logic {
 			}
 
 			if( mymod.Config.DebugModeInfo ) {
-				var modworld = mymod.GetModWorld<TheLunaticWorld>();
+				var modworld = ModContent.GetInstance<TheLunaticWorld>();
 				DebugHelpers.Print( "WorldID", "" + modworld.ID, 20 );
 				DebugHelpers.Print( "IsApocalypse", "" + this.IsApocalypse, 20 );
 				DebugHelpers.Print( "IsSafe", "" + this.IsSafe, 20 );
@@ -203,7 +204,7 @@ namespace TheLunatic.Logic {
 		public void UpdateMyMusic( ref int music ) {
 			var mymod = TheLunaticMod.Instance;
 			Player player = Main.player[Main.myPlayer];
-			var myplayer = player.GetModPlayer<TheLunaticPlayer>( mymod );
+			var myplayer = player.GetModPlayer<TheLunaticPlayer>();
 
 			if( this.IsApocalypse ) {
 				if( myplayer.IsInDangerZone ) {
@@ -318,7 +319,7 @@ namespace TheLunatic.Logic {
 
 		private bool HaveWeWon() {
 			var mymod = TheLunaticMod.Instance;
-			var myworld = mymod.GetModWorld<TheLunaticWorld>();
+			var myworld = ModContent.GetInstance<TheLunaticWorld>();
 
 			return this.HasWon || ( this.HasLoonyArrived
 				//&& this.IsSafe

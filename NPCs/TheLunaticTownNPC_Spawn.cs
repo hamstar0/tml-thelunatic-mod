@@ -8,7 +8,7 @@ namespace TheLunatic.NPCs {
 	partial class TheLunaticTownNPC : ModNPC {
 		public static bool WantsToSpawnAnew() {
 			var mymod = TheLunaticMod.Instance;
-			var myworld = mymod.GetModWorld<TheLunaticWorld>();
+			var myworld = ModContent.GetInstance<TheLunaticWorld>();
 			if( myworld.GameLogic == null ) { throw new ModHelpersException( "Game logic not initialized." ); }
 
 			bool canSpawn = !myworld.GameLogic.HasLoonyQuit;
@@ -55,7 +55,7 @@ namespace TheLunatic.NPCs {
 
 		public static bool WantsToSpawn() {
 			var mymod = TheLunaticMod.Instance;
-			var myworld = mymod.GetModWorld<TheLunaticWorld>();
+			var myworld = ModContent.GetInstance<TheLunaticWorld>();
 			if( myworld.GameLogic == null ) { throw new ModHelpersException( "Game logic not initialized."); }
 
 			bool canSpawn = !myworld.GameLogic.HasLoonyQuit;
@@ -109,7 +109,7 @@ namespace TheLunatic.NPCs {
 		////////////////
 		
 		public override bool CanTownNPCSpawn( int numTownNPCs, int money ) {
-			var myworld = mod.GetModWorld<TheLunaticWorld>();
+			var myworld = ModContent.GetInstance<TheLunaticWorld>();
 			if( myworld.GameLogic == null ) { throw new ModHelpersException("Game logic not initialized."); }
 
 			if( myworld.GameLogic.KillSurfaceTownNPCs ) { return false; }

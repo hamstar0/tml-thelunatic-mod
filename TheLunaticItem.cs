@@ -32,7 +32,7 @@ namespace TheLunatic {
 			var mymod = (TheLunaticMod)this.mod;
 			if( !mymod.Config.Enabled ) { return; }
 
-			bool found = item.type == this.mod.ItemType<CustomBossMaskItem>();
+			bool found = item.type == ModContent.ItemType<CustomBossMaskItem>();
 			if( !found ) { found = MaskLogic.AllVanillaMasks.Contains( item.type ); }
 			if( found ) {
 				TooltipLine line = new TooltipLine( mymod, "lunatic_info", "Contains latent spiritual essence" );
@@ -48,7 +48,7 @@ namespace TheLunatic {
 
 		public override void UpdateEquip( Item item, Player player ) {
 			var mymod = (TheLunaticMod)this.mod;
-			var myplayer = player.GetModPlayer<TheLunaticPlayer>( mymod );
+			var myplayer = player.GetModPlayer<TheLunaticPlayer>();
 
 			if( !mymod.Config.Enabled ) { return; }
 

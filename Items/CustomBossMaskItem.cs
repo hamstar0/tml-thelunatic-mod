@@ -14,7 +14,7 @@ namespace TheLunatic.Items {
 		public static Texture2D GetMaskTextureOfPlayer( Player player ) {
 			if( Main.dedServ || Main.netMode == 2 ) { return null; }
 
-			int itemType = TheLunaticMod.Instance.ItemType<CustomBossMaskItem>();
+			int itemType = ModContent.ItemType<CustomBossMaskItem>();
 			ModItem myitem;
 			CustomBossMaskItem mymaskitem = null;
 

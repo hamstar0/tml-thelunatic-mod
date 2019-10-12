@@ -19,11 +19,11 @@ namespace TheLunatic.Items {
 
 		public static void Give( Player player ) {
 			var mymod = TheLunaticMod.Instance;
-			int who = ItemHelpers.CreateItem( player.Center, mymod.ItemType<UmbralCowlItem>(), 1, UmbralCowlItem.Width, UmbralCowlItem.Height );
+			int who = ItemHelpers.CreateItem( player.Center, ModContent.ItemType<UmbralCowlItem>(), 1, UmbralCowlItem.Width, UmbralCowlItem.Height );
 			Item item = Main.item[who];
 			item.noGrabDelay = 15;
 
-			var itemInfo = item.GetGlobalItem<UmbralCowlItemInfo>( mymod );
+			var itemInfo = item.GetGlobalItem<UmbralCowlItemInfo>();
 			itemInfo.IsAllowed = true;
 		}
 
@@ -31,7 +31,7 @@ namespace TheLunatic.Items {
 
 		public static void CheckEquipState( Player player ) {
 			var mymod = TheLunaticMod.Instance;
-			int cowlType = mymod.ItemType<UmbralCowlItem>();
+			int cowlType = ModContent.ItemType<UmbralCowlItem>();
 			bool found = false;
 
 			for( int i=0; i<player.armor.Length; i++ ) {
@@ -67,7 +67,7 @@ namespace TheLunatic.Items {
 		}
 
 		public override void ModifyTooltips( List<TooltipLine> tooltips ) {
-			var itemInfo = item.GetGlobalItem<UmbralCowlItemInfo>();
+			var itemInfo = this.item.GetGlobalItem<UmbralCowlItemInfo>();
 			if( itemInfo.IsAllowed ) {
 				TooltipLine tip = new TooltipLine( this.mod, "how_to", "Enter complete darkness to use" );
 				TooltipLine tip2 = new TooltipLine( this.mod, "how_to2", "Press Shift to reenter light" );
@@ -87,12 +87,12 @@ namespace TheLunatic.Items {
 		////////////////
 
 		public override void Load( TagCompound tag ) {
-			var itemInfo = item.GetGlobalItem<UmbralCowlItemInfo>();
+			var itemInfo = this.item.GetGlobalItem<UmbralCowlItemInfo>();
 			itemInfo.IsAllowed = tag.GetBool( "is_allowed_use" );
 		}
 
 		public override TagCompound Save() {
-			var itemInfo = item.GetGlobalItem<UmbralCowlItemInfo>();
+			var itemInfo = this.item.GetGlobalItem<UmbralCowlItemInfo>();
 			return new TagCompound { { "is_allowed_use", (bool)itemInfo.IsAllowed } };
 		}
 
@@ -102,7 +102,7 @@ namespace TheLunatic.Items {
 		public override void UpdateAccessory( Player player, bool hideVisual ) {
 			if( player.whoAmI != Main.myPlayer ) { return; }    // Current player only
 
-			var itemInfo = item.GetGlobalItem<UmbralCowlItemInfo>( this.mod );
+			var itemInfo = this.item.GetGlobalItem<UmbralCowlItemInfo>();
 			if( !itemInfo.IsAllowed ) { return; }	// Allowed to use
 
 			if( ShadowWalkerBuff.CanShadowWalk( player ) ) {
@@ -110,7 +110,7 @@ namespace TheLunatic.Items {
 					ShadowWalkerBuff.AddBuffFor( this.mod, player );
 				}
 
-				var myplayer = player.GetModPlayer<TheLunaticPlayer>( this.mod );
+				var myplayer = player.GetModPlayer<TheLunaticPlayer>();
 				if( myplayer.Noclip != null ) {
 					myplayer.Noclip.UpdateMode( player );   // Redundant?
 				}

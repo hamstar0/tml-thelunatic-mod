@@ -10,7 +10,7 @@ namespace TheLunatic {
 		public override void PreUpdate() {
 			var mymod = (TheLunaticMod)this.mod;
 			if( !mymod.Config.Enabled ) { return; }
-			var myworld = this.mod.GetModWorld<TheLunaticWorld>();
+			var myworld = ModContent.GetInstance<TheLunaticWorld>();
 
 			if( this.player.position.Y < Main.worldSurface * 16.0 ) {
 				this.IsInDangerZone = true;

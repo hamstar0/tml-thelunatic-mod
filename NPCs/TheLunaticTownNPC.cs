@@ -109,7 +109,7 @@ namespace TheLunatic.NPCs {
 		}
 		
 		public override void AI() {
-			var myworld = this.mod.GetModWorld<TheLunaticWorld>();
+			var myworld = ModContent.GetInstance<TheLunaticWorld>();
 			if( myworld.GameLogic == null ) { throw new ModHelpersException( "Game logic not initialized." ); }
 
 			TheLunaticTownNPC.AmHere = true;

@@ -39,7 +39,7 @@ namespace TheLunatic {
 
 		public override void UpdateBiomes() {
 			var mymod = (TheLunaticMod)this.mod;
-			var myworld = this.mod.GetModWorld<TheLunaticWorld>();
+			var myworld = ModContent.GetInstance<TheLunaticWorld>();
 
 			if( !mymod.Config.Enabled ) { return; }
 			if( myworld.GameLogic == null ) { throw new ModHelpersException( "Game logic not initialized." ); }
@@ -49,7 +49,7 @@ namespace TheLunatic {
 
 		public override void UpdateBiomeVisuals() {
 			var mymod = (TheLunaticMod)this.mod;
-			var myworld = this.mod.GetModWorld<TheLunaticWorld>();
+			var myworld = ModContent.GetInstance<TheLunaticWorld>();
 
 			if( !mymod.Config.Enabled ) { return; }
 			if( myworld.GameLogic == null ) { throw new ModHelpersException( "Game logic not initialized." ); }
@@ -65,7 +65,7 @@ namespace TheLunatic {
 				Player player = drawInfo.drawPlayer;
 
 				var mod = ModLoader.GetMod( "TheLunatic" );
-				var myplayer = player.GetModPlayer<TheLunaticPlayer>( mod );
+				var myplayer = player.GetModPlayer<TheLunaticPlayer>();
 				var tex = myplayer.MaskTex;
 
 				var se = player.direction != 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;

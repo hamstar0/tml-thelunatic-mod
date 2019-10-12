@@ -19,7 +19,7 @@ namespace TheLunatic {
 
 		////////////////
 		
-		public LunaticConfig Config => this.GetConfig<LunaticConfig>();
+		public LunaticConfig Config => ModContent.GetInstance<LunaticConfig>();
 
 		internal AnimatedSky Sky { get; private set; }
 
@@ -60,7 +60,7 @@ namespace TheLunatic {
 		}
 
 		public override bool HijackGetData( ref byte messageType, ref BinaryReader reader, int playerNumber ) {
-			var myworld = this.GetModWorld<TheLunaticWorld>();
+			var myworld = ModContent.GetInstance<TheLunaticWorld>();
 			if( myworld != null && myworld.GameLogic != null ) {
 				// Let not a peep of town NPC suffering be heard when set to do so
 				if( myworld.GameLogic.KillSurfaceTownNPCs ) {
@@ -79,7 +79,7 @@ namespace TheLunatic {
 		public override void PostDrawInterface( SpriteBatch sb ) {
 			if( this.Config == null || !this.Config.Enabled ) { return; }
 
-			var myworld = this.GetModWorld<TheLunaticWorld>();
+			var myworld = ModContent.GetInstance<TheLunaticWorld>();
 			if( myworld.GameLogic != null ) {
 				myworld.GameLogic.ReadyClient = true;  // Ugh!
 			}
@@ -88,7 +88,7 @@ namespace TheLunatic {
 		public override void UpdateMusic( ref int music, ref MusicPriority priority ) {
 			if( this.Config == null || !this.Config.Enabled ) { return; }
 
-			var myworld = this.GetModWorld<TheLunaticWorld>();
+			var myworld = ModContent.GetInstance<TheLunaticWorld>();
 
 			if( myworld != null && myworld.GameLogic != null ) {
 				myworld.GameLogic.UpdateMyMusic( ref music );

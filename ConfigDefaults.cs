@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HamstarHelpers.Classes.UI.ModConfig;
+using System;
 using System.ComponentModel;
 using Terraria.ModLoader.Config;
 
@@ -26,17 +27,24 @@ namespace TheLunatic {
 		[DefaultValue( true )]
 		public bool Enabled = true;
 
+		////
 
+		[Range( 0, 999 )]
 		[DefaultValue( 9 )]
 		public int DaysUntil = 9;  // Days until The End
 
+		[Range( 0, 999 )]
 		[DefaultValue( 4 )]
 		public int HalfDaysRecoveredPerMask = 4;    // Half days recovered per mask
 
+		[Range( 0f, 100f )]
 		[DefaultValue( 2.5f )]
+		[CustomModConfigItem( typeof( FloatInputElement ) )]
 		public float WallOfFleshMultiplier = 2.5f;    // Added time for WoF kill
 
+		[Range( 0f, 100f )]
 		[DefaultValue( 1.5f )]
+		[CustomModConfigItem( typeof( FloatInputElement ) )]
 		public float HardModeMultiplier = 1.5f; // Added time for hard mode bosses
 
 
