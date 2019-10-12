@@ -5,6 +5,11 @@ using Terraria.ModLoader.Config;
 
 
 namespace TheLunatic {
+	class MyFloatInputElement : FloatInputElement { }
+
+
+
+
 	public class LunaticConfig : ModConfig {
 		public override ConfigScope Mode => ConfigScope.ServerSide;
 
@@ -39,12 +44,12 @@ namespace TheLunatic {
 
 		[Range( 0f, 100f )]
 		[DefaultValue( 2.5f )]
-		[CustomModConfigItem( typeof( FloatInputElement ) )]
+		[CustomModConfigItem( typeof( MyFloatInputElement ) )]
 		public float WallOfFleshMultiplier = 2.5f;    // Added time for WoF kill
 
 		[Range( 0f, 100f )]
 		[DefaultValue( 1.5f )]
-		[CustomModConfigItem( typeof( FloatInputElement ) )]
+		[CustomModConfigItem( typeof( MyFloatInputElement ) )]
 		public float HardModeMultiplier = 1.5f; // Added time for hard mode bosses
 
 
